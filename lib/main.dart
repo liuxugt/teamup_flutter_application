@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:teamup_app/pages/root_page.dart';
+import 'package:teamup_app/services/authentication.dart';
+
+
 
 void main() => runApp(MyApp());
 
@@ -6,15 +10,9 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Welcome to Flutter',
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Welcome to Flutter'),
-        ),
-        body: Center(
-          child: Text('Hello Teamup'),
-        ),
-      ),
+      title: 'Teamup Demo',
+      debugShowCheckedModeBanner: false,
+      home: new RootPage(auth: new Auth())
     );
   }
 }
