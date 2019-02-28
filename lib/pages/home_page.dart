@@ -9,7 +9,6 @@ class HomePage extends StatefulWidget{
   final VoidCallback onSignedOut;
   final String userId;
 
-
   @override
   State<StatefulWidget> createState() => new _HomePageState();
 
@@ -36,10 +35,6 @@ class _HomePageState extends State<HomePage>{
     }
   }
 
-  void _testDatabase() async{
-    DocumentSnapshot snap = await db.collection('users').document('F4njFHdDseOGfZzpnc3e').get();
-    print(snap.data['Test']);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,11 +50,6 @@ class _HomePageState extends State<HomePage>{
               color: Colors.blue,
               elevation: 5,
               child: new Text('Sign Out', style: new TextStyle(color: Colors.white),)
-              ),
-            new RaisedButton(
-                onPressed: _testDatabase,
-                color: Colors.blue,
-                child: new Text('Test DB', style: new TextStyle(color: Colors.white),)
               )
             ]
           )

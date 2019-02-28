@@ -19,7 +19,6 @@ abstract class BaseAuth {
 class Auth implements BaseAuth {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-
   Future<String> signIn(String email, String password) async {
     FirebaseUser user = await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
@@ -30,9 +29,10 @@ class Auth implements BaseAuth {
     FirebaseUser user = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
 
-    //TODO: Add user to /users with user.uid as index
 
+    Firestore.instance.collection('users').document(user.uid).setData({'email': '$email', 'uid': user.uid});
 
+//    user = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
 
     return user.uid;
   }
