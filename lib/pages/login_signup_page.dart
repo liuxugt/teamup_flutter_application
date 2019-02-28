@@ -19,6 +19,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   String _email;
   String _password;
   String _errorMessage;
+  String _firstName;
+  String _lastName;
 
   // Initial form is login form
   FormMode _formMode = FormMode.LOGIN;
@@ -48,7 +50,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           userId = await widget.auth.signIn(_email, _password);
           print('Signed in: $userId');
         } else {
-          userId = await widget.auth.signUp(_email, _password);
+          userId = await widget.auth.signUp(_email, _password, _firstName, _lastName);
           print('Signed up user: $userId');
 
 //          Here we show a popup that confirms creation of the account and then logs the user in
@@ -152,6 +154,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               _showCircularProgress(),
+              _showNameInput(),
               _showEmailInput(),
               _showPasswordInput(),
               _showPrimaryButton(),
@@ -179,9 +182,47 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     }
   }
 
+  Widget _showNameInput(){
+    if(_formMode == FormMode.SIGNUP){
+      return new Row(
+        children: <Widget>[
+          new Flexible(
+            child: new Padding(
+                padding: const EdgeInsets.fromLTRB(0.0, 0.0, 15.0, 0.0),
+                child: new TextFormField(
+                maxLines: 1,
+                decoration: new InputDecoration(
+                    hintText: 'First Name'
+                ),
+                validator: (value) => value.isEmpty ? 'Can\'t be empty' : null,
+                onSaved: (value) => _firstName = value,
+              )
+            )
+          ),
+          new Flexible(
+            child: new TextFormField(
+              maxLines: 1,
+              decoration: new InputDecoration(
+                  hintText: 'Last Name'
+              ),
+              validator: (value) => value.isEmpty ? 'Can\'t be empty' : null,
+              onSaved: (value) => _lastName = value,
+            ),
+          )
+        ],
+      );
+    }else{
+      return new Container(
+        height: 0.0,
+      );
+    }
+  }
+
 
   Widget _showEmailInput() {
-    return new TextFormField(
+    return Padding(
+        padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
+        child: new TextFormField(
         maxLines: 1,
         keyboardType: TextInputType.emailAddress,
         autofocus: false,
@@ -193,7 +234,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             )),
         validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
         onSaved: (value) => _email = value,
-      );
+      )
+    );
   }
 
   Widget _showPasswordInput() {
@@ -230,7 +272,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   }
 
   Widget _showPrimaryButton() {
-
     return new RaisedButton(
       elevation: 5.0,
 //      shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(30.0)),

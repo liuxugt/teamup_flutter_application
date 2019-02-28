@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 abstract class BaseAuth {
   Future<String> signIn(String email, String password);
 
-  Future<String> signUp(String email, String password);
+  Future<String> signUp(String email, String password, String firstName, String lastName);
 
   Future<FirebaseUser> getCurrentUser();
 
@@ -25,12 +25,17 @@ class Auth implements BaseAuth {
     return user.uid;
   }
 
-  Future<String> signUp(String email, String password) async {
+  Future<String> signUp(String email, String password, String firstName, String lastName) async {
     FirebaseUser user = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
 
 
-    Firestore.instance.collection('users').document(user.uid).setData({'email': '$email', 'uid': user.uid});
+    Firestore.instance.collection('users').document(user.uid).setData({
+      'email': '$email',
+      'uid': user.uid,
+      'first_name': firstName,
+      'last_name' : lastName
+    });
 
 //    user = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
 
