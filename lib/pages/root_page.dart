@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamup_app/pages/home_page.dart';
 import 'package:teamup_app/pages/login_signup_page.dart';
-import 'package:teamup_app/pages/onboarding_page.dart';
 import 'package:teamup_app/services/authentication.dart';
 
 class RootPage extends StatefulWidget {
@@ -16,7 +15,6 @@ enum AuthStatus {
   NOT_DETERMINED,
   NOT_LOGGED_IN,
   LOGGED_IN,
-  SIGNED_UP,
 }
 
 
@@ -56,16 +54,16 @@ class _RootPageState extends State<RootPage> {
     });
   }
 
-  void _onSignedUp() {
-    widget.auth.getCurrentUser().then((user){
-      setState(() {
-        _userId = user.uid.toString();
-      });
-      setState(() {
-        authStatus = AuthStatus.SIGNED_UP;
-      });
-    });
-  }
+//  void _onSignedUp() {
+//    widget.auth.getCurrentUser().then((user){
+//      setState(() {
+//        _userId = user.uid.toString();
+//      });
+//      setState(() {
+//        authStatus = AuthStatus.SIGNED_UP;
+//      });
+//    });
+//  }
 
   Widget _buildWaitingScreen() {
     return Scaffold(
@@ -86,7 +84,6 @@ class _RootPageState extends State<RootPage> {
         return new LoginSignUpPage(
           auth: widget.auth,
           onSignedIn: _onLoggedIn,
-          onSignedUp: _onSignedUp,
         );
         break;
       case AuthStatus.LOGGED_IN:
@@ -97,14 +94,6 @@ class _RootPageState extends State<RootPage> {
             onSignedOut: _onSignedOut,
           );
         } else return _buildWaitingScreen();
-        break;
-      case AuthStatus.SIGNED_UP:
-        if (_userId != null && _userId.length > 0){
-          return new OnBoardingPage(
-            userId: _userId,
-            auth: widget.auth,
-          );
-        }else return _buildWaitingScreen();
         break;
       default:
         return _buildWaitingScreen();

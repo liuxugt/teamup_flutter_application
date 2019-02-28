@@ -2,11 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:teamup_app/services/authentication.dart';
 
 class LoginSignUpPage extends StatefulWidget {
-  LoginSignUpPage({this.auth, this.onSignedIn, this.onSignedUp});
+  LoginSignUpPage({this.auth, this.onSignedIn});
 
   final BaseAuth auth;
   final VoidCallback onSignedIn;
-  final VoidCallback onSignedUp;
 
   @override
   State<StatefulWidget> createState() => new _LoginSignUpPageState();
@@ -50,6 +49,9 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           print('Signed in: $userId');
         } else {
           userId = await widget.auth.signUp(_email, _password);
+          print('Signed up user: $userId');
+
+//          Here we show a popup that confirms creation of the account and then logs the user in
           showDialog(
             context: context,
             builder: (BuildContext context){
@@ -61,7 +63,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
                     onPressed: () async {
                         userId = await widget.auth.signIn(_email, _password);
                         Navigator.of(context).pop();
-                        widget.onSignedUp();
+                        widget.onSignedIn();
                       },
                       child: new Text('Okay'),
                   )
@@ -69,7 +71,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
               );
             }
           );
-          print('Signed up user: $userId');
         }
         setState(() {
           _isLoading = false;
