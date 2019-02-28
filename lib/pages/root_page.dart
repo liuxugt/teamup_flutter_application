@@ -5,7 +5,6 @@ import 'package:teamup_app/services/authentication.dart';
 
 class RootPage extends StatefulWidget {
   RootPage({this.auth});
-
   final BaseAuth auth;
 
   @override
@@ -17,6 +16,7 @@ enum AuthStatus {
   NOT_LOGGED_IN,
   LOGGED_IN,
 }
+
 
 class _RootPageState extends State<RootPage> {
   AuthStatus authStatus = AuthStatus.NOT_DETERMINED;

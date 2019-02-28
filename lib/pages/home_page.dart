@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:teamup_app/services/authentication.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatefulWidget{
   HomePage({Key key, this.auth, this.userId, this.onSignedOut}) : super(key: key);
@@ -17,7 +17,6 @@ class HomePage extends StatefulWidget{
 
 class _HomePageState extends State<HomePage>{
 
-  final FirebaseDatabase _database = FirebaseDatabase.instance;
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
 
   @override
@@ -35,6 +34,9 @@ class _HomePageState extends State<HomePage>{
     }
   }
 
+  _testDatabase(){
+    print(Firestore.instance.collection('users').document('F4njFHdDseOGfZzpnc3e').path);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -43,14 +45,23 @@ class _HomePageState extends State<HomePage>{
         title: new Text('Home Page'),
       ),
       body: Center(
-        child: new RaisedButton(
-            onPressed: _signOut,
-            color: Colors.blue,
-            elevation: 5,
-            child: new Text('Sign Out', style: new TextStyle(color: Colors.white),),
+        child: Column(
+          children: [
+            new RaisedButton(
+              onPressed: _signOut,
+              color: Colors.blue,
+              elevation: 5,
+              child: new Text('Sign Out', style: new TextStyle(color: Colors.white),)
+              ),
+            new RaisedButton(
+                onPressed: _testDatabase,
+                color: Colors.blue,
+                child: new Text('Test DB', style: new TextStyle(color: Colors.white),)
+              )
+            ]
+          )
         )
-      )
-    );
+      );
   }
 
 
