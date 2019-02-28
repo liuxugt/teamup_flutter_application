@@ -18,6 +18,8 @@ class HomePage extends StatefulWidget{
 class _HomePageState extends State<HomePage>{
 
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final db = Firestore.instance;
+
 
   @override
   void initState() {
@@ -34,8 +36,9 @@ class _HomePageState extends State<HomePage>{
     }
   }
 
-  _testDatabase(){
-    print(Firestore.instance.collection('users').document('F4njFHdDseOGfZzpnc3e').path);
+  void _testDatabase() async{
+    DocumentSnapshot snap = await db.collection('users').document('F4njFHdDseOGfZzpnc3e').get();
+    print(snap.data['Test']);
   }
 
   @override
