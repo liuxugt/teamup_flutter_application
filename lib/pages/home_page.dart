@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:teamup_app/services/authentication.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:teamup_app/widgets/classmates_list.dart';
+import 'package:teamup_app/widgets/notifications_list.dart';
+import 'package:teamup_app/widgets/projects_list.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.auth, this.userId, this.onSignedOut})
@@ -16,24 +19,54 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
-  final db = Firestore.instance;
-  int _currentIndex = 0;
-  DocumentSnapshot userData;
-  final List<Widget> _children = [
+  final Firestore db = Firestore.instance;
 
-  ];
+  int _currentTabIndex = 0;
+  PageController _pageController;
+  DocumentSnapshot _userSnap;
+//  DocumentReference _courseRef;
+
+  int _currentCourseIndex = 0;
+//  DocumentReference _courseRef;
+  var _pageChildren;
+
+
+
 
   @override
   void initState() {
-    super.initState();
     _loadUserData();
+    _pageController = new PageController(
+      initialPage: _currentTabIndex,
+    );
+    super.initState();
   }
 
   _loadUserData() async {
-    DocumentSnapshot data = await db.collection('users').document(widget.userId).get();
+    DocumentSnapshot userSnap = await db.collection('users').document(widget.userId).get();
     setState(() {
-      userData = data;
+      _userSnap = userSnap;
     });
+    _updatePageChildren();
+  }
+
+  _updatePageChildren(){
+    if(_userSnap != null) {
+      DocumentReference courseRef = _userSnap.data['courses'][_currentCourseIndex]['ref'];
+      setState(() {
+        _pageChildren = [
+          new ClassmatesList(
+              courseRef: courseRef,
+              db: db
+          ),
+          new ProjectsList(
+              courseRef: courseRef,
+              db: db
+          ),
+          new NotificationList(),
+        ];
+      });
+    }
   }
 
 
@@ -46,18 +79,13 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  void onTabTapped(int index){
-    setState((){
-      _currentIndex = index;
-    });
-  }
-
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('Teamup'),
+        title: (_userSnap != null && _userSnap.data.containsKey('courses')) ? new Text(_userSnap.data['courses'][_currentCourseIndex]['name'].toString()) : const Text('No Courses'),
+//        title: Text('title'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.exit_to_app),
@@ -66,12 +94,15 @@ class _HomePageState extends State<HomePage> {
           IconButton(
             icon: Icon(Icons.refresh),
             onPressed: _loadUserData,
-          )
+          ),
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
-          onTap: onTabTapped,
-          currentIndex: _currentIndex,
+          onTap: (index){
+//            this._pageController.animateToPage(index, duration: const Duration(milliseconds: 500), curve: Curves.ease);
+            _pageController.jumpToPage(index);
+          },
+          currentIndex: _currentTabIndex,
           items: [
             BottomNavigationBarItem(
               icon: new Icon(Icons.person),
@@ -79,24 +110,28 @@ class _HomePageState extends State<HomePage> {
             ),
             BottomNavigationBarItem(
               icon: new Icon(Icons.group),
-              title: new Text('Teams')
+              title: new Text('Projects')
             ),
             BottomNavigationBarItem(
               icon: new Icon(Icons.email),
-              title: new Text('Inbox')
+              title: new Text('Notifications')
             )
           ]
       ),
-      body: Center(
-        child: Center(
-          child: userData != null ? Text(userData.data.toString()) : Text('Nothing here...')
-          )
-        ),
-        drawer: Drawer(
+      body: _userSnap == null ? Center(child: CircularProgressIndicator()) : PageView(
+        controller: this._pageController,
+        onPageChanged: (newPage){
+          setState(() {
+            _currentTabIndex = newPage;
+          });
+        },
+        children: _pageChildren,
+      ),
+      drawer: Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the Drawer if there isn't enough vertical
           // space to fit everything.
-          child: ListView(
+          child: _userSnap == null ? null : ListView(
             // Important: Remove any padding from the ListView.
             padding: EdgeInsets.zero,
             children: <Widget>[
