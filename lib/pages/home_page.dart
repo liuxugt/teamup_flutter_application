@@ -17,11 +17,25 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final db = Firestore.instance;
+  int _currentIndex = 0;
+  DocumentSnapshot userData;
+  final List<Widget> _children = [
+
+  ];
 
   @override
   void initState() {
     super.initState();
+    _loadUserData();
   }
+
+  _loadUserData() async {
+    DocumentSnapshot data = await db.collection('users').document(widget.userId).get();
+    setState(() {
+      userData = data;
+    });
+  }
+
 
   _signOut() async {
     try {
@@ -32,9 +46,53 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void onTabTapped(int index){
+    setState((){
+      _currentIndex = index;
+    });
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
+      appBar: new AppBar(
+        title: new Text('Teamup'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.exit_to_app),
+            onPressed: _signOut,
+          ),
+          IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: _loadUserData,
+          )
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+          onTap: onTabTapped,
+          currentIndex: _currentIndex,
+          items: [
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.person),
+              title: new Text('Classmates')
+            ),
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.group),
+              title: new Text('Teams')
+            ),
+            BottomNavigationBarItem(
+              icon: new Icon(Icons.email),
+              title: new Text('Inbox')
+            )
+          ]
+      ),
+      body: Center(
+        child: Center(
+          child: userData != null ? Text(userData.data.toString()) : Text('Nothing here...')
+          )
+        )
+      );
         appBar: new AppBar(
           title: new Text('Home Page'),
         ),
