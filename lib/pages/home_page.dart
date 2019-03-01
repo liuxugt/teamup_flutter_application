@@ -91,22 +91,7 @@ class _HomePageState extends State<HomePage> {
         child: Center(
           child: userData != null ? Text(userData.data.toString()) : Text('Nothing here...')
           )
-        )
-      );
-        appBar: new AppBar(
-          title: new Text('Home Page'),
         ),
-        body: Center(
-            child: Column(children: [
-          new RaisedButton(
-              onPressed: _signOut,
-              color: Colors.blue,
-              elevation: 5,
-              child: new Text(
-                'Sign Out',
-                style: new TextStyle(color: Colors.white),
-              ))
-        ])),
         drawer: Drawer(
           // Add a ListView to the drawer. This ensures the user can scroll
           // through the options in the Drawer if there isn't enough vertical
@@ -142,5 +127,7 @@ class _HomePageState extends State<HomePage> {
             ],
           ),
         ));
+
+
   }
 }
