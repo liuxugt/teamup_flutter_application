@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:teamup_app/services/authentication.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:teamup_app/widgets/classmates_list.dart';
-import 'package:teamup_app/widgets/notifications_list.dart';
-import 'package:teamup_app/widgets/projects_list.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.auth, this.userId, this.onSignedOut})
@@ -85,7 +82,6 @@ class _HomePageState extends State<HomePage> {
     return new Scaffold(
       appBar: new AppBar(
         title: (_userSnap != null && _userSnap.data.containsKey('courses')) ? new Text(_userSnap.data['courses'][_currentCourseIndex]['name'].toString()) : const Text('No Courses'),
-//        title: Text('title'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.exit_to_app),
@@ -127,41 +123,8 @@ class _HomePageState extends State<HomePage> {
         },
         children: _pageChildren,
       ),
-      drawer: Drawer(
-          // Add a ListView to the drawer. This ensures the user can scroll
-          // through the options in the Drawer if there isn't enough vertical
-          // space to fit everything.
-          child: _userSnap == null ? null : ListView(
-            // Important: Remove any padding from the ListView.
-            padding: EdgeInsets.zero,
-            children: <Widget>[
-              DrawerHeader(
-                child: Text('Drawer Header'),
-                decoration: BoxDecoration(
-                  color: Colors.blue,
-                ),
-              ),
-              ListTile(
-                title: Text('Item 1'),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  Navigator.pop(context);
-                },
-              ),
-              ListTile(
-                title: Text('Item 2'),
-                onTap: () {
-                  // Update the state of the app
-                  // ...
-                  // Then close the drawer
-                  Navigator.pop(context);
-                },
-              ),
-            ],
-          ),
-        ));
+        drawer: CustomDrawer(_userSnap, (){})
+    );
 
 
   }
