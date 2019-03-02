@@ -34,7 +34,6 @@ class _ProfilePageState extends State<ProfilePage>{
 
   @override
   Widget build(BuildContext context) {
-
     return new Scaffold(
       appBar: new AppBar(
         title: Text(_profileName),

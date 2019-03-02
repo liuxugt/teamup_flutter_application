@@ -68,7 +68,8 @@ class _HomePageState extends State<HomePage> {
           ),
           new ProjectsList(
               courseRef: _courseRef,
-              db: db
+              db: db,
+              userSnap: _userSnap,
           ),
           new NotificationList(),
         ];
@@ -124,7 +125,7 @@ class _HomePageState extends State<HomePage> {
             ),
             BottomNavigationBarItem(
               icon: new Icon(Icons.group),
-              title: new Text('Projects')
+              title: new Text('Teams')
             ),
             BottomNavigationBarItem(
               icon: new Icon(Icons.email),

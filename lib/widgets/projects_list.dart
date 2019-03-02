@@ -4,10 +4,11 @@ import 'package:teamup_app/widgets/project_page.dart';
 
 
 class ProjectsList extends StatefulWidget{
-  ProjectsList({this.courseRef, this.db});
+  ProjectsList({this.courseRef, this.db, this.userSnap});
 
   final DocumentReference courseRef;
   final Firestore db;
+  final DocumentSnapshot userSnap;
 
 
   @override
@@ -28,6 +29,7 @@ class _ProjectsListState extends State<ProjectsList>{
 
   @override
   Widget build(BuildContext context) {
+    //bool is_available = _userSnap.data.containsKey('courses')
     return widget.courseRef == null ? CircularProgressIndicator() : StreamBuilder<QuerySnapshot>(
       stream: widget.courseRef.collection('projects').snapshots(),
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot){
@@ -44,7 +46,7 @@ class _ProjectsListState extends State<ProjectsList>{
                   title: new Text(document['name']),
                   subtitle: new Text(document['description']),
                   onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context) => ProjectPage(projectSnap: document)));
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ProjectPage(projectSnap: document, courseRef: widget.courseRef, userSnap: widget.userSnap)));
                   },
                 );
               }).toList(),
