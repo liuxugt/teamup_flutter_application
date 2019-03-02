@@ -35,8 +35,8 @@ class CustomDrawer extends StatelessWidget {
         userData.data.containsKey('courses') &&
         userData.data['courses'] is List) {
 
-        List courses = userData.data['course'];
-        for(int i = 0; i < userData.data.length; i++){
+        List courses = userData.data['courses'];
+        for(int i = 0; i < courses.length; i++){
           labelListTiles.add(
               new ListTile(
                 title: new Text(courses[i]['name']),
