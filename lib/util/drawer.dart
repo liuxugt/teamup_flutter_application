@@ -23,27 +23,12 @@ class CustomDrawer extends StatelessWidget {
     List<Widget> children = [];
     children
       ..addAll(_buildDrawHeader(context))
-//      ..addAll(_defaultLabels(context))
-//      ..addAll([new Divider()])
       ..addAll(_buildLabelWidgets(context));
-//      ..addAll([new Divider()])
-//      ..addAll(_buildActions(context))
-//      ..addAll([new Divider()])
-//      ..addAll(_buildSettingAndHelp(context));
     return children;
   }
 
   List<Widget> _buildLabelWidgets(BuildContext context) {
     List<Widget> labelListTiles = [];
-//    labelListTiles.add(
-//        new ListTile(
-//          leading: new Text('Label'),
-//          trailing: new Text(
-//              'EDIT'
-//          ),
-//          onTap: () => _onTapCreateOrEditLabel(context),
-//        )
-//    );
 
     if (userData.exists &&
         userData.data.containsKey('courses') &&
@@ -66,22 +51,19 @@ class CustomDrawer extends StatelessWidget {
 
   List<Widget> _buildDrawHeader(BuildContext context) {
     return [
-      new DrawerHeader(
-        child: Text(userData.data['first_name'] + " " + userData.data['last_name']),
-
+      new UserAccountsDrawerHeader(
+        accountName: Text(userData.data['first_name'] + " " + userData.data['last_name']),
+        accountEmail: Text(userData.data['email']),
+        currentAccountPicture: CircleAvatar(backgroundImage: NetworkImage("http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png")),
         decoration: BoxDecoration(color: Colors.blue),
-      ),];
+      )
+    ];
+  }
+
+  Widget _buildAvatar(BuildContext context) {
+    return CircleAvatar();
   }
 
 }
 
-//Future<List<Map<K, V>>> _getCourse<K, V>() async {
-//
-//  if (querySnapshot.exists &&
-//      querySnapshot.data.containsKey('courses') &&
-//      querySnapshot.data['courses'] is List) {
-//    // Create a new List<String> from List<dynamic>
-//    return List<Map<K, V>>.from(querySnapshot.data['courses']);
-//  }
-//  return [];
-//}
+
