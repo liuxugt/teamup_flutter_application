@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:teamup_app/widgets/profile_page.dart';
 
 
 class ClassmatesList extends StatefulWidget{
@@ -40,7 +41,9 @@ class _ClassmatesListState extends State<ClassmatesList>{
                   return new ListTile(
                     leading: document['is_available'] ? Icon(Icons.brightness_1, color: Colors.green,) : Icon(Icons.brightness_1, color: Colors.red),
                     title: new Text(document['name']),
-                    onTap: (){},
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => ProfilePage(profileRef: document['ref'])));
+                    },
                   );
                 }).toList(),
               );

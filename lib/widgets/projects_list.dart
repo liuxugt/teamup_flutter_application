@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:teamup_app/widgets/project_page.dart';
 
 
 class ProjectsList extends StatefulWidget{
@@ -42,7 +43,9 @@ class _ProjectsListState extends State<ProjectsList>{
                   leading: document['is_full'] ? Icon(Icons.brightness_1, color: Colors.green,) : Icon(Icons.brightness_1, color: Colors.red),
                   title: new Text(document['name']),
                   subtitle: new Text(document['description']),
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(context, MaterialPageRoute(builder: (context) => ProjectPage(projectSnap: document)));
+                  },
                 );
               }).toList(),
             );

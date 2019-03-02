@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
   DocumentSnapshot _userSnap;
 //  DocumentReference _courseRef;
 
-  int _currentCourseIndex = 0;
+  String _currentCourseName = "TeamUp";
   DocumentReference _courseRef;
   var _pageChildren;
 
@@ -52,8 +52,9 @@ class _HomePageState extends State<HomePage> {
   }
 
   _updatePageChildren(DocumentReference selectedCourseRef){
-    print(selectedCourseRef.toString());
+//    print(selectedCourseRef.toString());
     if(_userSnap != null) {
+//      _currentCourseIndex =
 //      _courseRef = _userSnap.data['courses'][_currentCourseIndex]['ref'];
       setState(() {
         _pageChildren = [
@@ -67,9 +68,20 @@ class _HomePageState extends State<HomePage> {
           ),
           new NotificationList(),
         ];
+        _courseRef = selectedCourseRef;
       });
     }
+//    _updateTitle();
   }
+//
+//  _updateTitle(){
+//    if(_userSnap != null && _userSnap.data['courses'] is List){
+//      _userSnap.data['courses'].forEach(
+//        if()
+//      );
+//
+//    }
+//  }
 
 //  _onCourseSelected(DocumentReference selectedCourseRef){
 //    print('Callback activated!');
@@ -91,7 +103,7 @@ class _HomePageState extends State<HomePage> {
     return new Scaffold(
       appBar: new AppBar(
 //        title: (_userSnap != null && _userSnap.data.containsKey('courses')) ? new Text(_userSnap.data['courses'][_currentCourseIndex]['name'].toString()) : const Text('No Courses'),
-        title: Text('TeamUp'),
+        title: Text(_currentCourseName),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.exit_to_app),
