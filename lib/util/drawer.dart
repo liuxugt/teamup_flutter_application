@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class CustomDrawer extends StatelessWidget {
-  final List<String> labels = ["abc", "def"];
+//  final List<String> labels = ["abc", "def"];
   final DocumentSnapshot userData;
-  final Function(DocumentReference) cb;
-  CustomDrawer(this.userData, this.cb) {
+  final Function(DocumentReference, int) cb;
+  final int currentIndex;
+  CustomDrawer(this.userData, this.cb, this.currentIndex) {
 //    print(courseData.toString());
   }
 
@@ -34,17 +35,30 @@ class CustomDrawer extends StatelessWidget {
         userData.data.containsKey('courses') &&
         userData.data['courses'] is List) {
 
-        userData.data['courses'].forEach((course) {
+        List courses = userData.data['course'];
+        for(int i = 0; i < userData.data.length; i++){
           labelListTiles.add(
               new ListTile(
-                title: new Text(course['name']),
+                title: new Text(courses[i]['name']),
                 onTap: () {
-                  cb(course['ref']);
+                  cb(courses[i]['ref'], i);
                   Navigator.pop(context);
                 },
               )
           );
-        });
+        }
+
+//        userData.data['courses'].forEach((course) {
+//          labelListTiles.add(
+//              new ListTile(
+//                title: new Text(course['name']),
+//                onTap: () {
+//                  cb(course['ref']);
+//                  Navigator.pop(context);
+//                },
+//              )
+//          );
+//        });
         }
     return labelListTiles;
   }

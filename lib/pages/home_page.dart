@@ -25,11 +25,16 @@ class _HomePageState extends State<HomePage> {
   int _currentTabIndex = 0;
   PageController _pageController;
   DocumentSnapshot _userSnap;
-//  DocumentReference _courseRef;
 
-  String _currentCourseName = "TeamUp";
+//  String _currentCourseName = "TeamUp";
+
+  int _currentCourseIndex = 0;
   DocumentReference _courseRef;
-  var _pageChildren;
+  List<Widget> _pageChildren = [
+    new Center(child: Text('Nothing to show')),
+    new Center(child: Text('Nothing to show')),
+    new Center(child: Text('Nothing to show')),
+  ];
 
 
 
@@ -47,46 +52,37 @@ class _HomePageState extends State<HomePage> {
     DocumentSnapshot userSnap = await db.collection('users').document(widget.userId).get();
     setState(() {
       _userSnap = userSnap;
+      _courseRef = userSnap.data.containsKey('courses') ? userSnap.data['courses'][_currentCourseIndex]['ref'] : null;
     });
-    _updatePageChildren(_userSnap.data['courses'][0]['ref']);
+    _updatePageChildren();
   }
 
-  _updatePageChildren(DocumentReference selectedCourseRef){
+  _updatePageChildren(){
 //    print(selectedCourseRef.toString());
-    if(_userSnap != null) {
-//      _currentCourseIndex =
-//      _courseRef = _userSnap.data['courses'][_currentCourseIndex]['ref'];
+    if(_userSnap != null && _courseRef != null) {
       setState(() {
         _pageChildren = [
           new ClassmatesList(
-              courseRef: selectedCourseRef,
+              courseRef: _courseRef,
               db: db
           ),
           new ProjectsList(
-              courseRef: selectedCourseRef,
+              courseRef: _courseRef,
               db: db
           ),
           new NotificationList(),
         ];
-        _courseRef = selectedCourseRef;
       });
     }
-//    _updateTitle();
   }
-//
-//  _updateTitle(){
-//    if(_userSnap != null && _userSnap.data['courses'] is List){
-//      _userSnap.data['courses'].forEach(
-//        if()
-//      );
-//
-//    }
-//  }
 
-//  _onCourseSelected(DocumentReference selectedCourseRef){
-//    print('Callback activated!');
-//    print(selectedCourseRef.toString());
-//  }
+  _onDrawerCourseSelected(DocumentReference selectedCourseRef, int index){
+    setState(() {
+      _courseRef = selectedCourseRef;
+      _currentCourseIndex = index;
+    });
+    _updatePageChildren();
+  }
 
   _signOut() async {
     try {
@@ -102,8 +98,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-//        title: (_userSnap != null && _userSnap.data.containsKey('courses')) ? new Text(_userSnap.data['courses'][_currentCourseIndex]['name'].toString()) : const Text('No Courses'),
-        title: Text(_currentCourseName),
+        title: (_userSnap != null && _userSnap.data.containsKey('courses') && (_userSnap.data['courses'] as List).isNotEmpty) ? new Text(_userSnap.data['courses'][_currentCourseIndex]['name'].toString()) : const Text('No Courses'),
+//        title: Text(_currentCourseName),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.exit_to_app),
@@ -137,15 +133,15 @@ class _HomePageState extends State<HomePage> {
           ]
       ),
       body: _userSnap == null ? Center(child: CircularProgressIndicator()) : PageView(
-        controller: this._pageController,
-        onPageChanged: (newPage){
+        controller: _pageController,
+        onPageChanged: (index){
           setState(() {
-            _currentTabIndex = newPage;
+            _currentTabIndex = index;
           });
         },
         children: _pageChildren,
       ),
-        drawer: CustomDrawer(_userSnap, _updatePageChildren)
+        drawer: _userSnap == null ? null : CustomDrawer(_userSnap, _onDrawerCourseSelected, _currentCourseIndex)
     );
 
 
