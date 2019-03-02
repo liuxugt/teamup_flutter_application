@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:teamup_app/services/authentication.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:teamup_app/util/drawer.dart';
+import 'package:teamup_app/widgets/classmates_list.dart';
+import 'package:teamup_app/widgets/notifications_list.dart';
+import 'package:teamup_app/widgets/projects_list.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.auth, this.userId, this.onSignedOut})
@@ -24,7 +28,7 @@ class _HomePageState extends State<HomePage> {
 //  DocumentReference _courseRef;
 
   int _currentCourseIndex = 0;
-//  DocumentReference _courseRef;
+  DocumentReference _courseRef;
   var _pageChildren;
 
 
@@ -44,20 +48,21 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _userSnap = userSnap;
     });
-    _updatePageChildren();
+    _updatePageChildren(_userSnap.data['courses'][0]['ref']);
   }
 
-  _updatePageChildren(){
+  _updatePageChildren(DocumentReference selectedCourseRef){
+    print(selectedCourseRef.toString());
     if(_userSnap != null) {
-      DocumentReference courseRef = _userSnap.data['courses'][_currentCourseIndex]['ref'];
+//      _courseRef = _userSnap.data['courses'][_currentCourseIndex]['ref'];
       setState(() {
         _pageChildren = [
           new ClassmatesList(
-              courseRef: courseRef,
+              courseRef: selectedCourseRef,
               db: db
           ),
           new ProjectsList(
-              courseRef: courseRef,
+              courseRef: selectedCourseRef,
               db: db
           ),
           new NotificationList(),
@@ -66,6 +71,10 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+//  _onCourseSelected(DocumentReference selectedCourseRef){
+//    print('Callback activated!');
+//    print(selectedCourseRef.toString());
+//  }
 
   _signOut() async {
     try {
@@ -81,7 +90,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: (_userSnap != null && _userSnap.data.containsKey('courses')) ? new Text(_userSnap.data['courses'][_currentCourseIndex]['name'].toString()) : const Text('No Courses'),
+//        title: (_userSnap != null && _userSnap.data.containsKey('courses')) ? new Text(_userSnap.data['courses'][_currentCourseIndex]['name'].toString()) : const Text('No Courses'),
+        title: Text('TeamUp'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.exit_to_app),
@@ -123,7 +133,7 @@ class _HomePageState extends State<HomePage> {
         },
         children: _pageChildren,
       ),
-        drawer: CustomDrawer(_userSnap, (){})
+        drawer: CustomDrawer(_userSnap, _updatePageChildren)
     );
 
 

@@ -4,7 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class CustomDrawer extends StatelessWidget {
   final List<String> labels = ["abc", "def"];
   final DocumentSnapshot userData;
-  final VoidCallback cb;
+  final Function(DocumentReference) cb;
   CustomDrawer(this.userData, this.cb) {
 //    print(courseData.toString());
   }
@@ -53,7 +53,10 @@ class CustomDrawer extends StatelessWidget {
           labelListTiles.add(
               new ListTile(
                 title: new Text(course['name']),
-                onTap: () => cb(),
+                onTap: () {
+                  cb(course['ref']);
+                  Navigator.pop(context);
+                },
               )
           );
         });
@@ -66,7 +69,7 @@ class CustomDrawer extends StatelessWidget {
       new DrawerHeader(
         child: Text(userData.data['first_name'] + " " + userData.data['last_name']),
 
-        decoration: BoxDecoration(color: Colors.blue,),
+        decoration: BoxDecoration(color: Colors.blue),
       ),];
   }
 
