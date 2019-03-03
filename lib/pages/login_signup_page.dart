@@ -50,38 +50,40 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           userId = await widget.auth.signIn(_email, _password);
           print('Signed in: $userId');
         } else {
-          userId = await widget.auth.signUp(_email, _password, _firstName, _lastName);
+          userId = await widget.auth
+              .signUp(_email, _password, _firstName, _lastName);
           print('Signed up user: $userId');
 
 //          Here we show a popup that confirms creation of the account and then logs the user in
           showDialog(
-            context: context,
-            builder: (BuildContext context){
-              return AlertDialog(
-                title: new Text('Signup Successful'),
-                content: new Text('Your account has been successfully created, you will now be logged in'),
-                actions: <Widget>[
-                  new FlatButton(
-                    onPressed: () async {
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: new Text('Signup Successful'),
+                  content: new Text(
+                      'Your account has been successfully created, you will now be logged in'),
+                  actions: <Widget>[
+                    new FlatButton(
+                      onPressed: () async {
                         userId = await widget.auth.signIn(_email, _password);
                         Navigator.of(context).pop();
                         widget.onSignedIn();
                       },
                       child: new Text('Okay'),
-                  )
-                ],
-              );
-            }
-          );
+                    )
+                  ],
+                );
+              });
         }
         setState(() {
           _isLoading = false;
         });
 
-        if (userId.length > 0 && userId != null && _formMode == FormMode.LOGIN) {
+        if (userId.length > 0 &&
+            userId != null &&
+            _formMode == FormMode.LOGIN) {
           widget.onSignedIn();
         }
-
       } catch (e) {
         print('Error: $e');
         setState(() {
@@ -92,13 +94,12 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             _errorMessage = e.message;
         });
       }
-    }else{
-      setState((){
+    } else {
+      setState(() {
         _isLoading = false;
       });
     }
   }
-
 
   @override
   void initState() {
@@ -130,21 +131,20 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         appBar: new AppBar(
           title: new Text('Login & Signup'),
         ),
-        body: Center(
-          child: _showBody()
-        )
-      );
+        body: Center(child: _showBody()));
   }
 
-  Widget _showCircularProgress(){
+  Widget _showCircularProgress() {
     if (_isLoading) {
       return Center(child: CircularProgressIndicator());
-    } return Container(height: 0.0, width: 0.0,);
-
+    }
+    return Container(
+      height: 0.0,
+      width: 0.0,
+    );
   }
 
-
-  Widget _showBody(){
+  Widget _showBody() {
     return new Container(
         padding: EdgeInsets.all(24.0),
         child: new Form(
@@ -182,60 +182,53 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     }
   }
 
-  Widget _showNameInput(){
-    if(_formMode == FormMode.SIGNUP){
+  Widget _showNameInput() {
+    if (_formMode == FormMode.SIGNUP) {
       return new Row(
         children: <Widget>[
           new Flexible(
-            child: new Padding(
-                padding: const EdgeInsets.fromLTRB(0.0, 0.0, 15.0, 0.0),
-                child: new TextFormField(
-                maxLines: 1,
-                decoration: new InputDecoration(
-                    hintText: 'First Name'
-                ),
-                validator: (value) => value.isEmpty ? 'Can\'t be empty' : null,
-                onSaved: (value) => _firstName = value,
-              )
-            )
-          ),
+              child: new Padding(
+                  padding: const EdgeInsets.fromLTRB(0.0, 0.0, 15.0, 0.0),
+                  child: new TextFormField(
+                    maxLines: 1,
+                    decoration: new InputDecoration(hintText: 'First Name'),
+                    validator: (value) =>
+                        value.isEmpty ? 'Can\'t be empty' : null,
+                    onSaved: (value) => _firstName = value,
+                  ))),
           new Flexible(
             child: new TextFormField(
               maxLines: 1,
-              decoration: new InputDecoration(
-                  hintText: 'Last Name'
-              ),
+              decoration: new InputDecoration(hintText: 'Last Name'),
               validator: (value) => value.isEmpty ? 'Can\'t be empty' : null,
               onSaved: (value) => _lastName = value,
             ),
           )
         ],
       );
-    }else{
+    } else {
       return new Container(
         height: 0.0,
       );
     }
   }
 
-
   Widget _showEmailInput() {
     return Padding(
         padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
         child: new TextFormField(
-        maxLines: 1,
-        keyboardType: TextInputType.emailAddress,
-        autofocus: false,
-        decoration: new InputDecoration(
-            hintText: 'Email',
-            icon: new Icon(
-              Icons.mail,
-              color: Colors.grey,
-            )),
-        validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
-        onSaved: (value) => _email = value,
-      )
-    );
+          maxLines: 1,
+          keyboardType: TextInputType.emailAddress,
+          autofocus: false,
+          decoration: new InputDecoration(
+              hintText: 'Email',
+              icon: new Icon(
+                Icons.mail,
+                color: Colors.grey,
+              )),
+          validator: (value) => value.isEmpty ? 'Email can\'t be empty' : null,
+          onSaved: (value) => _email = value,
+        ));
   }
 
   Widget _showPasswordInput() {
@@ -261,10 +254,10 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     return new FlatButton(
       child: _formMode == FormMode.LOGIN
           ? new Text('Create an account',
-          style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
+              style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
           : new Text('Have an account? Sign in',
-          style:
-          new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
+              style:
+                  new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
       onPressed: _formMode == FormMode.LOGIN
           ? _changeFormToSignUp
           : _changeFormToLogin,
@@ -278,9 +271,9 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       color: Colors.blue,
       child: _formMode == FormMode.LOGIN
           ? new Text('Login',
-          style: new TextStyle(fontSize: 20.0, color: Colors.white))
+              style: new TextStyle(fontSize: 20.0, color: Colors.white))
           : new Text('Create account',
-          style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+              style: new TextStyle(fontSize: 20.0, color: Colors.white)),
       onPressed: _validateAndSubmit,
     );
   }
