@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:teamup_app/models/user.dart';
 
 
-class Auth extends Model{
+class UserModel extends Model{
   final Firestore _firestore = Firestore.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
@@ -13,20 +14,29 @@ class Auth extends Model{
   bool _isAppLoading = true;
   bool get isAppLoading => _isAppLoading;
 
+  User _currentUser;
+  User get currentUser => _currentUser;
 
-  Auth(){
+  String _error = "";
+  String get error => _error;
+
+
+  UserModel(){
     print("Auth Initialized");
     loadCurrentUser();
   }
 
 
   void loadCurrentUser() async {
-    _isAppLoading = true;
-    notifyListeners();
     FirebaseUser user = await _firebaseAuth.currentUser();
-
+    if(user != null && user.uid.length > 0){
+      DocumentSnapshot userSnap = await _firestore.document('/users/${user.uid}').get();
+      if(userSnap != null && userSnap.data != null){
+        _currentUser = User.fromSnapshotData(userSnap.data);
+        _isSignedIn = true;
+      }
+    }
     _isAppLoading = false;
-    _isSignedIn = (user != null && user.uid.length > 0) ? true : false;
     notifyListeners();
   }
 
@@ -38,19 +48,20 @@ class Auth extends Model{
       FirebaseUser user = await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
 
-      DocumentSnapshot userSnap = await _firestore.collection('users').document(
-          user?.uid).get();
+      DocumentSnapshot userSnap = await _firestore.document('/users/${user.uid}').get();
 
-      if (userSnap != null && userSnap.exists) {
+      if (userSnap != null && userSnap.data != null) {
         _isSignedIn = true;
+        _currentUser = User.fromSnapshotData(userSnap.data);
       } else {
         _isSignedIn = false;
       }
-      notifyListeners();
     }
     catch(error){
       print(error.toString());
+      _error = error.toString();
     }
+    notifyListeners();
   }
 
   Future<void> registerUser(

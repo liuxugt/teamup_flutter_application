@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:teamup_app/models/userModel.dart';
+import 'package:teamup_app/models/user_model.dart';
 
 class LoginSignUpPage extends StatefulWidget {
   @override
@@ -19,6 +19,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
   // Initial form is login form
   FormMode _formMode = FormMode.LOGIN;
+
   bool _isLoading = false;
 
   // Check if form is valid before perform login or signup
@@ -79,6 +80,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   }
 
   Widget _showErrorMessage() {
+
     if (_errorMessage.length > 0 && _errorMessage != null) {
       return new Text(
         _errorMessage,
@@ -198,7 +200,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   }
 
   Widget _showPrimaryButton() {
-    return ScopedModelDescendant<Auth>(builder: (context, child, auth) {
+    return ScopedModelDescendant<UserModel>(builder: (context, child, model) {
       return RaisedButton(
         color: Colors.blue,
         onPressed: () async {
@@ -207,9 +209,9 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           });
           if(_validateAndSave()) {
             if (_formMode == FormMode.LOGIN) {
-              auth.signInUser(_email, _password);
+              model.signInUser(_email, _password);
             } else {
-              await auth.registerUser(_email, _password, _firstName, _lastName);
+              await model.registerUser(_email, _password, _firstName, _lastName);
               _showSuccessfulRegistration();
             }
           }
