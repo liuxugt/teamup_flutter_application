@@ -1,18 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:teamup_app/models/auth.dart';
-import 'package:teamup_app/models/home.dart';
+import 'package:teamup_app/models/userModel.dart';
+import 'package:teamup_app/models/homeModel.dart';
 import 'package:teamup_app/pages/home_page.dart';
 import 'package:teamup_app/pages/login_signup_page.dart';
 
-class RootPage extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => new _RootPageState();
-}
 
-
-class _RootPageState extends State<RootPage> {
-
+class RootPage extends StatelessWidget {
 
   Widget _buildWaitingScreen() {
     return Scaffold(
@@ -22,6 +16,7 @@ class _RootPageState extends State<RootPage> {
     );
   }
 
+  final Home home = Home();
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<Auth>(
@@ -30,7 +25,6 @@ class _RootPageState extends State<RootPage> {
           return _buildWaitingScreen();
         }
         if(model.isSignedIn){
-          Home home = new Home();
           home.loadData();
           return ScopedModel<Home>(
             model: home,

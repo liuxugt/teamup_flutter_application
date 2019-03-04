@@ -1,34 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:teamup_app/widgets/profile_page.dart';
 
-class ProjectPage extends StatefulWidget {
-  final DocumentSnapshot projectSnap;
-  final DocumentReference courseRef;
-  final DocumentSnapshot userSnap;
 
-  ProjectPage({this.projectSnap, this.courseRef, this.userSnap});
+class ProjectPage extends StatelessWidget {
 
-  @override
-  State<StatefulWidget> createState() => new _ProjectPageState();
-}
-
-class _ProjectPageState extends State<ProjectPage> {
-
-
-
-  _loadUserData() async {
-
-  }
-
-  @override
-  void initState() {
-    _loadUserData();
-    super.initState();
-  }
 
   _onFloatingButtonPressed(){
+
     Map<String, dynamic> data = {
       'name': widget.userSnap.data['first_name'] + ' ' + widget.userSnap.data['last_name'],
       'ref' : widget.userSnap.reference
@@ -39,7 +18,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
   _buildMemberList(){
     return StreamBuilder<QuerySnapshot>(
-        stream: widget.projectSnap.reference.collection('members').snapshots(),
+        stream: ,
         builder: (BuildContext context,
             AsyncSnapshot<QuerySnapshot> snapshot) {
           if (snapshot.hasError)
@@ -54,10 +33,9 @@ class _ProjectPageState extends State<ProjectPage> {
                   return new ListTile(
                     title: new Text(document['name']),
                     onTap: () {
-                      Navigator.push(
-                          context,
+                      Navigator.of(context).push(
                           MaterialPageRoute(
-                              builder: (context) => ProfilePage(profileRef: document['ref'])));
+                              builder: (context) => ProfilePage()));
                     },
                   );
                 }).toList(),

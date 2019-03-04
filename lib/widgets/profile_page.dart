@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:teamup_app/models/home.dart';
+import 'package:teamup_app/models/homeModel.dart';
 
 
 class ProfilePage extends StatelessWidget{
@@ -12,7 +12,7 @@ class ProfilePage extends StatelessWidget{
         title: Text('Profile Page'),
       ),
       body: Center(
-        child: Text(ScopedModel.of<Home>(context, rebuildOnChange: false).user.firstName)
+        child: Text('')
       ),
     );
   }
