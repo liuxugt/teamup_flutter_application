@@ -57,8 +57,7 @@ class _ProjectPageState extends State<ProjectPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => ProfilePage(
-                                  profileRef: document['ref'])));
+                              builder: (context) => ProfilePage(profileRef: document['ref'])));
                     },
                   );
                 }).toList(),
