@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:teamup_app/models/home_model.dart';
+import 'package:teamup_app/models/course_model.dart';
 
 
 class ProfilePage extends StatelessWidget{

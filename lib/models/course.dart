@@ -18,8 +18,8 @@ class Course {
 
 
   String get name => _name;
-  String get groupSize => _groupSize;
-  int get id => _id;
+  int get groupSize => _groupSize;
+  String get id => _id;
   CollectionReference get membersRef => _membersRef;
   CollectionReference get projectsRef => _projectsRef;
 

@@ -8,7 +8,7 @@ class UserModel extends Model{
   final Firestore _firestore = Firestore.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  bool _isSignedIn;
+  bool _isSignedIn = false;
   bool get isSignedIn => _isSignedIn;
 
   bool _isAppLoading = true;
