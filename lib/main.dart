@@ -28,21 +28,6 @@ class MyApp extends StatelessWidget {
               child: HomePage()),
           '/login': (context) => LoginSignUpPage()
         }));
-//      ),
-//        child: ScopedModelDescendant<UserModel>(builder: (builder, child, model){
-//          return MaterialApp(
-//            title: "TeamUp",
-//            initialRoute: '/',
-//            routes: routes,
-//          );
-//        })
 
-//      child: RootPage()
-//      MaterialApp(
-//        title: "TeamUp",
-//        home: RootPage(),
-//        routes: routes,
-//      ),
-//    );
   }
 }

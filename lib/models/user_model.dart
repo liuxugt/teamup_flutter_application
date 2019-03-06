@@ -8,8 +8,7 @@ class UserModel extends Model{
   final Firestore _firestore = Firestore.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-  bool _isSignedIn = false;
-  bool get isSignedIn => _isSignedIn;
+
 
   bool _isAppLoading = true;
   bool get isAppLoading => _isAppLoading;
@@ -33,13 +32,10 @@ class UserModel extends Model{
       DocumentSnapshot userSnap = await _firestore.document('/users/${user.uid}').get();
       if(userSnap != null && userSnap.data != null){
         _currentUser = User.fromSnapshotData(userSnap.data);
-        _isSignedIn = true;
         return true;
       }
     }
     return false;
-//    _isAppLoading = false;
-//    notifyListeners();
   }
 
 
@@ -49,15 +45,10 @@ class UserModel extends Model{
     try {
       FirebaseUser user = await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-
       DocumentSnapshot userSnap = await _firestore.document('/users/${user.uid}').get();
-
       if (userSnap != null && userSnap.data != null) {
-        _isSignedIn = true;
         _currentUser = User.fromSnapshotData(userSnap.data);
         return true;
-      } else {
-        _isSignedIn = false;
       }
     }
     catch(error){
@@ -67,28 +58,29 @@ class UserModel extends Model{
     return false;
   }
 
-  Future<void> registerUser(
+  Future<bool> registerUser(
       String email, String password, String firstName, String lastName) async {
     try {
       FirebaseUser user = await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
 
-      _firestore.collection('users').document(user.uid).setData({
+      await _firestore.collection('users').document(user.uid).setData({
         'email': email,
         'uid': user.uid.toString(),
         'first_name': firstName,
         'last_name': lastName,
         'courses': []
       });
+      return true;
+
     }catch(error){
       print(error.toString());
     }
-
+    return false;
   }
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
-    _isSignedIn = false;
     return;
   }
 
