@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:teamup_app/models/home_model.dart';
 import 'package:teamup_app/models/user.dart';
+import 'package:teamup_app/models/user_model.dart';
 
 class CustomDrawer extends StatelessWidget {
   @override
@@ -20,13 +20,13 @@ class CustomDrawer extends StatelessWidget {
   List<Widget> _buildLabelWidgets(BuildContext context) {
     List<Widget> labelListTiles = [];
     User user =
-        ScopedModel.of<HomeModel>(context, rebuildOnChange: true).currentUser;
+        ScopedModel.of<UserModel>(context, rebuildOnChange: true).currentUser;
     List<String> courseIds = user.courseIds;
     for (int i = 0; i < courseIds.length; i++) {
       labelListTiles.add(ListTile(
         title: Text(courseIds[i]),
         onTap: () {
-          ScopedModel.of<HomeModel>(context, rebuildOnChange: true)
+          ScopedModel.of<UserModel>(context, rebuildOnChange: true)
               .changeCourse(courseIds[i]);
           Navigator.pop(context);
         },
@@ -37,7 +37,7 @@ class CustomDrawer extends StatelessWidget {
 
   List<Widget> _buildDrawHeader(BuildContext context) {
     User user =
-        ScopedModel.of<HomeModel>(context, rebuildOnChange: true).currentUser;
+        ScopedModel.of<UserModel>(context, rebuildOnChange: true).currentUser;
     return [
       new UserAccountsDrawerHeader(
         accountName: Text('${user.firstName} ${user.lastName}'),

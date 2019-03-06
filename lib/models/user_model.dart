@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:teamup_app/models/Course.dart';
 import 'package:teamup_app/models/user.dart';
 
 
@@ -8,13 +9,20 @@ class UserModel extends Model{
   final Firestore _firestore = Firestore.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
-
-
-  bool _isAppLoading = true;
-  bool get isAppLoading => _isAppLoading;
-
   User _currentUser;
+  Course _currentCourse;
+  String _currentCourseId = "";
+  bool _hasCourse = false;
+  bool _isAppLoading = true;
+
+
+
+  Course get currentCourse => _currentCourse;
+  String get currentCourseId => _currentCourseId;
+  bool get hasCourse => _hasCourse;
+  bool get isAppLoading => _isAppLoading;
   User get currentUser => _currentUser;
+
 
   String _error = "";
   String get error => _error;
@@ -32,12 +40,25 @@ class UserModel extends Model{
       DocumentSnapshot userSnap = await _firestore.document('/users/${user.uid}').get();
       if(userSnap != null && userSnap.data != null){
         _currentUser = User.fromSnapshotData(userSnap.data);
+        await _loadCourse();
         return true;
       }
     }
     return false;
   }
 
+
+  Future<void> _loadCourse() async {
+    if (_currentUser.courseIds.isNotEmpty) {
+      String courseId = _currentUser.courseIds.first;
+      DocumentSnapshot courseSnap = await _firestore.document('/courses/$courseId').get();
+      if (courseSnap != null && courseSnap.data != null) {
+        _currentCourseId = courseId;
+        _hasCourse = true;
+        _currentCourse = Course.fromSnapshot(courseSnap);
+      }
+    }
+  }
 
   // TODO: implement error catching that notifies error message listener in login/signup page
 
@@ -48,6 +69,7 @@ class UserModel extends Model{
       DocumentSnapshot userSnap = await _firestore.document('/users/${user.uid}').get();
       if (userSnap != null && userSnap.data != null) {
         _currentUser = User.fromSnapshotData(userSnap.data);
+        await _loadCourse();
         return true;
       }
     }
@@ -79,8 +101,25 @@ class UserModel extends Model{
     return false;
   }
 
+
+
+  void changeCourse(String courseId) async {
+    DocumentSnapshot courseSnap = await _firestore.document('/courses/$courseId').get();
+    if (courseSnap != null && courseSnap.data != null) {
+      _currentCourseId = courseId;
+      _currentCourse = Course.fromSnapshot(courseSnap);
+    }
+    notifyListeners();
+  }
+
+
+
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
+    _currentCourse = null;
+    _currentCourseId = null;
+    _currentUser = null;
+    _hasCourse = false;
     return;
   }
 

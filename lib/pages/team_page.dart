@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:teamup_app/models/home_model.dart';
+import 'package:teamup_app/models/user_model.dart';
 
 
 class TeamPage extends StatelessWidget {
@@ -44,13 +44,18 @@ class TeamPage extends StatelessWidget {
 //        });
 //  }
 
-  static final String route = "Team-Page";
+//  static final String route = "Team-Page";
+
+  final String teamId;
+  TeamPage({this.teamId});
+
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       appBar: AppBar(title: Text('Team Page')),
-      body: ScopedModelDescendant<HomeModel>(
+      body: ScopedModelDescendant<UserModel>(
           builder: (builder, child, model){
             return Center(child: CircularProgressIndicator());
           }

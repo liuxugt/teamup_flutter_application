@@ -20,27 +20,6 @@ class RootPage extends StatelessWidget {
       ),
     );
 
-//
-//    return ScopedModelDescendant<UserModel>(
-//      builder: (context, child, model) {
-//
-//
-//
-//        if (model.isAppLoading) return _buildWaitingScreen();
-//        if (!model.isSignedIn)
-//          Navigator.pushReplacementNamed(context, '/home');
-//
-//        Navigator.pushReplacementNamed(context, '/login');
-//
-//
-//        return Center(
-//          child: CircularProgressIndicator(),
-//        );
-////        return ScopedModel<HomeModel>(
-////          model: HomeModel(model.currentUser),
-////          child: HomePage(),
-////        );
-//      },
-//    );
+
   }
 }

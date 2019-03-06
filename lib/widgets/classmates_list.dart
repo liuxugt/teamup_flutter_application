@@ -1,16 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:teamup_app/models/home_model.dart';
+import 'package:teamup_app/models/user_model.dart';
 import 'package:teamup_app/pages/profile_page.dart';
 
 class ClassmatesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<HomeModel>(
-        builder: (BuildContext context, Widget child, HomeModel model) {
-      if (model.isCourseLoading)
-        return Center(child: CircularProgressIndicator());
+    return ScopedModelDescendant<UserModel>(
+        builder: (context, child, model) {
 
       if (!model.hasCourse) return Center(child: Text('No Courses'));
 
