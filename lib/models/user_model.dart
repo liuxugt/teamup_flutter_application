@@ -23,27 +23,29 @@ class UserModel extends Model{
 
   UserModel(){
     print("User Model Initialized");
-    loadCurrentUser();
+//    loadCurrentUser();
   }
 
 
-  void loadCurrentUser() async {
+  Future<bool> loadCurrentUser() async {
     FirebaseUser user = await _firebaseAuth.currentUser();
     if(user != null && user.uid.length > 0){
       DocumentSnapshot userSnap = await _firestore.document('/users/${user.uid}').get();
       if(userSnap != null && userSnap.data != null){
         _currentUser = User.fromSnapshotData(userSnap.data);
         _isSignedIn = true;
+        return true;
       }
     }
-    _isAppLoading = false;
-    notifyListeners();
+    return false;
+//    _isAppLoading = false;
+//    notifyListeners();
   }
 
 
   // TODO: implement error catching that notifies error message listener in login/signup page
 
-  void signInUser(String email, String password) async {
+  Future<bool> signInUser(String email, String password) async {
     try {
       FirebaseUser user = await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
@@ -53,6 +55,7 @@ class UserModel extends Model{
       if (userSnap != null && userSnap.data != null) {
         _isSignedIn = true;
         _currentUser = User.fromSnapshotData(userSnap.data);
+        return true;
       } else {
         _isSignedIn = false;
       }
@@ -61,12 +64,11 @@ class UserModel extends Model{
       print(error.toString());
       _error = error.toString();
     }
-    notifyListeners();
+    return false;
   }
 
   Future<void> registerUser(
       String email, String password, String firstName, String lastName) async {
-
     try {
       FirebaseUser user = await _firebaseAuth.createUserWithEmailAndPassword(
           email: email, password: password);
@@ -84,10 +86,10 @@ class UserModel extends Model{
 
   }
 
-  void signOut() async {
+  Future<void> signOut() async {
     await _firebaseAuth.signOut();
     _isSignedIn = false;
-    notifyListeners();
+    return;
   }
 
 

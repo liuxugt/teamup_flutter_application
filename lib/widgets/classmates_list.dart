@@ -36,10 +36,8 @@ class ClassmatesList extends StatelessWidget {
                       title: Text(
                           '${document.data['first_name']} ${document.data['last_name']}'),
                       onTap: () {
-
                         Navigator.of(context).push(MaterialPageRoute(
-                            builder: (context) => ProfilePage()
-                        ));
+                            builder: (context) => ProfilePage()));
                       },
                     );
                   }).toList(),

@@ -2,9 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/models/home_model.dart';
-import 'package:teamup_app/pages/project_page.dart';
+import 'package:teamup_app/pages/team_page.dart';
 
-class ProjectsList extends StatelessWidget {
+class TeamsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<HomeModel>(
@@ -38,7 +38,7 @@ class ProjectsList extends StatelessWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => ProjectPage()));
+                                  builder: (context) => TeamPage()));
                         });
                   }).toList(),
                 );

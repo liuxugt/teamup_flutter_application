@@ -203,16 +203,19 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     return ScopedModelDescendant<UserModel>(builder: (context, child, model) {
       return RaisedButton(
         color: Colors.blue,
-        onPressed: () async {
+        onPressed: () {
           setState(() {
             _isLoading = true;
           });
           if(_validateAndSave()) {
             if (_formMode == FormMode.LOGIN) {
-              model.signInUser(_email, _password);
+              model.signInUser(_email, _password).then((isSignedIn){
+                if(isSignedIn) Navigator.pushReplacementNamed(context, '/home');
+              });
             } else {
-              await model.registerUser(_email, _password, _firstName, _lastName);
-              _showSuccessfulRegistration();
+              model.registerUser(_email, _password, _firstName, _lastName).then((isRegistered){
+                _showSuccessfulRegistration();
+              });
             }
           }
           setState(() {

@@ -6,9 +6,7 @@ import 'package:teamup_app/models/user.dart';
 class CustomDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return new Drawer(
-        child: new ListView(
-            padding: EdgeInsets.zero, children: _buildDrawerList(context)));
+    return new Drawer(child: new ListView(children: _buildDrawerList(context)));
   }
 
   List<Widget> _buildDrawerList(BuildContext context) {
@@ -24,7 +22,7 @@ class CustomDrawer extends StatelessWidget {
     User user =
         ScopedModel.of<HomeModel>(context, rebuildOnChange: true).currentUser;
     List<String> courseIds = user.courseIds;
-    for(int i = 0; i < courseIds.length; i++){
+    for (int i = 0; i < courseIds.length; i++) {
       labelListTiles.add(ListTile(
         title: Text(courseIds[i]),
         onTap: () {

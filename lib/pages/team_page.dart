@@ -1,9 +1,9 @@
-//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-//import 'package:teamup_app/widgets/profile_page.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:teamup_app/models/home_model.dart';
 
 
-class ProjectPage extends StatelessWidget {
+class TeamPage extends StatelessWidget {
 
 //
 //  _onFloatingButtonPressed(){
@@ -44,10 +44,20 @@ class ProjectPage extends StatelessWidget {
 //        });
 //  }
 
+  static final String route = "Team-Page";
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
+    return Scaffold(
+      appBar: AppBar(title: Text('Team Page')),
+      body: ScopedModelDescendant<HomeModel>(
+          builder: (builder, child, model){
+            return Center(child: CircularProgressIndicator());
+          }
+      ),
+    );
+
+//    return Scaffold(
 //        appBar: new AppBar(
 //          title: Text(widget.projectSnap.data['name'].toString()),
 //        ),
@@ -70,6 +80,6 @@ class ProjectPage extends StatelessWidget {
 //      floatingActionButton: FloatingActionButton(
 //          child: Icon(Icons.add),
 //          onPressed: _onFloatingButtonPressed),
-    );
+//    );
   }
 }
