@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 
 class ProfilePage extends StatelessWidget{
-  static final String route = "Profile-Page";
   @override
   Widget build(BuildContext context) {
     return Scaffold(

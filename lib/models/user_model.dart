@@ -30,7 +30,6 @@ class UserModel extends Model{
 
   UserModel(){
     print("User Model Initialized");
-//    loadCurrentUser();
   }
 
 
@@ -59,7 +58,7 @@ class UserModel extends Model{
       }
     }
   }
-
+  
   // TODO: implement error catching that notifies error message listener in login/signup page
 
   Future<bool> signInUser(String email, String password) async {
