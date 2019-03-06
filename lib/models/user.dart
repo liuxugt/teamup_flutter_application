@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 class User {
   String _firstName;
@@ -30,7 +29,7 @@ class User {
       _courseIds = temp;
     }
 
-    _printVariables();
+//    _printVariables();
   }
 
   String get firstName => _firstName;

@@ -6,6 +6,7 @@ class Course {
   String _id;
   CollectionReference _membersRef;
   CollectionReference _projectsRef;
+  CollectionReference _teamsRef;
 
 
   Course.fromSnapshot(DocumentSnapshot courseSnap){
@@ -14,6 +15,8 @@ class Course {
     _id = courseSnap.documentID;
     _membersRef = courseSnap.reference.collection('members').reference();
     _projectsRef = courseSnap.reference.collection('projects').reference();
+    _teamsRef = courseSnap.reference.collection('teams').reference();
+
   }
 
 
@@ -22,5 +25,6 @@ class Course {
   String get id => _id;
   CollectionReference get membersRef => _membersRef;
   CollectionReference get projectsRef => _projectsRef;
+  CollectionReference get teamsRef => _teamsRef;
 
 }

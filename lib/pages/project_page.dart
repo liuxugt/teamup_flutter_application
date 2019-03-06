@@ -1,6 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:teamup_app/widgets/profile_page.dart';
+//import 'package:teamup_app/widgets/profile_page.dart';
 
 
 class ProjectPage extends StatelessWidget {

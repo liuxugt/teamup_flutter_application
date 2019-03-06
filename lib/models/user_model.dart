@@ -22,7 +22,7 @@ class UserModel extends Model{
 
 
   UserModel(){
-    print("Auth Initialized");
+    print("User Model Initialized");
     loadCurrentUser();
   }
 
