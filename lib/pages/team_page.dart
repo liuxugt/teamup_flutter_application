@@ -1,90 +1,86 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:teamup_app/models/course_user.dart';
+import 'package:teamup_app/models/team.dart';
 import 'package:teamup_app/models/user_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class TeamPage extends StatelessWidget {
 
-//
-//  _onFloatingButtonPressed(){
-//
-//    Map<String, dynamic> data = {
-//      'name': widget.userSnap.data['first_name'] + ' ' + widget.userSnap.data['last_name'],
-//      'ref' : widget.userSnap.reference
-//    };
-//    widget.projectSnap.reference.collection('members').add(data);
-//  }
-//
-//
-//  _buildMemberList(){
-//    return StreamBuilder<QuerySnapshot>(
-//        stream: ,
-//        builder: (BuildContext context,
-//            AsyncSnapshot<QuerySnapshot> snapshot) {
-//          if (snapshot.hasError)
-//            return new Text('Error: %{snapshot.error}');
-//          switch (snapshot.connectionState) {
-//            case ConnectionState.waiting:
-//              return new Center(child: new CircularProgressIndicator());
-//            default:
-//              return new ListView(
-//                children: snapshot.data.documents
-//                    .map((DocumentSnapshot document) {
-//                  return new ListTile(
-//                    title: new Text(document['name']),
-//                    onTap: () {
-//                      Navigator.of(context).push(
-//                          MaterialPageRoute(
-//                              builder: (context) => ProfilePage()));
-//                    },
-//                  );
-//                }).toList(),
-//              );
-//          }
-//        });
-//  }
 
-//  static final String route = "Team-Page";
+  Widget _makeClassmateCard(CourseUser user, BuildContext context){
+    return ListTile(
+      title: Text('${user.firstName} ${user.lastName}'),
+      subtitle: Text(user.email),
+    );
+  }
 
-  final String teamId;
-  TeamPage({this.teamId});
 
+  _buildMemberList(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+        stream: ScopedModel.of<UserModel>(context, rebuildOnChange: true).getTeamMembers(team.id),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) return Text('Error: %{snapshot.error}');
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return Center(child: CircularProgressIndicator());
+            default:
+              return ListView(
+                  children: snapshot.data.documents.map((document) {
+                return _makeClassmateCard(
+                CourseUser.fromSnapshotData(document.data),context);
+              }).toList());
+          }
+        });
+  }
+
+  final Team team;
+  TeamPage({this.team});
+
+  _buildFAB(BuildContext context) {
+    return ScopedModelDescendant<UserModel>(builder: (context, child, model) {
+      if (model.userInTeam)
+        return Container(
+          height: 0.0,
+        );
+      return FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            model.joinTeam(this.team.id);
+          });
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
-      appBar: AppBar(title: Text('Team Page')),
-      body: ScopedModelDescendant<UserModel>(
-          builder: (builder, child, model){
-            return Center(child: CircularProgressIndicator());
-          }
+      appBar: AppBar(title: Text(team.name)),
+      floatingActionButton: _buildFAB(context),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Text(
+                "Description",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )),
+          Padding(
+            padding: EdgeInsets.only(left: 20.0, bottom: 10.0),
+            child: Text(team.description),
+          ),
+          Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Text(
+                "Team Members",
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )),
+          Flexible(
+            child: _buildMemberList(context),
+          )
+        ],
       ),
     );
-
-//    return Scaffold(
-//        appBar: new AppBar(
-//          title: Text(widget.projectSnap.data['name'].toString()),
-//        ),
-//        body: Column(
-//          children: <Widget>[
-//            Padding(
-//              padding: const EdgeInsets.fromLTRB(15.0, 15.0, 15.0, 15.0),
-//              child: Text('Description: ${widget.projectSnap.data['description']}'),
-//            ),
-//            Padding(
-//              padding: const EdgeInsets.fromLTRB(15.0, 15.0, 15.0, 15.0),
-//              child: Text('Team Members',
-//                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),),
-//            ),
-//            Flexible(
-//              child: _buildMemberList(),
-//            )
-//          ],
-//        ),
-//      floatingActionButton: FloatingActionButton(
-//          child: Icon(Icons.add),
-//          onPressed: _onFloatingButtonPressed),
-//    );
   }
 }

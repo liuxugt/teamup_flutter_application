@@ -19,8 +19,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
   // Initial form is login form
   FormMode _formMode = FormMode.LOGIN;
-
   bool _isLoading = false;
+
 
   // Check if form is valid before perform login or signup
   bool _validateAndSave() {
@@ -51,23 +51,27 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
   @override
   Widget build(BuildContext context) {
-    return new Scaffold(
-        appBar: new AppBar(
-          title: new Text('Login & Signup'),
+    return Scaffold(
+        appBar: AppBar(
+          title: _formMode == FormMode.LOGIN ? Text('Login') : Text('Sign Up'),
         ),
-        body: Center(child: _showBody()));
+        body: _showBody()
+    );
   }
 
 
+
+
   Widget _showBody() {
-    return new Container(
+    return Container(
         padding: EdgeInsets.all(24.0),
-        child: new Form(
+        child: Form(
           key: _formKey,
-          child: new Column(
+          child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
+              _showLoading(),
               _showNameInput(),
               _showEmailInput(),
               _showPasswordInput(),
@@ -79,10 +83,14 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         ));
   }
 
-  Widget _showErrorMessage() {
+  Widget _showLoading(){
+    return _isLoading ? Center(child: CircularProgressIndicator()) : Container(height: 0.0,);
+  }
 
+
+  Widget _showErrorMessage() {
     if (_errorMessage.length > 0 && _errorMessage != null) {
-      return new Text(
+      return Text(
         _errorMessage,
         style: TextStyle(
             fontSize: 16.0,
@@ -91,7 +99,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             fontWeight: FontWeight.w300),
       );
     } else {
-      return new Container(
+      return Container(
         height: 0.0,
       );
     }
@@ -99,22 +107,22 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
   Widget _showNameInput() {
     if (_formMode == FormMode.SIGNUP) {
-      return new Row(
+      return Row(
         children: <Widget>[
-          new Flexible(
-              child: new Padding(
+          Flexible(
+              child: Padding(
                   padding: const EdgeInsets.fromLTRB(0.0, 0.0, 15.0, 0.0),
-                  child: new TextFormField(
+                  child: TextFormField(
                     maxLines: 1,
-                    decoration: new InputDecoration(hintText: 'First Name'),
+                    decoration: InputDecoration(hintText: 'First Name'),
                     validator: (value) =>
                         value.isEmpty ? 'Can\'t be empty' : null,
                     onSaved: (value) => _firstName = value,
                   ))),
-          new Flexible(
-            child: new TextFormField(
+          Flexible(
+            child: TextFormField(
               maxLines: 1,
-              decoration: new InputDecoration(hintText: 'Last Name'),
+              decoration: InputDecoration(hintText: 'Last Name'),
               validator: (value) => value.isEmpty ? 'Can\'t be empty' : null,
               onSaved: (value) => _lastName = value,
             ),
@@ -166,13 +174,12 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   }
 
   Widget _showSecondaryButton() {
-    return new FlatButton(
+    return FlatButton(
       child: _formMode == FormMode.LOGIN
-          ? new Text('Create an account',
-              style: new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
-          : new Text('Have an account? Sign in',
-              style:
-                  new TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
+          ? Text('Create an account',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300))
+          : Text('Have an account? Sign in',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.w300)),
       onPressed: _formMode == FormMode.LOGIN
           ? _changeFormToSignUp
           : _changeFormToLogin,
@@ -184,15 +191,15 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: new Text('Signup Successful'),
-            content: new Text(
+            title: Text('Signup Successful'),
+            content: Text(
                 'Your account has been successfully created, you may now login'),
             actions: <Widget>[
-              new FlatButton(
+              FlatButton(
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
-                child: new Text('Okay'),
+                child: Text('Okay'),
               )
             ],
           );
@@ -200,38 +207,33 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   }
 
   Widget _showPrimaryButton() {
-    return ScopedModelDescendant<UserModel>(builder: (context, child, model) {
       return RaisedButton(
         color: Colors.blue,
         onPressed: () {
-          setState(() {
-            _isLoading = true;
-          });
           if(_validateAndSave()) {
+            setState(() {
+              _isLoading = true;
+            });
             if (_formMode == FormMode.LOGIN) {
-              model.signInUser(_email, _password).then((isSignedIn){
+              ScopedModel.of<UserModel>(context, rebuildOnChange: false).signInUser(_email, _password).then((isSignedIn){
                 if(isSignedIn) Navigator.pushReplacementNamed(context, '/home');
               });
             } else {
-              model.registerUser(_email, _password, _firstName, _lastName).then((isRegistered){
-                _showSuccessfulRegistration();
+              ScopedModel.of<UserModel>(context, rebuildOnChange: false).registerUser(_email, _password, _firstName, _lastName).then((isRegistered){
+                if(isRegistered) _showSuccessfulRegistration();
               });
             }
+            setState(() {
+              _isLoading = false;
+              _errorMessage = ScopedModel.of<UserModel>(context, rebuildOnChange: true).error;
+            });
           }
-          setState(() {
-            _isLoading = false;
-          });
         },
-        child: _isLoading ?
-            new CircularProgressIndicator(
-              backgroundColor: Colors.white,
-            )
-            : _formMode == FormMode.LOGIN
-            ? new Text('Login',
-                style: new TextStyle(fontSize: 20.0, color: Colors.white))
-            : new Text('Create account',
-                style: new TextStyle(fontSize: 20.0, color: Colors.white)),
+        child: _formMode == FormMode.LOGIN
+            ? Text('Login',
+                style: TextStyle(fontSize: 20.0, color: Colors.white))
+            : Text('Create account',
+                style: TextStyle(fontSize: 20.0, color: Colors.white)),
       );
-    });
   }
 }

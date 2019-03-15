@@ -6,13 +6,13 @@ class User {
   List<String> _courseIds = [];
   String _uid;
 
-  _printVariables(){
-    print('first name: $_firstName');
-    print('last name: $_lastName');
-    print('email: $_email');
-    print('courses : ${_courseIds.toString()}');
-    print('uid: $_uid');
-  }
+//  _printVariables(){
+//    print('first name: $_firstName');
+//    print('last name: $_lastName');
+//    print('email: $_email');
+//    print('courses : ${_courseIds.toString()}');
+//    print('uid: $_uid');
+//  }
 
 
   User.fromSnapshotData(Map<String, dynamic> data){
@@ -20,6 +20,7 @@ class User {
     _lastName = data['last_name'];
     _email = data['email'];
     _uid = data['uid'];
+//    _courseIds = data['courses'];
     if(data.containsKey('courses') && data['courses'] is List){
       List<String> temp = [];
       for(int i = 0; i < data['courses'].length; i++){
@@ -44,17 +45,3 @@ class User {
 
 
 }
-
-//class CourseCover {
-//  String _name;
-//  DocumentReference _ref;
-//
-//  CourseCover(Map<dynamic, dynamic> course){
-//    _name = course['name'];
-//    _ref = course['ref'];
-//  }
-//
-//  String get name => _name;
-//  DocumentReference get ref => _ref;
-//
-//}

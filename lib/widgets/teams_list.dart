@@ -1,47 +1,90 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:teamup_app/models/team.dart';
 import 'package:teamup_app/models/user_model.dart';
 import 'package:teamup_app/pages/team_page.dart';
 
 class TeamsList extends StatelessWidget {
+
+  Widget _makeTeamCard(Team team, BuildContext context) {
+    return Card(
+      elevation: 2.0,
+      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      child: Container(
+        decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
+        child: ListTile(
+            title: Text(team.name, style: TextStyle(fontWeight: FontWeight.bold)),
+            subtitle: Text(team.description),
+            onTap: () {
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => TeamPage(team: team)));
+            }),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<UserModel>(
-        builder: (context, child, model) {
-
+    return ScopedModelDescendant<UserModel>(builder: (context, child, model) {
       if (!model.hasCourse) return Center(child: Text('No Courses'));
-
-      return StreamBuilder<QuerySnapshot>(
-          stream: model.currentCourse.teamsRef.snapshots(),
-          builder:
-              (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-            if (snapshot.hasError) return Text('Error: %{snapshot.error}');
-            switch (snapshot.connectionState) {
-              case ConnectionState.waiting:
-                return Center(child: CircularProgressIndicator());
-              default:
-                return ListView(
-                  children:
-                      snapshot.data.documents.map((DocumentSnapshot document) {
-                    return new ListTile(
-                        leading: document['is_full']
-                            ? Icon(
-                                Icons.brightness_1,
-                                color: Colors.green,
-                              )
-                            : Icon(Icons.brightness_1, color: Colors.red),
-                        title: new Text(document['name']),
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => TeamPage(teamId: document.documentID)));
-                        });
-                  }).toList(),
-                );
-            }
-          });
+      return Column(
+          crossAxisAlignment: CrossAxisAlignment.start, //align to the left
+          children: <Widget>[
+            //Label for my team
+            Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Text("My Team"),
+            ),
+            // if I am in a team show my team card, if not don't show
+            model.userInTeam
+                ? Center(child: _makeTeamCard(model.currentTeam, context))
+                : Center(
+                    child: Text('Oops! You\'re not in a team yet.',
+                        style: TextStyle(
+                            color: Colors.black, fontWeight: FontWeight.bold))),
+            Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Text("Available Teams"),
+            ),
+            Flexible(
+                child: StreamBuilder<QuerySnapshot>(
+                    stream: model.currentCourse.availableTeamsStream,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError)
+                        return Text('Error: %{snapshot.error}');
+                      switch (snapshot.connectionState) {
+                        case ConnectionState.waiting:
+                          return Center(child: CircularProgressIndicator());
+                        default:
+                          return ListView(
+                              children: snapshot.data.documents.map((document) {
+                            return _makeTeamCard(
+                                Team.fromSnapshot(document), context);
+                          }).toList());
+                      }
+                    })),
+//            Padding(
+//              padding: EdgeInsets.all(20.0),
+//              child: Text("Full Teams"),
+//            ),
+//            Flexible(
+//                child: StreamBuilder<QuerySnapshot>(
+//                    stream: model.currentCourse.unavailableTeamsStream,
+//                    builder: (ctx, snapshot) {
+//                      if (snapshot.hasError)
+//                        return Text('Error: %{snapshot.error}');
+//                      switch (snapshot.connectionState) {
+//                        case ConnectionState.waiting:
+//                          return Center(child: CircularProgressIndicator());
+//                        default:
+//                          return ListView(
+//                              children: snapshot.data.documents.map((document) {
+//                                return _makeTeamCard(Team.fromSnapshotData(document.data), context);
+//                              }).toList());
+//                      }
+//                    }))
+          ]);
     });
   }
 }

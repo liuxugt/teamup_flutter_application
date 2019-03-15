@@ -1,79 +1,89 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:teamup_app/models/Course.dart';
+import 'package:teamup_app/models/course.dart';
+import 'package:teamup_app/models/course_user.dart';
+import 'package:teamup_app/models/team.dart';
 import 'package:teamup_app/models/user.dart';
 
-
-class UserModel extends Model{
+class UserModel extends Model {
   final Firestore _firestore = Firestore.instance;
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   User _currentUser;
   Course _currentCourse;
-  String _currentCourseId = "";
-  bool _hasCourse = false;
-  bool _isAppLoading = true;
-
-
+  Team _currentTeam;
+  CourseUser _currentCourseUser;
+  String _error = "";
 
   Course get currentCourse => _currentCourse;
-  String get currentCourseId => _currentCourseId;
-  bool get hasCourse => _hasCourse;
-  bool get isAppLoading => _isAppLoading;
   User get currentUser => _currentUser;
-
-
-  String _error = "";
   String get error => _error;
+  bool get hasCourse => _currentCourse != null;
+  String get courseTitle => _currentCourse?.id ?? "No Courses";
+  bool get userInTeam => _currentTeam != null;
+  Team get currentTeam => _currentTeam;
 
 
-  UserModel(){
+
+
+  UserModel() {
     print("User Model Initialized");
+    loadCurrentUser();
   }
-
 
   Future<bool> loadCurrentUser() async {
     FirebaseUser user = await _firebaseAuth.currentUser();
-    if(user != null && user.uid.length > 0){
-      DocumentSnapshot userSnap = await _firestore.document('/users/${user.uid}').get();
-      if(userSnap != null && userSnap.data != null){
+    if (user != null && user.uid != "") {
+      DocumentSnapshot userSnap =
+          await _firestore.document('/users/${user.uid}').get();
+      if (userSnap?.data != null) {
         _currentUser = User.fromSnapshotData(userSnap.data);
-        await _loadCourse();
+        await _loadCourseAndTeam();
         return true;
       }
     }
     return false;
   }
 
+  Future<void> _loadCourseAndTeam([String id = ""]) async {
+    if(_currentUser?.courseIds == null || _currentUser.courseIds.isEmpty) return;
 
-  Future<void> _loadCourse() async {
-    if (_currentUser.courseIds.isNotEmpty) {
-      String courseId = _currentUser.courseIds.first;
-      DocumentSnapshot courseSnap = await _firestore.document('/courses/$courseId').get();
-      if (courseSnap != null && courseSnap.data != null) {
-        _currentCourseId = courseId;
-        _hasCourse = true;
-        _currentCourse = Course.fromSnapshot(courseSnap);
+
+    String courseId = (id.isEmpty) ? _currentUser.courseIds.first : id;
+
+
+    DocumentSnapshot courseSnap =
+        await _firestore.document('/courses/$courseId').get();
+
+    DocumentSnapshot courseUserSnap = await _firestore
+        .document('/courses/$courseId/members/${_currentUser.id}')
+        .get();
+
+    _currentCourse = (courseSnap?.data != null) ? Course.fromSnapshot(courseSnap) : null;
+
+    if (courseUserSnap?.data != null) {
+      _currentCourseUser = CourseUser.fromSnapshotData(courseUserSnap.data);
+      if (_currentCourseUser.teamId != null) {
+        DocumentSnapshot teamSnap = await _firestore
+            .document(
+                '/courses/${_currentCourse.id}/teams/${_currentCourseUser.teamId}')
+            .get();
+        _currentTeam = (teamSnap?.data != null) ? Team.fromSnapshot(teamSnap) : null;
+      }else {
+        _currentTeam = null;
       }
+    }else{
+      _currentCourseUser = null;
     }
   }
-  
-  // TODO: implement error catching that notifies error message listener in login/signup page
 
   Future<bool> signInUser(String email, String password) async {
     try {
-      FirebaseUser user = await _firebaseAuth.signInWithEmailAndPassword(
+      await _firebaseAuth.signInWithEmailAndPassword(
           email: email, password: password);
-      DocumentSnapshot userSnap = await _firestore.document('/users/${user.uid}').get();
-      if (userSnap != null && userSnap.data != null) {
-        _currentUser = User.fromSnapshotData(userSnap.data);
-        await _loadCourse();
-        return true;
-      }
-    }
-    catch(error){
-      print(error.toString());
+      return loadCurrentUser();
+    } catch (error) {
       _error = error.toString();
     }
     return false;
@@ -93,33 +103,64 @@ class UserModel extends Model{
         'courses': []
       });
       return true;
-
-    }catch(error){
-      print(error.toString());
+    } catch (error) {
+      _error = error.toString();
     }
     return false;
   }
 
-
-
-  void changeCourse(String courseId) async {
-    DocumentSnapshot courseSnap = await _firestore.document('/courses/$courseId').get();
-    if (courseSnap != null && courseSnap.data != null) {
-      _currentCourseId = courseId;
-      _currentCourse = Course.fromSnapshot(courseSnap);
-    }
-    notifyListeners();
-  }
-
-
-
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
     _currentCourse = null;
-    _currentCourseId = null;
     _currentUser = null;
-    _hasCourse = false;
+    _currentTeam = null;
+    _currentCourseUser = null;
     return;
+  }
+
+  void changeCourse(String courseId) async {
+    await _loadCourseAndTeam(courseId);
+    notifyListeners();
+  }
+
+  Future<bool> joinTeam(String teamId) async {
+    try {
+      //make sure current user exists and is in a course and the user is not already in a team (they are available)
+      if (_currentUser != null && _currentCourse != null && !_currentCourseUser.isAvailable) {
+        DocumentReference teamRef = _firestore.document('/courses/${_currentCourse.id}/teams/$teamId');
+        DocumentSnapshot teamSnap = await teamRef.get();
+        if (teamSnap.exists) {
+          Team team = Team.fromSnapshot(teamSnap);
+          //if user is not in the group, if user is available, if user is not part of a project
+          if (!team.isFull) {
+            ++team.numMembers;
+            team.isFull = team.numMembers >= _currentCourse.groupSize;
+            _currentCourseUser.teamId = teamId;
+            _currentTeam = team;
+
+            //add the user to the team
+            await teamRef.setData({
+              'num_members': team.numMembers,
+              'is_full': team.isFull
+            }, merge: true);
+            //add the team to the CourseUser
+            await _firestore
+                .document(
+                    'courses/${_currentCourse.id}/members/${_currentUser.id}')
+                .setData({'team': _currentCourseUser.teamId}, merge: true);
+            return true;
+          }
+        }
+      }
+    } catch (e) {
+      _error = e.toString();
+    }
+    return false;
+  }
+
+  Stream<QuerySnapshot> getTeamMembers(String teamId){
+    if(_currentCourse == null) return null;
+    return _firestore.collection('courses/${_currentCourse.id}/users').where('team', isEqualTo: teamId).snapshots();
   }
 
 

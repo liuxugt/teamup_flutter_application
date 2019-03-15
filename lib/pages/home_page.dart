@@ -7,7 +7,6 @@ import 'package:teamup_app/widgets/notifications_list.dart';
 import 'package:teamup_app/widgets/teams_list.dart';
 
 class HomePage extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -15,9 +14,10 @@ class HomePage extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(ScopedModel.of<UserModel>(context, rebuildOnChange: true)
-              .currentCourseId),
+              .courseTitle),
 //          title: Text('Home Page'),
           actions: <Widget>[
+            // TODO: Move sign out to the drawer
             IconButton(
               icon: Icon(Icons.exit_to_app),
               onPressed: () {
