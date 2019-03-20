@@ -1,32 +1,38 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
 class Team {
-  String _name;
-  String _description;
-  bool isFull;
+  String name;
+  String description;
   String _id;
-  int numMembers;
+  int availableSpots;
 
 
-
-
-  // ignore: unnecessary_getters_setters
-  String get name => _name;
-  String get description => _description;
 
   String get id => _id;
+  bool get isFull => availableSpots == 0;
 
 
 
   Team.fromSnapshot(DocumentSnapshot snap){
     //TODO: make these null safe
-    _name = snap.data['name'];
-    _description = snap.data['description'];
-    isFull = snap.data['is_full'];
+
+    Map<String, dynamic> data = snap.data;
+
+    name = data['name'];
+    description = data['description'];
     _id = snap.documentID;
-    numMembers = snap.data.containsKey('num_members') ? snap.data['num_members'] : 0;
+    availableSpots = data['available_spots'];
   }
 
+
+
+  Team.fromSnapshotData(Map<String, dynamic> data){
+    //TODO: make these null safe
+
+    name = data['name'];
+    description = data['description'];
+    _id = data['id'];
+    availableSpots = data['available_spots'];
+  }
 }

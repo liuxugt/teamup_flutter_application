@@ -1,25 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:teamup_app/models/course_user.dart';
+import 'package:teamup_app/models/course_member.dart';
 import 'package:teamup_app/models/team.dart';
 import 'package:teamup_app/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
 class TeamPage extends StatelessWidget {
+  final Team team;
+  TeamPage({this.team});
 
-
-  Widget _makeClassmateCard(CourseUser user, BuildContext context){
-    return ListTile(
-      title: Text('${user.firstName} ${user.lastName}'),
-      subtitle: Text(user.email),
+  Widget _makeClassmateCard(CourseMember member, BuildContext context) {
+    return Card(
+      elevation: 2.0,
+      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+      child: Container(
+        decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
+        child: ListTile(
+          leading: CircleAvatar(backgroundImage: NetworkImage(member.photoURL),),
+          title: Text('${member.firstName} ${member.lastName}'),
+          subtitle: Text(member.headline),
+        ),
+      ),
     );
   }
 
-
   _buildMemberList(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-        stream: ScopedModel.of<UserModel>(context, rebuildOnChange: true).getTeamMembers(team.id),
+        stream: ScopedModel.of<UserModel>(context, rebuildOnChange: true)
+            .getTeamMembersStream(team.id),
         builder: (context, snapshot) {
           if (snapshot.hasError) return Text('Error: %{snapshot.error}');
           switch (snapshot.connectionState) {
@@ -29,26 +37,23 @@ class TeamPage extends StatelessWidget {
               return ListView(
                   children: snapshot.data.documents.map((document) {
                 return _makeClassmateCard(
-                CourseUser.fromSnapshotData(document.data),context);
+                    CourseMember.fromSnapshotData(document.data), context);
               }).toList());
           }
         });
   }
 
-  final Team team;
-  TeamPage({this.team});
-
   _buildFAB(BuildContext context) {
     return ScopedModelDescendant<UserModel>(builder: (context, child, model) {
-      if (model.userInTeam)
-        return Container(
-          height: 0.0,
-        );
-      return FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () {
-            model.joinTeam(this.team.id);
-          });
+      return model.userInTeam
+          ? Container(
+              height: 0.0,
+            )
+          : FloatingActionButton(
+              child: Icon(Icons.add),
+              onPressed: () {
+                model.joinTeam(this.team.id);
+              });
     });
   }
 
@@ -64,17 +69,17 @@ class TeamPage extends StatelessWidget {
               padding: EdgeInsets.all(20.0),
               child: Text(
                 "Description",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
               )),
           Padding(
             padding: EdgeInsets.only(left: 20.0, bottom: 10.0),
-            child: Text(team.description),
+            child: Text(team.description, style: TextStyle(fontSize: 18.0),),
           ),
           Padding(
               padding: EdgeInsets.all(20.0),
               child: Text(
                 "Team Members",
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
               )),
           Flexible(
             child: _buildMemberList(context),

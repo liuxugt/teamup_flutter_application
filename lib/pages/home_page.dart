@@ -17,16 +17,6 @@ class HomePage extends StatelessWidget {
               .courseTitle),
 //          title: Text('Home Page'),
           actions: <Widget>[
-            // TODO: Move sign out to the drawer
-            IconButton(
-              icon: Icon(Icons.exit_to_app),
-              onPressed: () {
-                  ScopedModel.of<UserModel>(context, rebuildOnChange: false)
-                      .signOut().then((void n){
-                        Navigator.of(context).pushReplacementNamed('/');
-                  });
-              }
-            )
           ],
         ),
         bottomNavigationBar: TabBar(
@@ -38,7 +28,8 @@ class HomePage extends StatelessWidget {
           labelColor: Colors.blue,
           unselectedLabelColor: Colors.grey,
         ),
-        body: TabBarView(children: [
+        body: TabBarView(
+            children: [
           ClassmatesList(),
           TeamsList(),
           NotificationList(),

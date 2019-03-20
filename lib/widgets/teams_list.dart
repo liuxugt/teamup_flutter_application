@@ -6,19 +6,21 @@ import 'package:teamup_app/models/user_model.dart';
 import 'package:teamup_app/pages/team_page.dart';
 
 class TeamsList extends StatelessWidget {
-
   Widget _makeTeamCard(Team team, BuildContext context) {
     return Card(
       elevation: 2.0,
-      margin: new EdgeInsets.symmetric(horizontal: 10.0, vertical: 6.0),
+      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       child: Container(
         decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
         child: ListTile(
-            title: Text(team.name, style: TextStyle(fontWeight: FontWeight.bold)),
+            title:
+                Text(team.name, style: TextStyle(fontWeight: FontWeight.bold)),
             subtitle: Text(team.description),
             onTap: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => TeamPage(team: team)));
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => TeamPage(team: team)));
             }),
       ),
     );
@@ -34,7 +36,7 @@ class TeamsList extends StatelessWidget {
             //Label for my team
             Padding(
               padding: EdgeInsets.all(20.0),
-              child: Text("My Team"),
+              child: Text("My Team", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),),
             ),
             // if I am in a team show my team card, if not don't show
             model.userInTeam
@@ -45,7 +47,7 @@ class TeamsList extends StatelessWidget {
                             color: Colors.black, fontWeight: FontWeight.bold))),
             Padding(
               padding: EdgeInsets.all(20.0),
-              child: Text("Available Teams"),
+              child: Text("Available Teams", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
             ),
             Flexible(
                 child: StreamBuilder<QuerySnapshot>(
@@ -59,8 +61,12 @@ class TeamsList extends StatelessWidget {
                         default:
                           return ListView(
                               children: snapshot.data.documents.map((document) {
-                            return _makeTeamCard(
-                                Team.fromSnapshot(document), context);
+                            return (document?.data != null)
+                                ? _makeTeamCard(
+                                    Team.fromSnapshot(document), context)
+                                : Container(
+                                    height: 0.0,
+                                  );
                           }).toList());
                       }
                     })),

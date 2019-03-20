@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/models/course.dart';
-import 'package:teamup_app/models/course_user.dart';
+import 'package:teamup_app/models/course_member.dart';
 import 'package:teamup_app/models/team.dart';
 import 'package:teamup_app/models/user.dart';
 
@@ -13,23 +13,21 @@ class UserModel extends Model {
   User _currentUser;
   Course _currentCourse;
   Team _currentTeam;
-  CourseUser _currentCourseUser;
+
   String _error = "";
 
   Course get currentCourse => _currentCourse;
   User get currentUser => _currentUser;
+  Team get currentTeam => _currentTeam;
+
   String get error => _error;
   bool get hasCourse => _currentCourse != null;
   String get courseTitle => _currentCourse?.id ?? "No Courses";
   bool get userInTeam => _currentTeam != null;
-  Team get currentTeam => _currentTeam;
-
-
-
 
   UserModel() {
     print("User Model Initialized");
-    loadCurrentUser();
+//    loadCurrentUser();
   }
 
   Future<bool> loadCurrentUser() async {
@@ -39,43 +37,46 @@ class UserModel extends Model {
           await _firestore.document('/users/${user.uid}').get();
       if (userSnap?.data != null) {
         _currentUser = User.fromSnapshotData(userSnap.data);
-        await _loadCourseAndTeam();
-        return true;
+        return _loadCourseAndTeam();
       }
     }
     return false;
   }
 
-  Future<void> _loadCourseAndTeam([String id = ""]) async {
-    if(_currentUser?.courseIds == null || _currentUser.courseIds.isEmpty) return;
+  Future<bool> _loadCourseAndTeam([String id = ""]) async {
+    if (_currentUser?.courseIds == null || _currentUser.courseIds.isEmpty)
+      return false;
+    try {
+      String courseId = (id.isEmpty) ? _currentUser.courseIds.first : id;
 
+      DocumentSnapshot courseSnap =
+          await _firestore.document('/courses/$courseId').get();
 
-    String courseId = (id.isEmpty) ? _currentUser.courseIds.first : id;
+      _currentCourse =
+          (courseSnap?.data != null) ? Course.fromSnapshot(courseSnap) : null;
 
+      DocumentSnapshot courseMemberSnap = await _firestore
+          .document('/courses/$courseId/members/${_currentUser.id}')
+          .get();
 
-    DocumentSnapshot courseSnap =
-        await _firestore.document('/courses/$courseId').get();
+      if (courseMemberSnap?.data != null) {
+        CourseMember courseMember = CourseMember.fromSnapshot(courseMemberSnap);
+        if (courseMember.teamId != null) {
+          DocumentSnapshot teamSnap = await _firestore
+              .document('/courses/$courseId/teams/${courseMember.teamId}')
+              .get();
 
-    DocumentSnapshot courseUserSnap = await _firestore
-        .document('/courses/$courseId/members/${_currentUser.id}')
-        .get();
-
-    _currentCourse = (courseSnap?.data != null) ? Course.fromSnapshot(courseSnap) : null;
-
-    if (courseUserSnap?.data != null) {
-      _currentCourseUser = CourseUser.fromSnapshotData(courseUserSnap.data);
-      if (_currentCourseUser.teamId != null) {
-        DocumentSnapshot teamSnap = await _firestore
-            .document(
-                '/courses/${_currentCourse.id}/teams/${_currentCourseUser.teamId}')
-            .get();
-        _currentTeam = (teamSnap?.data != null) ? Team.fromSnapshot(teamSnap) : null;
-      }else {
-        _currentTeam = null;
+          _currentTeam =
+              (teamSnap?.data != null) ? Team.fromSnapshot(teamSnap) : null;
+        } else {
+          _currentTeam = null;
+        }
       }
-    }else{
-      _currentCourseUser = null;
+      return true;
+    } catch (error) {
+      _error = error.toString();
     }
+    return false;
   }
 
   Future<bool> signInUser(String email, String password) async {
@@ -100,7 +101,10 @@ class UserModel extends Model {
         'uid': user.uid.toString(),
         'first_name': firstName,
         'last_name': lastName,
-        'courses': []
+        'courses': [],
+        'attributes': {},
+        'photo_url': "http://rkhealth.com/wp-content/uploads/5.jpg",
+        'onboard_complete': false,
       });
       return true;
     } catch (error) {
@@ -114,7 +118,6 @@ class UserModel extends Model {
     _currentCourse = null;
     _currentUser = null;
     _currentTeam = null;
-    _currentCourseUser = null;
     return;
   }
 
@@ -124,43 +127,54 @@ class UserModel extends Model {
   }
 
   Future<bool> joinTeam(String teamId) async {
+    print('Join Team initiated with $teamId and ${_currentUser.firstName}');
     try {
-      //make sure current user exists and is in a course and the user is not already in a team (they are available)
-      if (_currentUser != null && _currentCourse != null && !_currentCourseUser.isAvailable) {
-        DocumentReference teamRef = _firestore.document('/courses/${_currentCourse.id}/teams/$teamId');
-        DocumentSnapshot teamSnap = await teamRef.get();
-        if (teamSnap.exists) {
-          Team team = Team.fromSnapshot(teamSnap);
-          //if user is not in the group, if user is available, if user is not part of a project
-          if (!team.isFull) {
-            ++team.numMembers;
-            team.isFull = team.numMembers >= _currentCourse.groupSize;
-            _currentCourseUser.teamId = teamId;
-            _currentTeam = team;
+      DocumentSnapshot teamSnap =
+          await _currentCourse.teamsRef.document(teamId).get();
 
-            //add the user to the team
-            await teamRef.setData({
-              'num_members': team.numMembers,
-              'is_full': team.isFull
-            }, merge: true);
-            //add the team to the CourseUser
-            await _firestore
-                .document(
-                    'courses/${_currentCourse.id}/members/${_currentUser.id}')
-                .setData({'team': _currentCourseUser.teamId}, merge: true);
-            return true;
-          }
-        }
+      Team team = Team.fromSnapshot(teamSnap);
+
+      print('Team Created -  ${team.name}');
+      //if user is not part of a team and the team is not full
+      if (!userInTeam && !team.isFull) {
+        print("user not part of team and team is not full");
+        //update team locally and set it as current user's team
+        --team.availableSpots;
+        _currentTeam = team;
+
+        //add the user to the team in the database
+        await teamSnap.reference
+            .setData({'available_spots': team.availableSpots}, merge: true);
+
+        //add the team to the CourseMember
+        await _currentCourse.membersRef
+            .document(_currentUser.id)
+            .setData({'team': currentTeam.id}, merge: true);
+
+        return true;
       }
     } catch (e) {
+      print('error occurred!!!  -   ${e.toString()}');
       _error = e.toString();
     }
     return false;
   }
 
-  Stream<QuerySnapshot> getTeamMembers(String teamId){
-    if(_currentCourse == null) return null;
-    return _firestore.collection('courses/${_currentCourse.id}/users').where('team', isEqualTo: teamId).snapshots();
+  //TODO: Leave team function
+
+
+
+
+  Stream<QuerySnapshot> getTeamMembersStream(String teamId) {
+    if (_currentCourse == null) return null;
+    return _currentCourse.membersRef
+        .where('team', isEqualTo: teamId)
+        .snapshots();
+  }
+
+  Future<User> getUser(String uid) async {
+    DocumentSnapshot user = await _firestore.collection('users').document(uid).get();
+    return User.fromSnapshotData(user.data);
   }
 
 

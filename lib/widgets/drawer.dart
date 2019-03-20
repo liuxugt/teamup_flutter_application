@@ -13,7 +13,8 @@ class CustomDrawer extends StatelessWidget {
     List<Widget> children = [];
     children
       ..addAll(_buildDrawHeader(context))
-      ..addAll(_buildLabelWidgets(context));
+      ..addAll(_buildLabelWidgets(context))
+      ..addAll(_buildSettingsWidgets(context));
     return children;
   }
 
@@ -39,13 +40,35 @@ class CustomDrawer extends StatelessWidget {
     User user =
         ScopedModel.of<UserModel>(context, rebuildOnChange: true).currentUser;
     return [
-      new UserAccountsDrawerHeader(
+      UserAccountsDrawerHeader(
         accountName: Text('${user.firstName} ${user.lastName}'),
         accountEmail: Text(user.email),
         currentAccountPicture: CircleAvatar(
-            backgroundImage: NetworkImage(
-                "http://www.personalbrandingblog.com/wp-content/uploads/2017/08/blank-profile-picture-973460_640.png")),
+            backgroundImage: NetworkImage(user.photoURL)),
         decoration: BoxDecoration(color: Colors.blue),
+      )
+    ];
+  }
+
+  List<Widget> _buildSettingsWidgets(BuildContext context) {
+    return [
+      ListTile(
+        trailing: Icon(Icons.add),
+        title: Text("Add Course"),
+        onTap: () {
+          //TODO: make page to view all courses and join selected
+        },
+      ),
+      ListTile(
+        trailing: Icon(Icons.exit_to_app),
+        title: Text("Sign Out"),
+        onTap: () {
+          ScopedModel.of<UserModel>(context, rebuildOnChange: false)
+              .signOut()
+              .then((void n) {
+            Navigator.of(context).pushReplacementNamed('/');
+          });
+        },
       )
     ];
   }

@@ -1,12 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:teamup_app/models/team.dart';
 
 class Course {
   String _name;
   int _groupSize;
   String _id;
   CollectionReference _membersRef;
-//  CollectionReference _projectsRef;
   CollectionReference _teamsRef;
 
 
@@ -16,7 +14,6 @@ class Course {
     _groupSize = courseSnap.data['group_size'];
     _id = courseSnap.documentID;
     _membersRef = courseSnap.reference.collection('members').reference();
-//    _projectsRef = courseSnap.reference.collection('projects').reference();
     _teamsRef = courseSnap.reference.collection('teams').reference();
 
   }
@@ -31,8 +28,12 @@ class Course {
 
 
   //TODO: potentially do the conversion here from QuerySnapshot to Team here and create a stream<Team> that is fed to the pages for better abstraction
-  Stream<QuerySnapshot> get availableTeamsStream => _teamsRef.where("is_full", isEqualTo: false).snapshots();
-  Stream<QuerySnapshot> get unavailableTeamsStream => _teamsRef.where("is_full", isEqualTo: true).snapshots();
+  Stream<QuerySnapshot> get availableTeamsStream => _teamsRef.where("available_spots", isGreaterThan: 0).snapshots();
+  Stream<QuerySnapshot> get unavailableTeamsStream => _teamsRef.where("available_spots", isEqualTo: 0).snapshots();
+  Stream<QuerySnapshot> get availableMembersStream => _membersRef.orderBy("team").snapshots();
+
+
+
 
 
 }
