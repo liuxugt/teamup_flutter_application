@@ -4,15 +4,15 @@ import 'package:teamup_app/objects/course_member.dart';
 import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/models/user_model.dart';
 
-class ProfilePage extends StatefulWidget {
+class MemberPage extends StatefulWidget {
   final CourseMember member;
-  ProfilePage({this.member});
+  MemberPage({this.member});
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  _MemberPageState createState() => _MemberPageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _MemberPageState extends State<MemberPage> {
   User user;
 
   Widget _makeBody(BuildContext context) {

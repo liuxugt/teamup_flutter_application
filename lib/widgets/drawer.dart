@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/models/user_model.dart';
+import 'package:teamup_app/pages/onboarding_page.dart';
+import 'package:teamup_app/pages/select_course_page.dart';
+import 'package:teamup_app/pages/user_page.dart';
 
 class CustomDrawer extends StatelessWidget {
   @override
@@ -26,6 +29,7 @@ class CustomDrawer extends StatelessWidget {
     for (int i = 0; i < courseIds.length; i++) {
       labelListTiles.add(ListTile(
         title: Text(courseIds[i]),
+        leading: Icon(Icons.book),
         onTap: () {
           ScopedModel.of<UserModel>(context, rebuildOnChange: true)
               .changeCourse(courseIds[i]);
@@ -46,6 +50,10 @@ class CustomDrawer extends StatelessWidget {
         currentAccountPicture: CircleAvatar(
             backgroundImage: NetworkImage(user.photoURL)),
         decoration: BoxDecoration(color: Colors.blue),
+        onDetailsPressed: (){
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => UserPage()));
+        },
       )
     ];
   }
@@ -53,14 +61,23 @@ class CustomDrawer extends StatelessWidget {
   List<Widget> _buildSettingsWidgets(BuildContext context) {
     return [
       ListTile(
-        trailing: Icon(Icons.add),
-        title: Text("Add Course"),
-        onTap: () {
-          //TODO: make page to view all courses and join selected
+        title: Text("Onboarding"),
+        leading: Icon(Icons.person),
+        onTap: (){
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => OnboardingPage()));
         },
       ),
       ListTile(
-        trailing: Icon(Icons.exit_to_app),
+        leading: Icon(Icons.add),
+        title: Text("Add Course"),
+        onTap: () {
+          Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => SelectCoursePage()));
+        },
+      ),
+      ListTile(
+        leading: Icon(Icons.exit_to_app),
         title: Text("Sign Out"),
         onTap: () {
           ScopedModel.of<UserModel>(context, rebuildOnChange: false)
@@ -73,7 +90,4 @@ class CustomDrawer extends StatelessWidget {
     ];
   }
 
-//  Widget _buildAvatar(BuildContext context) {
-//    return CircleAvatar();
-//  }
 }

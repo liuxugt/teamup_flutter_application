@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/objects/course_member.dart';
 import 'package:teamup_app/models/user_model.dart';
-import 'package:teamup_app/pages/profile_page.dart';
+import 'package:teamup_app/pages/member_page.dart';
 
 class ClassmatesList extends StatelessWidget {
   Widget _makeClassmateCard(CourseMember member, BuildContext context) {
@@ -21,7 +21,7 @@ class ClassmatesList extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => ProfilePage(member: member)));
+                      builder: (context) => MemberPage(member: member)));
             }),
       ),
     );
@@ -49,20 +49,6 @@ class ClassmatesList extends StatelessWidget {
                         : Container(
                             height: 0.0,
                           );
-//                    return ListTile(
-//                      leading: document.data['is_available']
-//                          ? Icon(
-//                              Icons.brightness_1,
-//                              color: Colors.green,
-//                            )
-//                          : Icon(Icons.brightness_1, color: Colors.red),
-//                      title: Text(
-//                          '${document.data['first_name']} ${document.data['last_name']}'),
-//                      onTap: () {
-//                        Navigator.of(context).push(MaterialPageRoute(
-//                            builder: (context) => ProfilePage()));
-//                      },
-//                    );
                   }).toList(),
                 );
             }
