@@ -16,7 +16,9 @@ class TeamPage extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
         child: ListTile(
-          leading: CircleAvatar(backgroundImage: NetworkImage(member.photoURL),),
+          leading: CircleAvatar(
+            backgroundImage: NetworkImage(member.photoURL),
+          ),
           title: Text('${member.firstName} ${member.lastName}'),
           subtitle: Text(member.headline),
         ),
@@ -44,16 +46,28 @@ class TeamPage extends StatelessWidget {
   }
 
   _buildFAB(BuildContext context) {
-    return ScopedModelDescendant<UserModel>(builder: (context, child, model) {
-      return model.userInTeam
-          ? Container(
-              height: 0.0,
-            )
-          : FloatingActionButton(
-              child: Icon(Icons.add),
-              onPressed: () {
-                model.joinTeam(this.team.id);
-              });
+    return ScopedModelDescendant<UserModel>(rebuildOnChange: true, builder: (context, child, model) {
+      //if this team is the user's team, show the leave team button
+      if (model.userInTeam && model.currentTeam.id == team.id)
+        return FloatingActionButton(
+            child: Icon(Icons.remove),
+            onPressed: () {
+              model.leaveCurrentTeam();
+            });
+
+      //if the user is in a team or the team is full, don't show anything
+      if (team.isFull || model.userInTeam)
+        return Container(
+          height: 0.0,
+        );
+
+      //show a join button if the team isn't full and the user is not on a team
+
+      return FloatingActionButton(
+          child: Icon(Icons.add),
+          onPressed: () {
+            model.joinTeam(team);
+          });
     });
   }
 
@@ -73,7 +87,10 @@ class TeamPage extends StatelessWidget {
               )),
           Padding(
             padding: EdgeInsets.only(left: 20.0, bottom: 10.0),
-            child: Text(team.description, style: TextStyle(fontSize: 18.0),),
+            child: Text(
+              team.description,
+              style: TextStyle(fontSize: 18.0),
+            ),
           ),
           Padding(
               padding: EdgeInsets.all(20.0),

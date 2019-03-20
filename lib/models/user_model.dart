@@ -126,44 +126,58 @@ class UserModel extends Model {
     notifyListeners();
   }
 
-  Future<bool> joinTeam(String teamId) async {
-    print('Join Team initiated with $teamId and ${_currentUser.firstName}');
+  Future<bool> joinTeam(Team team) async {
     try {
-      DocumentSnapshot teamSnap =
-          await _currentCourse.teamsRef.document(teamId).get();
 
-      Team team = Team.fromSnapshot(teamSnap);
-
-      print('Team Created -  ${team.name}');
+      DocumentReference teamRef = _currentCourse.teamsRef.document(team.id);
       //if user is not part of a team and the team is not full
       if (!userInTeam && !team.isFull) {
-        print("user not part of team and team is not full");
-        //update team locally and set it as current user's team
-        --team.availableSpots;
-        _currentTeam = team;
-
         //add the user to the team in the database
-        await teamSnap.reference
-            .setData({'available_spots': team.availableSpots}, merge: true);
+        await teamRef
+            .setData({'available_spots': --team.availableSpots}, merge: true);
 
         //add the team to the CourseMember
         await _currentCourse.membersRef
             .document(_currentUser.id)
-            .setData({'team': currentTeam.id}, merge: true);
+            .setData({'team': team.id}, merge: true);
 
+        //set the current team
+        _currentTeam = team;
+
+        //return successful execution
+        notifyListeners();
         return true;
       }
     } catch (e) {
-      print('error occurred!!!  -   ${e.toString()}');
       _error = e.toString();
+      print(_error);
     }
     return false;
   }
 
-  //TODO: Leave team function
+  Future<bool> leaveCurrentTeam() async {
+    try {
+      DocumentReference teamRef =
+          _currentCourse.teamsRef.document(_currentTeam.id);
 
+      await _currentCourse.membersRef
+          .document(_currentUser.id)
+          .setData({'team': null}, merge: true);
 
+      await teamRef.setData({'available_spots': ++_currentTeam.availableSpots},
+          merge: true);
 
+      //set local team to null
+      _currentTeam = null;
+
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      print(_error);
+    }
+    return false;
+  }
 
   Stream<QuerySnapshot> getTeamMembersStream(String teamId) {
     if (_currentCourse == null) return null;
@@ -173,9 +187,8 @@ class UserModel extends Model {
   }
 
   Future<User> getUser(String uid) async {
-    DocumentSnapshot user = await _firestore.collection('users').document(uid).get();
+    DocumentSnapshot user =
+        await _firestore.collection('users').document(uid).get();
     return User.fromSnapshotData(user.data);
   }
-
-
 }

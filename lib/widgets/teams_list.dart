@@ -13,6 +13,7 @@ class TeamsList extends StatelessWidget {
       child: Container(
         decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
         child: ListTile(
+            isThreeLine: true,
             title:
                 Text(team.name, style: TextStyle(fontWeight: FontWeight.bold)),
             subtitle: Text(team.description),
@@ -36,7 +37,10 @@ class TeamsList extends StatelessWidget {
             //Label for my team
             Padding(
               padding: EdgeInsets.all(20.0),
-              child: Text("My Team", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),),
+              child: Text(
+                "My Team",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+              ),
             ),
             // if I am in a team show my team card, if not don't show
             model.userInTeam
@@ -47,7 +51,9 @@ class TeamsList extends StatelessWidget {
                             color: Colors.black, fontWeight: FontWeight.bold))),
             Padding(
               padding: EdgeInsets.all(20.0),
-              child: Text("Available Teams", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
+              child: Text("Available Teams",
+                  style:
+                      TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
             ),
             Flexible(
                 child: StreamBuilder<QuerySnapshot>(
