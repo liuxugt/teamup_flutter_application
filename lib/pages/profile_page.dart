@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:teamup_app/models/course_member.dart';
-import 'package:teamup_app/models/user.dart';
+import 'package:teamup_app/objects/course_member.dart';
+import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/models/user_model.dart';
 
 class ProfilePage extends StatefulWidget {

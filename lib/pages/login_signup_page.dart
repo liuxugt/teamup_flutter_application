@@ -4,13 +4,13 @@ import 'package:teamup_app/models/user_model.dart';
 
 class LoginSignUpPage extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => new _LoginSignUpPageState();
+  State<StatefulWidget> createState() => _LoginSignUpPageState();
 }
 
 enum FormMode { LOGIN, SIGNUP }
 
 class _LoginSignUpPageState extends State<LoginSignUpPage> {
-  final _formKey = new GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   String _email;
   String _password;
   String _errorMessage = "";
@@ -130,7 +130,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         ],
       );
     } else {
-      return new Container(
+      return Container(
         height: 0.0,
       );
     }
@@ -139,13 +139,13 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   Widget _showEmailInput() {
     return Padding(
         padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 0.0),
-        child: new TextFormField(
+        child: TextFormField(
           maxLines: 1,
           keyboardType: TextInputType.emailAddress,
           autofocus: false,
-          decoration: new InputDecoration(
+          decoration: InputDecoration(
               hintText: 'Email',
-              icon: new Icon(
+              icon: Icon(
                 Icons.mail,
                 color: Colors.grey,
               )),
@@ -157,13 +157,13 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   Widget _showPasswordInput() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(0.0, 15.0, 0.0, 15.0),
-      child: new TextFormField(
+      child: TextFormField(
         maxLines: 1,
         obscureText: true,
         autofocus: false,
-        decoration: new InputDecoration(
+        decoration: InputDecoration(
             hintText: 'Password',
-            icon: new Icon(
+            icon: Icon(
               Icons.lock,
               color: Colors.grey,
             )),
@@ -210,24 +210,24 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       return RaisedButton(
         color: Colors.blue,
         onPressed: () {
+          setState(() {
+            _isLoading = true;
+          });
           if(_validateAndSave()) {
-            setState(() {
-              _isLoading = true;
-            });
             if (_formMode == FormMode.LOGIN) {
-              ScopedModel.of<UserModel>(context, rebuildOnChange: false).signInUser(_email, _password).then((isSignedIn){
+              ScopedModel.of<UserModel>(context, rebuildOnChange: true).signInUser(_email, _password).then((isSignedIn){
                 if(isSignedIn) Navigator.pushReplacementNamed(context, '/home');
               });
             } else {
-              ScopedModel.of<UserModel>(context, rebuildOnChange: false).registerUser(_email, _password, _firstName, _lastName).then((isRegistered){
+              ScopedModel.of<UserModel>(context, rebuildOnChange: true).registerUser(_email, _password, _firstName, _lastName).then((isRegistered){
                 if(isRegistered) _showSuccessfulRegistration();
               });
             }
-            setState(() {
-              _isLoading = false;
-              _errorMessage = ScopedModel.of<UserModel>(context, rebuildOnChange: true).error;
-            });
           }
+          setState(() {
+            _isLoading = false;
+            _errorMessage = ScopedModel.of<UserModel>(context, rebuildOnChange: true).error;
+          });
         },
         child: _formMode == FormMode.LOGIN
             ? Text('Login',
