@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:teamup_app/models/member_model.dart';
 import 'package:teamup_app/objects/course_member.dart';
 import 'package:teamup_app/models/user_model.dart';
 import 'package:teamup_app/pages/member_page.dart';
@@ -21,7 +22,7 @@ class ClassmatesList extends StatelessWidget {
               Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MemberPage(member: member)));
+                      builder: (context) => ScopedModel<MemberModel>(model: MemberModel(member: member),child: MemberPage(),)));
             }),
       ),
     );
