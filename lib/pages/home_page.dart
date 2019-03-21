@@ -3,8 +3,9 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/models/user_model.dart';
 import 'package:teamup_app/widgets/classmates_list.dart';
 import 'package:teamup_app/widgets/drawer.dart';
-import 'package:teamup_app/widgets/notifications_list.dart';
+import 'package:teamup_app/widgets/send_list.dart';
 import 'package:teamup_app/widgets/teams_list.dart';
+import 'package:teamup_app/widgets/receive_list.dart'
 
 class HomePage extends StatelessWidget {
   @override
@@ -32,7 +33,8 @@ class HomePage extends StatelessWidget {
             children: [
           ClassmatesList(),
           TeamsList(),
-          NotificationList(),
+          SentList(),
+          ReceivedList()
         ]),
         drawer: CustomDrawer(),
       ),
