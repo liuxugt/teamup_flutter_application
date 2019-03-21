@@ -193,7 +193,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           return AlertDialog(
             title: Text('Signup Successful'),
             content: Text(
-                'Your account has been successfully created, you may now login'),
+                'Your account has been successfully created, you may now login with password ' + _password),
             actions: <Widget>[
               FlatButton(
                 onPressed: () {
@@ -216,7 +216,9 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           if(_validateAndSave()) {
             if (_formMode == FormMode.LOGIN) {
               ScopedModel.of<UserModel>(context, rebuildOnChange: true).signInUser(_email, _password).then((isSignedIn){
-                if(isSignedIn) Navigator.pushReplacementNamed(context, '/home');
+                if(isSignedIn) {
+                  Navigator.pushReplacementNamed(context, '/home');
+                }
               });
             } else {
               ScopedModel.of<UserModel>(context, rebuildOnChange: true).registerUser(_email, _password, _firstName, _lastName).then((isRegistered){

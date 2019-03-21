@@ -24,11 +24,9 @@ class User {
     _uid = data['uid'];
     _photoURL = data['photo_url'];
     if(data.containsKey('courses') && data['courses'] is List){
-      List<String> temp = [];
       for(int i = 0; i < data['courses'].length; i++){
-          temp.add(data['courses'][i]);
+          _courseIds.add(data['courses'][i]);
       }
-      _courseIds = temp;
     }
     onboardComplete = data['onboard_complete'];
 //    _printVariables();

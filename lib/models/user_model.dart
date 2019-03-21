@@ -48,6 +48,7 @@ class UserModel extends Model {
   }
 
   Future<bool> _loadCourseAndTeam([String id = ""]) async {
+    print(_currentUser.courseIds);
     if (_currentUser == null || _currentUser.courseIds.isEmpty)
       return false;
     try {
@@ -67,6 +68,7 @@ class UserModel extends Model {
       return true;
     } catch (error) {
       _error = error.toString();
+      print(_error);
     }
     return false;
   }
@@ -74,8 +76,10 @@ class UserModel extends Model {
   Future<bool> signInUser(String email, String password) async {
     try {
       await api.signInUser(email, password);
-      return loadCurrentUser();
+      loadCurrentUser();
+      return true;
     } catch (error) {
+      print("test");
       _error = error.toString();
       print(_error);
     }
@@ -85,7 +89,6 @@ class UserModel extends Model {
   Future<bool> registerUser(
       String email, String password, String firstName, String lastName) async {
     try {
-
       api.registerUser(email, password, firstName, lastName);
       return true;
     } catch (error) {
@@ -175,4 +178,5 @@ class UserModel extends Model {
   Future<User> getUser(String uid) async {
     return api.getUser(uid);
   }
+
 }

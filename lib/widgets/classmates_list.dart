@@ -31,11 +31,14 @@ class ClassmatesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<UserModel>(builder: (context, child, model) {
+      print("in classmateList");
+      print(model.currentCourse.name);
       if (!model.hasCourse) return Center(child: Text('No Courses'));
 
       return StreamBuilder<QuerySnapshot>(
           stream: model.currentCourse.availableMembersStream,
           builder: (context, snapshot) {
+            //print(snapshot.data.documents);
             if (snapshot.hasError) return Text('Error: %{snapshot.error}');
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:

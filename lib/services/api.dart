@@ -40,8 +40,13 @@ class API {
   }
 
   Future<void> signInUser(String email, String password) async {
-    await _firebaseAuth.signInWithEmailAndPassword(
+    final FirebaseUser user = await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
+    assert (user != null);
+    assert(await user.getIdToken() != null);
+    final FirebaseUser currentUser = await _firebaseAuth.currentUser();
+    assert(user.uid == currentUser.uid);
+    print(" in SignInUser API, returning");
   }
 
   Future<void> signOutUser() async {
@@ -53,6 +58,9 @@ class API {
       String email, String password, String firstName, String lastName) async {
     FirebaseUser user = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
+
+    assert (user != null);
+    assert (await user.getIdToken() != null);
 
     await _firestore.collection('users').document(user.uid).setData({
       'email': email,
