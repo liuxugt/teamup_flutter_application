@@ -35,40 +35,28 @@ class UserModel extends Model {
   Future<bool> loadCurrentUser() async {
     try {
       FirebaseUser user = await api.getCurrentUser();
-      if (user != null && user.uid != "") {
+      print('user ${user.uid} is loaded');
         _currentUser = await api.getUser(user.uid);
-        return _loadCourseAndTeam();
-
-      }
+        await _loadCourseAndTeam();
+        return true;
     } catch (e) {
-      print(e.toString());
+      print("Error loading user: " + e.toString());
       _error = e.toString();
     }
     return false;
   }
 
-  Future<bool> _loadCourseAndTeam([String id = ""]) async {
-    if (_currentUser == null || _currentUser.courseIds.isEmpty)
-      return false;
-    try {
+  Future<void> _loadCourseAndTeam([String id = ""]) async {
       String courseId = (id.isEmpty) ? _currentUser.courseIds.first : id;
+
       _currentCourse = await api.getCourse(courseId);
 
       CourseMember courseMember =
           await api.getCourseMember(courseId, _currentUser.id);
 
-      if (courseMember.teamId != null) {
-        _currentTeam = await api.getTeam(courseId, courseMember.teamId);
-      } else {
-        _currentTeam = null;
-      }
+      _currentTeam = (courseMember?.teamId != null) ? await api.getTeam(courseId, courseMember.teamId) : null;
 
 
-      return true;
-    } catch (error) {
-      _error = error.toString();
-    }
-    return false;
   }
 
   Future<bool> signInUser(String email, String password) async {
@@ -87,6 +75,7 @@ class UserModel extends Model {
     try {
 
       api.registerUser(email, password, firstName, lastName);
+      _error = "";
       return true;
     } catch (error) {
       _error = error.toString();
@@ -101,6 +90,7 @@ class UserModel extends Model {
       _currentCourse = null;
       _currentUser = null;
       _currentTeam = null;
+      _error = "";
       return true;
     }catch(error){
       _error = error.toString();
@@ -110,8 +100,13 @@ class UserModel extends Model {
   }
 
   void changeCourse(String courseId) async {
-    await _loadCourseAndTeam(courseId);
-    notifyListeners();
+    try {
+      await _loadCourseAndTeam(courseId);
+      notifyListeners();
+    }catch(error){
+      _error = error.toString();
+      print(_error);
+    }
   }
 
   Future<bool> joinTeam(Team team) async {
@@ -131,6 +126,7 @@ class UserModel extends Model {
         //set the current team
         _currentTeam = team;
         //return successful execution
+        _error = "";
         notifyListeners();
         return true;
       }
@@ -155,7 +151,7 @@ class UserModel extends Model {
 
       //set local team to null
       _currentTeam = null;
-
+      _error = "";
       notifyListeners();
       return true;
     } catch (e) {

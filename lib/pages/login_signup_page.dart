@@ -71,7 +71,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              _showLoading(),
+//              _showLoading(),
               _showNameInput(),
               _showEmailInput(),
               _showPasswordInput(),
@@ -174,6 +174,8 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   }
 
   Widget _showSecondaryButton() {
+    print('is loding is here: ${_isLoading.toString()}');
+    if(_isLoading) return Center(child: CircularProgressIndicator());
     return FlatButton(
       child: _formMode == FormMode.LOGIN
           ? Text('Create an account',
@@ -209,26 +211,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   Widget _showPrimaryButton() {
       return RaisedButton(
         color: Colors.blue,
-        onPressed: () {
-          setState(() {
-            _isLoading = true;
-          });
-          if(_validateAndSave()) {
-            if (_formMode == FormMode.LOGIN) {
-              ScopedModel.of<UserModel>(context, rebuildOnChange: true).signInUser(_email, _password).then((isSignedIn){
-                if(isSignedIn) Navigator.pushReplacementNamed(context, '/home');
-              });
-            } else {
-              ScopedModel.of<UserModel>(context, rebuildOnChange: true).registerUser(_email, _password, _firstName, _lastName).then((isRegistered){
-                if(isRegistered) _showSuccessfulRegistration();
-              });
-            }
-          }
-          setState(() {
-            _isLoading = false;
-            _errorMessage = ScopedModel.of<UserModel>(context, rebuildOnChange: true).error;
-          });
-        },
+        onPressed: _onPrimaryButtonPressed,
         child: _formMode == FormMode.LOGIN
             ? Text('Login',
                 style: TextStyle(fontSize: 20.0, color: Colors.white))
@@ -236,4 +219,32 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
                 style: TextStyle(fontSize: 20.0, color: Colors.white)),
       );
   }
+
+  _onPrimaryButtonPressed() async {
+    if(_validateAndSave()) {
+      setState(() {
+        _isLoading = true;
+      });
+      if (_formMode == FormMode.LOGIN) {
+       if(await ScopedModel.of<UserModel>(context, rebuildOnChange: false).signInUser(_email, _password)){
+         Navigator.pushReplacementNamed(context, '/home');
+       }
+      } else {
+        if(await ScopedModel.of<UserModel>(context, rebuildOnChange: false).registerUser(_email, _password, _firstName, _lastName)){
+          _showSuccessfulRegistration();
+        }
+
+      }
+      setState(() {
+        _isLoading = false;
+        _errorMessage = ScopedModel.of<UserModel>(context, rebuildOnChange: true).error;
+      });
+    }else{
+      setState(() {
+        _errorMessage = "";
+      });
+    }
+  }
+
+
 }

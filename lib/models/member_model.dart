@@ -6,7 +6,7 @@ import 'package:teamup_app/services/api.dart';
 class MemberModel extends Model{
 
   User user;
-  API api = API();
+  static final API api = API();
 
   final CourseMember member;
   MemberModel({this.member}){
