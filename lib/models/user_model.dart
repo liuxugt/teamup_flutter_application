@@ -74,7 +74,8 @@ class UserModel extends Model {
   Future<bool> signInUser(String email, String password) async {
     try {
       await api.signInUser(email, password);
-      return loadCurrentUser();
+      loadCurrentUser();
+      return true;
     } catch (error) {
       _error = error.toString();
       print(_error);
