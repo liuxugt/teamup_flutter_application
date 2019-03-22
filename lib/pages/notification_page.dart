@@ -4,6 +4,21 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/pages/team_page.dart';
 import 'package:teamup_app/models/user_model.dart';
 
-class notification_page extends StatelessWidget{
+class ApplicationPage extends StatelessWidget{
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      body: Center(child: Text("Detail inforamation for applications"),),
+    );
+  }
+}
 
+
+class InvitationPage extends StatelessWidget{
+  @override
+  Widget build(BuildContext context){
+    return Scaffold(
+      body: Center(child: Text("Detail inforamation for invitations"),),
+    );
+  }
 }

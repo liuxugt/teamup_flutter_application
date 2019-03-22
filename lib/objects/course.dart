@@ -36,6 +36,7 @@ class Course {
   Stream<QuerySnapshot> get availableTeamsStream => _teamsRef.where("available_spots", isGreaterThan: 0).snapshots();
   Stream<QuerySnapshot> get unavailableTeamsStream => _teamsRef.where("available_spots", isEqualTo: 0).snapshots();
   Stream<QuerySnapshot> get availableMembersStream => _membersRef.orderBy("team").snapshots();
+
   Stream<QuerySnapshot> get pendingApplicationStream => _applicationRef.where("status", isEqualTo: "pending").snapshots();
   Stream<QuerySnapshot> get respondedApplicationStream => _applicationRef.where("status", isEqualTo: "responded").snapshots();
   Stream<QuerySnapshot> get pendingInvitationStream => _invitationRef.where("status", isEqualTo: "pending").snapshots();

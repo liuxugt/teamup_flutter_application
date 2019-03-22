@@ -53,7 +53,6 @@ class UserModel extends Model {
     try {
       String courseId = (id.isEmpty) ? _currentUser.courseIds.first : id;
       _currentCourse = await api.getCourse(courseId);
-
       CourseMember courseMember =
           await api.getCourseMember(courseId, _currentUser.id);
 
@@ -173,7 +172,38 @@ class UserModel extends Model {
         .snapshots();
   }
 
+
   Future<User> getUser(String uid) async {
     return api.getUser(uid);
   }
+
+  //Corresponding functions in notification system.
+  Stream<QuerySnapshot> getSendAppllication(){
+    if(_currentUser == null || _currentCourse == null) return null;
+    return _currentCourse.applicationRef
+        .where('from', isEqualTo: _currentUser.id)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getReceivedApplication(){
+    if(_currentUser == null || _currentCourse == null) return null;
+    return _currentCourse.applicationRef
+        .where('to', isEqualTo: _currentUser.id)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getSendInvitation(){
+    if(_currentUser == null || _currentCourse == null) return null;
+    return _currentCourse.invitationRef
+        .where('from', isEqualTo: _currentUser.id)
+        .snapshots();
+  }
+
+  Stream<QuerySnapshot> getReceivedInvitation(){
+    if(_currentUser == null || _currentCourse == null) return null;
+    return _currentCourse.invitationRef
+        .where('to', isEqualTo: _currentUser.id)
+        .snapshots();
+  }
+
 }
