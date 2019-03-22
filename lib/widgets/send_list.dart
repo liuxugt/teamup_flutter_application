@@ -66,7 +66,7 @@ class SendApplications extends StatelessWidget{
                     return ListView(
                       children: snapshot.data.documents.map((document){
                         return (document?.data != null)
-                            ? _makeCard(
+                            ? _makeNotificationCard(
                             Notifi.fromSnapshot(document), context)
                             : Container(
                           height: 0.0,
@@ -82,7 +82,7 @@ class SendApplications extends StatelessWidget{
 
   }
 
-  Widget _makeCard(Notifi notification, BuildContext context){
+  Widget _makeNotificationCard(Notifi notification, BuildContext context){
     return Card(
       elevation: 2.0,
       margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
@@ -132,7 +132,7 @@ class SendInvitations extends StatelessWidget{
                     return ListView(
                         children: snapshot.data.documents.map((document) {
                           return document?.data != null
-                              ? _makeCard(
+                              ? _makeNotificationCard(
                               Notifi.fromSnapshot(document), context)
                               : Container(height: 0.0);
                         }).toList());
@@ -145,7 +145,7 @@ class SendInvitations extends StatelessWidget{
     });
   }
 
-  Widget _makeCard(Notifi notification, BuildContext context){
+  Widget _makeNotificationCard(Notifi notification, BuildContext context){
     return Card(
       elevation: 2.0,
       margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),

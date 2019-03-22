@@ -9,6 +9,7 @@ class Notifi{
   String _fromName;
   String _toName;
   String _teamName;
+  String _id;
 
   Notifi.fromSnapshot(DocumentSnapshot notification){
     Map<String, dynamic> data = notification.data;
@@ -16,18 +17,20 @@ class Notifi{
     this._toId = data["to"];
     this._status = data["status"];
     this._team = data["team"];
-    this._teamName = data["team_name"];
-    this._fromName = data["from_name"];
-    this._toName = data["to_name"];
+    this._teamName = data["teamName"];
+    this._fromName = data["fromName"];
+    this._toName = data["toName"];
+    this._id = data["id"];
   }
   Notifi.fromSnapshotData(Map<String, dynamic> data){
     this._fromId = data['from'];
     this._toId = data["to"];
     this._status = data["status"];
     this._team = data["team"];
-    this._teamName = data["team_name"];
-    this._fromName = data["from_name"];
-    this._toName = data["to_name"];
+    this._teamName = data["teamName"];
+    this._fromName = data["fromName"];
+    this._toName = data["toName"];
+    this._id = data["id"];
   }
 
   String get from => _fromId;
@@ -37,5 +40,6 @@ class Notifi{
   String get fromName => _fromName;
   String get toName => _toName;
   String get teamName => _teamName;
+  String get id => _id;
 
 }

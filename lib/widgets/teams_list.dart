@@ -44,7 +44,7 @@ class TeamsList extends StatelessWidget {
             ),
             // if I am in a team show my team card, if not don't show
             model.userInTeam
-                ? Center(child: _makeTeamCard(model.currentTeam, context))
+                ? Center(child: _makeTeamCard(model.z, context))
                 : Center(
                     child: Text('Oops! You\'re not in a team yet.',
                         style: TextStyle(

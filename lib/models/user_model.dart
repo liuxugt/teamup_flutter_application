@@ -6,6 +6,7 @@ import 'package:teamup_app/objects/course_member.dart';
 import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/services/api.dart';
+import 'package:teamup_app/objects/notification.dart';
 
 class UserModel extends Model {
   //TODO: start moving database functions into the API
@@ -61,7 +62,6 @@ class UserModel extends Model {
       } else {
         _currentTeam = null;
       }
-
 
       return true;
     } catch (error) {
@@ -165,6 +165,7 @@ class UserModel extends Model {
     return false;
   }
 
+
   Stream<QuerySnapshot> getTeamMembersStream(String teamId) {
     if (_currentCourse == null) return null;
     return _currentCourse.membersRef
@@ -204,6 +205,27 @@ class UserModel extends Model {
     return _currentCourse.invitationRef
         .where('to', isEqualTo: _currentUser.id)
         .snapshots();
+  }
+
+  //Functions in creating and response to applications.
+
+  Future<void> createApplications(String fromID, String toID, String teamID, String courseID) async{
+
+    DocumentSnapshot fromRef = await _currentCourse.membersRef.document(fromID).get();
+    DocumentSnapshot toRef = await _currentCourse.membersRef.document(toID).get();
+    DocumentSnapshot teamRef = await _currentCourse.teamsRef.document(teamID).get();
+    DocumentReference application = await _currentCourse.applicationRef.add({
+      'from' : fromID,
+      'to': toID,
+      'status': "pending",
+      'team': teamID,
+      'fromName': fromRef.data["email"],
+      'toName': toRef.data["email"],
+      'teamName': teamRef.data["name"]
+    });
+    application.updateData({
+      "id": application.documentID
+    });
   }
 
 }
