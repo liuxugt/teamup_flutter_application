@@ -95,7 +95,7 @@ class ReceiveApplications extends StatelessWidget{
             onTap: (){
               Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ApplicationPage())
+                  MaterialPageRoute(builder: (context) => ApplicationPage(notification: notification))
               );
             },
           )
@@ -159,7 +159,7 @@ class ReceiveInvitations extends StatelessWidget{
           onTap: (){
             Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => InvitationPage())
+                MaterialPageRoute(builder: (context) => InvitationPage(notification: notification))
             );
           },
         ),

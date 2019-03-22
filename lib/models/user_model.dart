@@ -228,4 +228,33 @@ class UserModel extends Model {
     });
   }
 
+  Future<void> acceptApplication(Notifi notification) async{
+    DocumentReference from = _currentCourse.membersRef.document(notification.from);
+    DocumentReference team = _currentCourse.teamsRef.document(notification.team);
+    DocumentSnapshot teamSnapshot = await team.get();
+    DocumentSnapshot fromSnapshot = await from.get();
+    if(teamSnapshot.data["available_spots"] > 0 && fromSnapshot.data["team"] == null){
+      DocumentReference note = _currentCourse.applicationRef.document(notification.id);
+      note.updateData({
+        "status": "accepted"
+      });
+      from.updateData({
+        "team": notification.team
+      });
+      team.updateData({
+        "available_spots": teamSnapshot.data["available_spots"] - 1
+      });
+    }
+    else{
+      print("error in adding applicant into team");
+    }
+  }
+
+  Future<void> rejectApplication(Notifi notification) async{
+    DocumentReference note = _currentCourse.applicationRef.document(notification.id);
+    note.updateData({
+      "status": "rejected"
+    });
+  }
+
 }
