@@ -71,7 +71,6 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-//              _showLoading(),
               _showNameInput(),
               _showEmailInput(),
               _showPasswordInput(),
@@ -83,9 +82,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         ));
   }
 
-  Widget _showLoading(){
-    return _isLoading ? Center(child: CircularProgressIndicator()) : Container(height: 0.0,);
-  }
+
 
 
   Widget _showErrorMessage() {

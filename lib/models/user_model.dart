@@ -9,7 +9,7 @@ import 'package:teamup_app/services/api.dart';
 
 class UserModel extends Model {
   //TODO: start moving database functions into the API
-  final API api = API();
+  final API _api = API();
 
 
   User _currentUser;
@@ -34,9 +34,9 @@ class UserModel extends Model {
 
   Future<bool> loadCurrentUser() async {
     try {
-      FirebaseUser user = await api.getCurrentUser();
+      FirebaseUser user = await _api.getCurrentUser();
       print('user ${user.uid} is loaded');
-        _currentUser = await api.getUser(user.uid);
+        _currentUser = await _api.getUser(user.uid);
         await _loadCourseAndTeam();
         return true;
     } catch (e) {
@@ -49,19 +49,19 @@ class UserModel extends Model {
   Future<void> _loadCourseAndTeam([String id = ""]) async {
       String courseId = (id.isEmpty) ? _currentUser.courseIds.first : id;
 
-      _currentCourse = await api.getCourse(courseId);
+      _currentCourse = await _api.getCourse(courseId);
 
       CourseMember courseMember =
-          await api.getCourseMember(courseId, _currentUser.id);
+          await _api.getCourseMember(courseId, _currentUser.id);
 
-      _currentTeam = (courseMember?.teamId != null) ? await api.getTeam(courseId, courseMember.teamId) : null;
+      _currentTeam = (courseMember?.teamId != null) ? await _api.getTeam(courseId, courseMember.teamId) : null;
 
 
   }
 
   Future<bool> signInUser(String email, String password) async {
     try {
-      await api.signInUser(email, password);
+      await _api.signInUser(email, password);
       return loadCurrentUser();
     } catch (error) {
       _error = error.toString();
@@ -74,7 +74,7 @@ class UserModel extends Model {
       String email, String password, String firstName, String lastName) async {
     try {
 
-      api.registerUser(email, password, firstName, lastName);
+      _api.registerUser(email, password, firstName, lastName);
       _error = "";
       return true;
     } catch (error) {
@@ -86,7 +86,7 @@ class UserModel extends Model {
 
   Future<bool> signOut() async {
     try {
-      await api.signOutUser();
+      await _api.signOutUser();
       _currentCourse = null;
       _currentUser = null;
       _currentTeam = null;
@@ -169,6 +169,6 @@ class UserModel extends Model {
   }
 
   Future<User> getUser(String uid) async {
-    return api.getUser(uid);
+    return _api.getUser(uid);
   }
 }

@@ -48,7 +48,6 @@ class API {
     await _firebaseAuth.signOut();
   }
 
-
   Future<void> registerUser(
       String email, String password, String firstName, String lastName) async {
     FirebaseUser user = await _firebaseAuth.createUserWithEmailAndPassword(
@@ -64,5 +63,12 @@ class API {
       'photo_url': "http://rkhealth.com/wp-content/uploads/5.jpg",
       'onboard_complete': false,
     });
+  }
+
+  Future<void> updateUserAttributes(
+      String uid, Map<String, dynamic> attributes) async {
+    await _firestore
+        .document('/users/$uid')
+        .setData({'attributes': attributes}, merge: true);
   }
 }
