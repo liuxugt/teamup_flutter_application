@@ -257,4 +257,52 @@ class UserModel extends Model {
     });
   }
 
+  Future <void> createInvitations(String fromID, String toID, String teamID, String courseID) async{
+    DocumentSnapshot fromRef = await _currentCourse.membersRef.document(fromID).get();
+    DocumentSnapshot toRef = await _currentCourse.membersRef.document(toID).get();
+    DocumentSnapshot teamRef = await _currentCourse.teamsRef.document(teamID).get();
+
+    DocumentReference invitation = await _currentCourse.invitationRef.add({
+      'from': fromID,
+      'to': toID,
+      'status': 'pending',
+      'team': teamID,
+      'fromName': fromRef.data["email"],
+      'toName': toRef.data['email'],
+      'teamName': teamRef.data["name"]
+    });
+    invitation.updateData({
+      "id": invitation.documentID
+    });
+  }
+
+  Future<void> acceptInvitation(Notifi notification) async{
+    DocumentReference to = _currentCourse.membersRef.document(notification.to);
+    DocumentReference team = _currentCourse.teamsRef.document(notification.from);
+    DocumentSnapshot teamSnapshot = await team.get();
+    DocumentSnapshot toSnapshot = await to.get();
+    if(teamSnapshot.dat["available_spots"] > 0 && toSnapshot.data["team"] == null){
+      DocumentReference note = _currentCourse.invitationRef.document(notification.id);
+      note.updateData({
+        "status": "accepted"
+      });
+      from.updateData({
+        "team": notification.team
+      });
+      team.updateDat({
+        "available_spots": teamSnapshot.data["available_spots"] - 1
+      });
+    }
+    else{
+      print("error in accepting invitaitons");
+    }
+  }
+
+  Future<void> rejectInvitation(Notifi notification) async{
+    DocumentReference note = _currentCourse.invitationRef.document(notificaiton.id);
+    note.updateData({
+      "status": "rejected"
+    });
+  }
+
 }
