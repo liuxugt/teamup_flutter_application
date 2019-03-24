@@ -10,7 +10,7 @@ import 'package:teamup_app/objects/notification.dart';
 
 class UserModel extends Model {
   //TODO: start moving database functions into the API
-  final API api = API();
+  final API _api = API();
 
 
   User _currentUser;
@@ -35,48 +35,34 @@ class UserModel extends Model {
 
   Future<bool> loadCurrentUser() async {
     try {
-      FirebaseUser user = await api.getCurrentUser();
-      if (user != null && user.uid != "") {
-        _currentUser = await api.getUser(user.uid);
-        return _loadCourseAndTeam();
-
-      }
+      FirebaseUser user = await _api.getCurrentUser();
+      print('user ${user.uid} is loaded');
+        _currentUser = await _api.getUser(user.uid);
+        await _loadCourseAndTeam();
+        return true;
     } catch (e) {
-      print(e.toString());
+      print("Error loading user: " + e.toString());
       _error = e.toString();
     }
     return false;
   }
 
-  Future<bool> _loadCourseAndTeam([String id = ""]) async {
-    print(_currentUser.courseIds);
-    if (_currentUser == null || _currentUser.courseIds.isEmpty)
-      return false;
-    try {
-      String courseId = (id.isEmpty) ? _currentUser.courseIds.first : id;
-      _currentCourse = await api.getCourse(courseId);
-      CourseMember courseMember =
-          await api.getCourseMember(courseId, _currentUser.id);
+  Future<void> _loadCourseAndTeam([String id = ""]) async {
+    String courseId = (id.isEmpty) ? _currentUser.courseIds.first : id;
 
-      if (courseMember.teamId != null) {
-        _currentTeam = await api.getTeam(courseId, courseMember.teamId);
-      } else {
-        _currentTeam = null;
-      }
+    _currentCourse = await _api.getCourse(courseId);
 
-      return true;
-    } catch (error) {
-      _error = error.toString();
-      print(_error);
-    }
-    return false;
+    CourseMember courseMember =
+    await _api.getCourseMember(courseId, _currentUser.id);
+
+    _currentTeam = (courseMember?.teamId != null) ? await _api.getTeam(
+        courseId, courseMember.teamId) : null;
   }
 
   Future<bool> signInUser(String email, String password) async {
     try {
-      await api.signInUser(email, password);
-      loadCurrentUser();
-      return true;
+      await _api.signInUser(email, password);
+      return loadCurrentUser();
     } catch (error) {
       print("test");
       _error = error.toString();
@@ -88,7 +74,8 @@ class UserModel extends Model {
   Future<bool> registerUser(
       String email, String password, String firstName, String lastName) async {
     try {
-      api.registerUser(email, password, firstName, lastName);
+      _api.registerUser(email, password, firstName, lastName);
+      _error = "";
       return true;
     } catch (error) {
       _error = error.toString();
@@ -99,10 +86,11 @@ class UserModel extends Model {
 
   Future<bool> signOut() async {
     try {
-      await api.signOutUser();
+      await _api.signOutUser();
       _currentCourse = null;
       _currentUser = null;
       _currentTeam = null;
+      _error = "";
       return true;
     }catch(error){
       _error = error.toString();
@@ -112,8 +100,13 @@ class UserModel extends Model {
   }
 
   void changeCourse(String courseId) async {
-    await _loadCourseAndTeam(courseId);
-    notifyListeners();
+    try {
+      await _loadCourseAndTeam(courseId);
+      notifyListeners();
+    }catch(error){
+      _error = error.toString();
+      print(_error);
+    }
   }
 
   Future<bool> joinTeam(Team team) async {
@@ -133,6 +126,7 @@ class UserModel extends Model {
         //set the current team
         _currentTeam = team;
         //return successful execution
+        _error = "";
         notifyListeners();
         return true;
       }
@@ -157,7 +151,7 @@ class UserModel extends Model {
 
       //set local team to null
       _currentTeam = null;
-
+      _error = "";
       notifyListeners();
       return true;
     } catch (e) {
@@ -177,7 +171,7 @@ class UserModel extends Model {
 
 
   Future<User> getUser(String uid) async {
-    return api.getUser(uid);
+    return _api.getUser(uid);
   }
 
   //Corresponding functions in notification system.
