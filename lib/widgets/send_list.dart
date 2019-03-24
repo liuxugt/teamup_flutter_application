@@ -90,8 +90,8 @@ class SendApplications extends StatelessWidget{
         decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
         child: ListTile(
           isThreeLine: true,
-          title: Text("To " + notification.to),
-          subtitle: Text("Apply to Join " + notification.team),
+          title: Text("To " + notification.toName),
+          subtitle: Text("Apply to Join " + notification.teamName),
           onTap: (){
             Navigator.push(
               context,
@@ -153,8 +153,8 @@ class SendInvitations extends StatelessWidget{
         decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
         child: ListTile(
           isThreeLine: true,
-          title: Text("To" + notification.to),
-          subtitle: Text("Invite you to join " + notification.team),
+          title: Text("To " + notification.toName),
+          subtitle: Text("Invite you to join team " + notification.teamName),
           onTap: (){
             Navigator.push(
               context,
