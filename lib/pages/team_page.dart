@@ -66,7 +66,8 @@ class TeamPage extends StatelessWidget {
       return FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () {
-            model.joinTeam(team);
+            model.createApplications(model.currentUser.id, team.leader, team.id, model.currentCourse.id);
+            //model.joinTeam(team);
           });
     });
   }

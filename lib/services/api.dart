@@ -40,8 +40,10 @@ class API {
   }
 
   Future<void> signInUser(String email, String password) async {
+    print("begin signin");
     final FirebaseUser user = await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
+    print("signin complete");
     assert (user != null);
     assert(await user.getIdToken() != null);
     final FirebaseUser currentUser = await _firebaseAuth.currentUser();
@@ -73,4 +75,5 @@ class API {
       'onboard_complete': false,
     });
   }
+
 }

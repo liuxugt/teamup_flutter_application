@@ -6,11 +6,12 @@ class Team {
   String description;
   String _id;
   int availableSpots;
-
+  String _leader;
 
 
   String get id => _id;
   bool get isFull => availableSpots == 0;
+  String get leader => _leader;
 
 
 
@@ -23,6 +24,7 @@ class Team {
     description = data['description'];
     _id = snap.documentID;
     availableSpots = data['available_spots'];
+    _leader = data['leader'];
   }
 
 
@@ -34,5 +36,6 @@ class Team {
     description = data['description'];
     _id = data['id'];
     availableSpots = data['available_spots'];
+    _leader = data['leader'];
   }
 }
