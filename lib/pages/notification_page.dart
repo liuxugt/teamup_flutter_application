@@ -4,7 +4,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/pages/team_page.dart';
 import 'package:teamup_app/models/user_model.dart';
 import 'package:teamup_app/objects/notification.dart';
-
+/*
 class ApplicationPage extends StatelessWidget {
   Notifi notification;
   ApplicationPage({this.notification});
@@ -196,3 +196,4 @@ class InvitationPage extends StatelessWidget{
     );
   }
 }
+*/

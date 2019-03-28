@@ -28,12 +28,13 @@ class API {
         await _firestore.document('/courses/$courseId').get();
     return Course.fromSnapshot(courseSnap);
   }
-
+  /*
   Future<CourseMember> getCourseMember(String courseId, String memberId) async {
     DocumentSnapshot courseMemberSnap =
         await _firestore.document('/courses/$courseId/members/$memberId').get();
     return CourseMember.fromSnapshot(courseMemberSnap);
   }
+  */
 
   Future<FirebaseUser> getCurrentUser() async {
     return await _firebaseAuth.currentUser();
@@ -72,6 +73,8 @@ class API {
       'attributes': {},
       'photo_url': "http://rkhealth.com/wp-content/uploads/5.jpg",
       'onboard_complete': false,
+      'teams': [],
+      'course_team': {},
     });
   }
 
@@ -80,5 +83,15 @@ class API {
     await _firestore
         .document('/users/$uid')
         .setData({'attributes': attributes}, merge: true);
+  }
+
+
+  //New Added for changing database Structure
+  CollectionReference getUserRef(){
+    return _firestore.collection('users').reference();
+  }
+
+  DocumentReference getUserDoc(String userId){
+    return _firestore.collection('users').document(userId);
   }
 }

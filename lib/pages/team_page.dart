@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:teamup_app/objects/course_member.dart';
+import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -9,7 +9,7 @@ class TeamPage extends StatelessWidget {
   final Team team;
   TeamPage({this.team});
 
-  Widget _makeClassmateCard(CourseMember member, BuildContext context) {
+  Widget _makeClassmateCard(User user, BuildContext context) {
     return Card(
       elevation: 2.0,
       margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
@@ -17,10 +17,10 @@ class TeamPage extends StatelessWidget {
         decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
         child: ListTile(
           leading: CircleAvatar(
-            backgroundImage: NetworkImage(member.photoURL),
+            backgroundImage: NetworkImage(user.photoURL),
           ),
-          title: Text('${member.firstName} ${member.lastName}'),
-          subtitle: Text(member.headline),
+          title: Text('${user.firstName} ${user.lastName}'),
+          subtitle: Text(user.email),
         ),
       ),
     );
@@ -39,7 +39,7 @@ class TeamPage extends StatelessWidget {
               return ListView(
                   children: snapshot.data.documents.map((document) {
                 return _makeClassmateCard(
-                    CourseMember.fromSnapshotData(document.data), context);
+                    User.fromSnapshotData(document.data), context);
               }).toList());
           }
         });
@@ -52,6 +52,7 @@ class TeamPage extends StatelessWidget {
         return FloatingActionButton(
             child: Icon(Icons.remove),
             onPressed: () {
+              print('pressed to leave');
               model.leaveCurrentTeam();
             });
 
@@ -66,8 +67,8 @@ class TeamPage extends StatelessWidget {
       return FloatingActionButton(
           child: Icon(Icons.add),
           onPressed: () {
-            model.createApplications(model.currentUser.id, team.leader, team.id, model.currentCourse.id);
-            //model.joinTeam(team);
+            //model.createApplications(model.currentUser.id, team.leader, team.id, model.currentCourse.id);
+            model.joinTeam(team);
           });
     });
   }

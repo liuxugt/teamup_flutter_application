@@ -5,7 +5,7 @@ import 'package:teamup_app/models/user_model.dart';
 import 'package:teamup_app/objects/notification.dart';
 import 'package:teamup_app/pages/notification_page.dart';
 
-
+/*
 class ReceiveList extends StatelessWidget{
   @override
   Widget build(BuildContext context){
@@ -166,4 +166,4 @@ class ReceiveInvitations extends StatelessWidget{
       ),
     );
   }
-}
+}*/
