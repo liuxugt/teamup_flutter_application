@@ -48,6 +48,7 @@ class UserModel extends Model {
   }
 
   Future<void> _loadCourseAndTeam([String id = ""]) async {
+    print(id);
     String courseId = (id.isEmpty) ? _currentUser.courseIds.first : id;
 
     _currentCourse = await _api.getCourse(courseId);
@@ -175,38 +176,17 @@ class UserModel extends Model {
   }
 
   //Corresponding functions in notification system.
-  Stream<QuerySnapshot> getSendAppllication(){
-    if(_currentUser == null || _currentCourse == null) return null;
-    return _currentCourse.applicationRef
-        .where('from', isEqualTo: _currentUser.id)
-        .snapshots();
-  }
-
-  Stream<QuerySnapshot> getReceivedApplication(){
-    if(_currentUser == null || _currentCourse == null) return null;
-    return _currentCourse.applicationRef
-        .where('to', isEqualTo: _currentUser.id)
-        .snapshots();
-  }
-
-  Stream<QuerySnapshot> getSendInvitation(){
-    if(_currentUser == null || _currentCourse == null) return null;
-    return _currentCourse.invitationRef
-        .where('from', isEqualTo: _currentUser.id)
-        .snapshots();
-  }
-
-  Stream<QuerySnapshot> getReceivedInvitation(){
-    if(_currentUser == null || _currentCourse == null) return null;
-    return _currentCourse.invitationRef
-        .where('to', isEqualTo: _currentUser.id)
-        .snapshots();
+  Stream<QuerySnapshot> getMessage(){
+    if(_currentUser != null && _currentCourse != null){
+      return _currentCourse.messagesRef.where('related_user', arrayContains: _currentUser.id).snapshots();
+    }
+    return null;
   }
 
   //Functions in creating and response to applications.
 
   Future<void> createApplications(String fromID, String toID, String teamID, String courseID) async{
-
+    /*
     DocumentSnapshot fromRef = await _currentCourse.membersRef.document(fromID).get();
     DocumentSnapshot toRef = await _currentCourse.membersRef.document(toID).get();
     DocumentSnapshot teamRef = await _currentCourse.teamsRef.document(teamID).get();
@@ -221,10 +201,11 @@ class UserModel extends Model {
     });
     application.updateData({
       "id": application.documentID
-    });
+    });*/
   }
 
   Future<void> acceptApplication(Notifi notification) async{
+    /*
     DocumentReference from = _currentCourse.membersRef.document(notification.from);
     DocumentReference team = _currentCourse.teamsRef.document(notification.team);
     DocumentSnapshot teamSnapshot = await team.get();
@@ -243,10 +224,11 @@ class UserModel extends Model {
     }
     else{
       print("error in adding applicant into team");
-    }
+    }*/
   }
 
   Future<void> rejectApplication(Notifi notification) async{
+    /*
     DocumentReference note = _currentCourse.applicationRef.document(notification.id);
     note.updateData({
       "status": "rejected"
@@ -270,9 +252,11 @@ class UserModel extends Model {
     invitation.updateData({
       "id": invitation.documentID
     });
+    */
   }
 
   Future<void> acceptInvitation(Notifi notification) async{
+    /*
     DocumentReference to = _currentCourse.membersRef.document(notification.to);
     DocumentReference team = _currentCourse.teamsRef.document(notification.from);
     DocumentSnapshot teamSnapshot = await team.get();
@@ -292,13 +276,16 @@ class UserModel extends Model {
     else{
       print("error in accepting invitaitons");
     }
+    */
   }
 
   Future<void> rejectInvitation(Notifi notification) async{
+    /*
     DocumentReference note = _currentCourse.invitationRef.document(notification.id);
     note.updateData({
       "status": "rejected"
     });
+    */
   }
 
 }

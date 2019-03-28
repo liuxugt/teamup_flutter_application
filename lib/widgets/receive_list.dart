@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+/*import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/models/user_model.dart';
@@ -57,7 +57,7 @@ class ReceiveApplications extends StatelessWidget{
                   stream: model.getReceivedApplication(),
                   builder: (context, snapshot) {
                     if(snapshot.hasError){
-                      return Text('Error: %{snapshot.error}');
+                      return Text('Error: ${snapshot.error}');
                     }
                     switch(snapshot.connectionState){
                       case ConnectionState.waiting:
@@ -166,4 +166,4 @@ class ReceiveInvitations extends StatelessWidget{
       ),
     );
   }
-}
+}*/

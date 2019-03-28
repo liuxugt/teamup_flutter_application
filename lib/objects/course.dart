@@ -6,8 +6,7 @@ class Course {
   String _id;
   CollectionReference _membersRef;
   CollectionReference _teamsRef;
-  CollectionReference _applicationRef;
-  CollectionReference _invitationRef;
+  CollectionReference _messagesRef;
 
   Course.fromSnapshot(DocumentSnapshot courseSnap){
     _name = courseSnap.data['name'];
@@ -15,8 +14,7 @@ class Course {
     _id = courseSnap.documentID;
     _membersRef = courseSnap.reference.collection('members').reference();
     _teamsRef = courseSnap.reference.collection('teams').reference();
-    _applicationRef = courseSnap.reference.collection('applications').reference();
-    _invitationRef = courseSnap.reference.collection('invitations').reference();
+    _messagesRef = courseSnap.reference.collection('messages').reference();
   }
 
 
@@ -26,8 +24,7 @@ class Course {
   CollectionReference get membersRef => _membersRef;
 //  CollectionReference get projectsRef => _projectsRef;
   CollectionReference get teamsRef => _teamsRef;
-  CollectionReference get applicationRef => _applicationRef;
-  CollectionReference get invitationRef => _invitationRef;
+  CollectionReference get messagesRef => _messagesRef;
 
 
   //TODO: potentially do the conversion here from QuerySnapshot to Team here and create a stream<Team> that is fed to the pages for better abstraction
@@ -35,8 +32,7 @@ class Course {
   Stream<QuerySnapshot> get unavailableTeamsStream => _teamsRef.where("available_spots", isEqualTo: 0).snapshots();
   Stream<QuerySnapshot> get availableMembersStream => _membersRef.orderBy("team").snapshots();
 
-  Stream<QuerySnapshot> get pendingApplicationStream => _applicationRef.where("status", isEqualTo: "pending").snapshots();
-  Stream<QuerySnapshot> get respondedApplicationStream => _applicationRef.where("status", isEqualTo: "responded").snapshots();
-  Stream<QuerySnapshot> get pendingInvitationStream => _invitationRef.where("status", isEqualTo: "pending").snapshots();
-  Stream<QuerySnapshot> get respondedInvitationStream => _invitationRef.where("status", isEqualTo: "responded").snapshots();
+  Stream<QuerySnapshot> get pendingMessageStream => _messagesRef.where('status', isEqualTo: 'pending').snapshots();
+  Stream<QuerySnapshot> get respondedMessageStream => _messagesRef.where('status', isEqualTo: 'responded').snapshots();
+
 }
