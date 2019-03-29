@@ -1,12 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:teamup_app/models/member_model.dart';
 import 'package:teamup_app/models/user_model.dart';
-import 'package:teamup_app/pages/member_page.dart';
+import 'package:teamup_app/pages/profile_page.dart';
 import 'package:teamup_app/objects/user.dart';
 
 class ClassmatesList extends StatelessWidget {
+
+
   Widget _makeClassmateCard(User user, BuildContext context) {
     return Card(
       elevation: 1.0,
@@ -18,12 +19,12 @@ class ClassmatesList extends StatelessWidget {
             title: Text('${user.firstName} ${user.lastName}',
                 style: TextStyle(fontWeight: FontWeight.bold)),
             subtitle: Text(user.email),
-            //onTap: () {
-            //  Navigator.push(
-            //      context,
-            //      MaterialPageRoute(
-            //          builder: (context) => ScopedModel<MemberModel>(model: MemberModel(member: member),child: MemberPage(),)));
-            //}
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => ProfilePage(user: user,)));
+            }
             ),
       ),
     );
