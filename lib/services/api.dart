@@ -79,10 +79,12 @@ class API {
   }
 
 
-  Future<void> joinTeam(String userId, String courseId, Team team) async {
-    String teamId = team.id;
+  Future<void> joinTeam(String userId, String courseId, String teamId) async {
+//    String teamId = team.id;
     DocumentReference teamRef = _firestore.document('courses/$courseId/teams/$teamId');
     DocumentReference userRef = _firestore.document('users/$userId');
+
+    Team team = await getTeam(courseId, teamId);
 
     //add the user to the team in the database
     await teamRef.updateData({'available_spots': --team.availableSpots});
@@ -96,10 +98,13 @@ class API {
     );
   }
 
-  Future<void> leaveTeam(String userId, String courseId, Team team) async {
-    String teamId = team.id;
+  Future<void> leaveTeam(String userId, String courseId, String teamId) async {
+//    String teamId = team.id;
     DocumentReference teamRef = _firestore.document('/courses/$courseId/teams/$teamId');
     DocumentReference userRef = _firestore.document('users/$userId');
+
+
+    Team team = await getTeam(courseId, teamId);
 
 
     await userRef.updateData({

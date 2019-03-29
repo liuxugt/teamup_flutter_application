@@ -118,12 +118,13 @@ class UserModel extends Model {
     try {
       String courseId = _currentCourse.id;
       String userId = _currentUser.id;
+      String teamId = team.id;
 
 //      DocumentReference teamRef = _currentCourse.teamsRef.document(team.id);
       //if user is not part of a team and the team is not full
       if (!userInTeam && !team.isFull) {
 
-        await _api.joinTeam(userId, courseId, team);
+        await _api.joinTeam(userId, courseId, teamId);
 
         //set the current team
         _currentTeam = await _api.getTeam(courseId, team.id);
@@ -145,7 +146,7 @@ class UserModel extends Model {
       String courseId = _currentCourse.id;
       String userId = _currentUser.id;
 
-      await _api.leaveTeam(userId, courseId, _currentTeam);
+      await _api.leaveTeam(userId, courseId, _currentTeam.id);
 
       _currentUser.teamIds.remove(_currentTeam.id);
       print(_currentUser.courseTeam);
