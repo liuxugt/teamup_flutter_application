@@ -3,6 +3,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/models/user_model.dart';
 import 'package:teamup_app/pages/onboarding_page.dart';
+import 'package:teamup_app/pages/profile_page.dart';
 import 'package:teamup_app/pages/select_course_page.dart';
 import 'package:teamup_app/pages/user_page.dart';
 
@@ -52,7 +53,7 @@ class CustomDrawer extends StatelessWidget {
         decoration: BoxDecoration(color: Colors.blue),
         onDetailsPressed: (){
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => UserPage()));
+              builder: (context) => ProfilePage(user: user,)));
         },
       )
     ];
