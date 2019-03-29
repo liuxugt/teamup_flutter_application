@@ -182,6 +182,12 @@ class UserModel extends Model {
     return _userRef.where('courses', arrayContains: _currentCourse.id).snapshots();
   }
 
+  Stream<QuerySnapshot> getTeams() {
+    if (_currentCourse == null) return null;
+    return _currentCourse.availableTeamsStream;
+  }
+
+
   /*
   //Corresponding functions in notification system.
   Stream<QuerySnapshot> getSendAppllication(){

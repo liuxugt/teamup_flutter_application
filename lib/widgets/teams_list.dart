@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/models/user_model.dart';
+import 'package:teamup_app/pages/propose_team_page.dart';
 import 'package:teamup_app/pages/team_page.dart';
 
 class TeamsList extends StatelessWidget {
   Widget _makeTeamCard(Team team, BuildContext context) {
     return Card(
-      elevation: 2.0,
+      elevation: 0.0,
       margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       child: Container(
         decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
@@ -43,12 +44,35 @@ class TeamsList extends StatelessWidget {
               ),
             ),
             // if I am in a team show my team card, if not don't show
-            model.userInTeam
-                ? Center(child: _makeTeamCard(model.currentTeam, context))
-                : Center(
-                    child: Text('Oops! You\'re not in a team yet.',
-                        style: TextStyle(
-                            color: Colors.black, fontWeight: FontWeight.bold))),
+            Center(
+              child: model.userInTeam
+                  ? _makeTeamCard(model.currentTeam, context)
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        Text(
+                          'Oops! You are not in a team yet!',
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.bold),
+                        ),
+                        Container(height: 16.0,),
+                        FlatButton(
+                          child: Text(
+                            'Propose a new Team',
+                          ),
+                          color: Colors.blue,
+                          textColor: Colors.white,
+                          onPressed: () {
+                            int courseGroupSize = ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentCourse.groupSize;
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ProposeTeamPage(maxGroupSize: courseGroupSize,)));
+                          },
+                        )
+                      ],
+                    ),
+            ),
             Padding(
               padding: EdgeInsets.all(20.0),
               child: Text("Available Teams",
@@ -57,7 +81,7 @@ class TeamsList extends StatelessWidget {
             ),
             Flexible(
                 child: StreamBuilder<QuerySnapshot>(
-                    stream: model.currentCourse.availableTeamsStream,
+                    stream: model.getTeams(),
                     builder: (context, snapshot) {
                       if (snapshot.hasError)
                         return Text('Error: %{snapshot.error}');
