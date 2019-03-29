@@ -28,12 +28,13 @@ class API {
         await _firestore.document('/courses/$courseId').get();
     return Course.fromSnapshot(courseSnap);
   }
-
+  /*
   Future<CourseMember> getCourseMember(String courseId, String memberId) async {
     DocumentSnapshot courseMemberSnap =
         await _firestore.document('/courses/$courseId/members/$memberId').get();
     return CourseMember.fromSnapshot(courseMemberSnap);
   }
+  */
 
   Future<FirebaseUser> getCurrentUser() async {
     return await _firebaseAuth.currentUser();
@@ -72,8 +73,52 @@ class API {
       'attributes': {},
       'photo_url': "http://rkhealth.com/wp-content/uploads/5.jpg",
       'onboard_complete': false,
+      'teams': [],
+      'course_team': {},
     });
   }
+
+
+  Future<void> joinTeam(String userId, String courseId, String teamId) async {
+//    String teamId = team.id;
+    DocumentReference teamRef = _firestore.document('courses/$courseId/teams/$teamId');
+    DocumentReference userRef = _firestore.document('users/$userId');
+
+    Team team = await getTeam(courseId, teamId);
+
+    //add the user to the team in the database
+    await teamRef.updateData({'available_spots': --team.availableSpots});
+
+    //add the team to the CourseMember
+    await userRef.updateData(
+        {
+          'course_team.$courseId' : teamId,
+          'teams' : FieldValue.arrayUnion([teamId]),
+        }
+    );
+  }
+
+  Future<void> leaveTeam(String userId, String courseId, String teamId) async {
+//    String teamId = team.id;
+    DocumentReference teamRef = _firestore.document('/courses/$courseId/teams/$teamId');
+    DocumentReference userRef = _firestore.document('users/$userId');
+
+
+    Team team = await getTeam(courseId, teamId);
+
+
+    await userRef.updateData({
+      "teams": FieldValue.arrayRemove([teamId]),
+      "course_team.$courseId": null,
+    });
+    /*
+      await _currentCourse.membersRef
+          .document(_currentUser.id)
+          .setData({'team': null}, merge: true);
+      */
+    await teamRef.updateData({'available_spots': ++team.availableSpots});
+  }
+
 
   Future<void> updateUserAttributes(
       String uid, Map<String, dynamic> attributes) async {
@@ -81,4 +126,19 @@ class API {
         .document('/users/$uid')
         .setData({'attributes': attributes}, merge: true);
   }
+
+
+  //New Added for changing database Structure
+  CollectionReference getUserRef(){
+    return _firestore.collection('users').reference();
+  }
+
+  DocumentReference getUserDoc(String userId){
+    return _firestore.collection('users').document(userId);
+  }
+
+
+
+
+
 }

@@ -28,8 +28,12 @@ class UserModel extends Model {
   String get courseTitle => _currentCourse?.id ?? "No Courses";
   bool get userInTeam => _currentTeam != null;
 
+  //New Added variable for changing database structure
+  CollectionReference _userRef;
+
   UserModel() {
     print("User Model Initialized");
+    _userRef = _api.getUserRef();
 //    loadCurrentUser();
   }
 
@@ -52,11 +56,12 @@ class UserModel extends Model {
 
     _currentCourse = await _api.getCourse(courseId);
 
-    CourseMember courseMember =
-    await _api.getCourseMember(courseId, _currentUser.id);
-
-    _currentTeam = (courseMember?.teamId != null) ? await _api.getTeam(
-        courseId, courseMember.teamId) : null;
+    if(courseId == ""){
+      _currentTeam = null;
+    }
+    else{
+      _currentTeam = (_currentUser.courseTeam[courseId] != null) ? await _api.getTeam(courseId, _currentUser.courseTeam[courseId]) : null;
+    }
   }
 
   Future<bool> signInUser(String email, String password) async {
@@ -111,20 +116,18 @@ class UserModel extends Model {
 
   Future<bool> joinTeam(Team team) async {
     try {
-      DocumentReference teamRef = _currentCourse.teamsRef.document(team.id);
+      String courseId = _currentCourse.id;
+      String userId = _currentUser.id;
+      String teamId = team.id;
+
+//      DocumentReference teamRef = _currentCourse.teamsRef.document(team.id);
       //if user is not part of a team and the team is not full
       if (!userInTeam && !team.isFull) {
-        //add the user to the team in the database
-        await teamRef
-            .setData({'available_spots': --team.availableSpots}, merge: true);
 
-        //add the team to the CourseMember
-        await _currentCourse.membersRef
-            .document(_currentUser.id)
-            .setData({'team': team.id}, merge: true);
+        await _api.joinTeam(userId, courseId, teamId);
 
         //set the current team
-        _currentTeam = team;
+        _currentTeam = await _api.getTeam(courseId, team.id);
         //return successful execution
         _error = "";
         notifyListeners();
@@ -137,18 +140,17 @@ class UserModel extends Model {
     return false;
   }
 
+
   Future<bool> leaveCurrentTeam() async {
     try {
-      DocumentReference teamRef =
-          _currentCourse.teamsRef.document(_currentTeam.id);
+      String courseId = _currentCourse.id;
+      String userId = _currentUser.id;
 
-      await _currentCourse.membersRef
-          .document(_currentUser.id)
-          .setData({'team': null}, merge: true);
+      await _api.leaveTeam(userId, courseId, _currentTeam.id);
 
-      await teamRef.setData({'available_spots': ++_currentTeam.availableSpots},
-          merge: true);
-
+      _currentUser.teamIds.remove(_currentTeam.id);
+      print(_currentUser.courseTeam);
+      _currentUser.courseTeam.update(_currentCourse.id, (dynamic val) => null, ifAbsent: () => null);
       //set local team to null
       _currentTeam = null;
       _error = "";
@@ -162,18 +164,25 @@ class UserModel extends Model {
   }
 
 
-  Stream<QuerySnapshot> getTeamMembersStream(String teamId) {
-    if (_currentCourse == null) return null;
-    return _currentCourse.membersRef
-        .where('team', isEqualTo: teamId)
-        .snapshots();
-  }
 
 
   Future<User> getUser(String uid) async {
     return _api.getUser(uid);
   }
 
+  //Added Functions for changing database structure
+
+  Stream<QuerySnapshot> getTeamMembersStream(String teamId) {
+    if (_currentCourse == null) return null;
+    return _userRef.where('teams', arrayContains: teamId).snapshots();
+  }
+
+  Stream<QuerySnapshot> getClassMates(){
+    if(_currentCourse == null) return null;
+    return _userRef.where('courses', arrayContains: _currentCourse.id).snapshots();
+  }
+
+  /*
   //Corresponding functions in notification system.
   Stream<QuerySnapshot> getSendAppllication(){
     if(_currentUser == null || _currentCourse == null) return null;
@@ -202,9 +211,11 @@ class UserModel extends Model {
         .where('to', isEqualTo: _currentUser.id)
         .snapshots();
   }
+  */
+
 
   //Functions in creating and response to applications.
-
+  /*
   Future<void> createApplications(String fromID, String toID, String teamID, String courseID) async{
 
     DocumentSnapshot fromRef = await _currentCourse.membersRef.document(fromID).get();
@@ -300,5 +311,6 @@ class UserModel extends Model {
       "status": "rejected"
     });
   }
+  */
 
 }

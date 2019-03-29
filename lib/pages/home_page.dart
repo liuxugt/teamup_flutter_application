@@ -11,7 +11,7 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           title: Text(ScopedModel.of<UserModel>(context, rebuildOnChange: true)
@@ -24,8 +24,8 @@ class HomePage extends StatelessWidget {
           tabs: <Widget>[
             Tab(icon: Icon(Icons.person)),
             Tab(icon: Icon(Icons.group)),
-            Tab(icon: Icon(Icons.mail)),
-            Tab(icon: Icon(Icons.mail_outline))
+            //Tab(icon: Icon(Icons.mail)),
+            //Tab(icon: Icon(Icons.mail_outline))
           ],
           labelColor: Colors.blue,
           unselectedLabelColor: Colors.grey,
@@ -34,8 +34,8 @@ class HomePage extends StatelessWidget {
             children: [
           ClassmatesList(),
           TeamsList(),
-          SendList(),
-          ReceiveList()
+          //SendList(),
+          //ReceiveList()
         ]),
         drawer: CustomDrawer(),
       ),

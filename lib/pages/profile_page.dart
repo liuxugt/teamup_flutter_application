@@ -1,53 +1,56 @@
 import 'package:flutter/material.dart';
-import 'package:scoped_model/scoped_model.dart';
-import 'package:teamup_app/models/member_model.dart';
+import 'package:teamup_app/objects/user.dart';
 
 
-class MemberPage extends StatelessWidget {
-  Widget _makeBody(BuildContext context, MemberModel model) {
+class ProfilePage extends StatelessWidget {
+
+  final User user;
+  ProfilePage({this.user});
+
+  Widget _makeBody() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Padding(
           padding: EdgeInsets.all(20.0),
         ),
-        _makeHeader(context, model),
-        _makeAttributeList(context, model),
+        _makeHeader(),
+        _makeAttributeList(),
       ],
     );
   }
 
-  Widget _makeHeader(BuildContext context, MemberModel model) {
+  Widget _makeHeader() {
     return Column(
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(10.0),
           child: CircleAvatar(
-            backgroundImage: NetworkImage(model.member.photoURL),
+            backgroundImage: NetworkImage(user.photoURL),
             radius: 40.0,
           ),
         ),
         Padding(
           padding: const EdgeInsets.all(4.0),
           child: Text(
-            '${model.member.firstName} ${model.member.lastName}',
+            '${user.firstName} ${user.lastName}',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
           ),
         ),
-        Padding(
-          padding: const EdgeInsets.all(4.0),
-          child: Text(model.member.headline,
-              style: TextStyle(fontSize: 18.0, color: Colors.black54)),
-        ),
+// TODO: Add headline here
+//        Padding(
+//          padding: const EdgeInsets.all(4.0),
+//          child: Text(user.headline,
+//              style: TextStyle(fontSize: 18.0, color: Colors.black54)),
+//        ),
       ],
     );
   }
 
-  Widget _makeAttributeList(BuildContext context, MemberModel model) {
+  Widget _makeAttributeList() {
     return Padding(
       padding: const EdgeInsets.all(32.0),
-      child: model.userLoaded
-          ? Column(
+      child: Column(
               children: <Widget>[
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -57,27 +60,22 @@ class MemberPage extends StatelessWidget {
                       style: TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 16.0),
                     ),
-                    Text(model.user.email,
+                    Text(user.email,
                         style: TextStyle(fontSize: 16.0, color: Colors.black54))
                   ],
                 ),
                 //TODO: Add all the attributes for a user here
               ],
             )
-          : Center(
-              child: CircularProgressIndicator(),
-            ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<MemberModel>(builder: (context, child, model) {
       return Scaffold(
           appBar: AppBar(
-            title: Text('${model.member.firstName} ${model.member.lastName}'),
+            title: Text('${user.firstName} ${user.lastName}'),
           ),
-          body: _makeBody(context, model));
-    });
+          body: _makeBody());
   }
 }

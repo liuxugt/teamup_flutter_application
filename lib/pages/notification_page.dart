@@ -1,3 +1,5 @@
+
+/*
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -196,3 +198,4 @@ class InvitationPage extends StatelessWidget{
     );
   }
 }
+*/
