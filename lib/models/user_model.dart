@@ -116,28 +116,17 @@ class UserModel extends Model {
 
   Future<bool> joinTeam(Team team) async {
     try {
-      DocumentReference teamRef = _currentCourse.teamsRef.document(team.id);
+      String courseId = _currentCourse.id;
+      String userId = _currentUser.id;
+
+//      DocumentReference teamRef = _currentCourse.teamsRef.document(team.id);
       //if user is not part of a team and the team is not full
       if (!userInTeam && !team.isFull) {
-        //add the user to the team in the database
-        await teamRef
-            .setData({'available_spots': --team.availableSpots}, merge: true);
 
-        //add the team to the CourseMember
-        await _userRef.document(currentUser.id).updateData(
-          {
-            'course_team.${currentCourse.id}' : team.id,
-            'teams' : FieldValue.arrayUnion([team.id]),
-          }
-        );
-        /*
-        await _currentCourse.membersRef
-            .document(_currentUser.id)
-            .setData({'team': team.id}, merge: true);
-        */
+        await _api.joinTeam(userId, courseId, team);
 
         //set the current team
-        _currentTeam = team;
+        _currentTeam = await _api.getTeam(courseId, team.id);
         //return successful execution
         _error = "";
         notifyListeners();
@@ -153,26 +142,14 @@ class UserModel extends Model {
 
   Future<bool> leaveCurrentTeam() async {
     try {
-      DocumentReference teamRef =
-          _currentCourse.teamsRef.document(_currentTeam.id);
+      String courseId = _currentCourse.id;
+      String userId = _currentUser.id;
+
+      await _api.leaveTeam(userId, courseId, _currentTeam);
+
       _currentUser.teamIds.remove(_currentTeam.id);
       print(_currentUser.courseTeam);
       _currentUser.courseTeam.update(_currentCourse.id, (dynamic val) => null, ifAbsent: () => null);
-      print("here");
-      DocumentReference currentUserRef = _api.getUserDoc(currentUser.id);
-
-      await currentUserRef.updateData({
-        "teams": FieldValue.arrayRemove([_currentTeam.id]),
-        "course_team.${_currentCourse.id}": null,
-      });
-      /*
-      await _currentCourse.membersRef
-          .document(_currentUser.id)
-          .setData({'team': null}, merge: true);
-      */
-      await teamRef.setData({'available_spots': ++_currentTeam.availableSpots},
-          merge: true);
-
       //set local team to null
       _currentTeam = null;
       _error = "";
