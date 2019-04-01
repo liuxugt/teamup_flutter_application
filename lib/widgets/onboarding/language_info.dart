@@ -8,7 +8,15 @@ class LanguageInfoTab extends StatefulWidget {
 }
 
 class _LanguageInfoTabState extends State<LanguageInfoTab> {
-  final List<String> languages = ['English', 'Spanish', 'Korean', 'Mandarin', 'Japanese', 'French', 'German'];
+  final List<String> languages = [
+    'English',
+    'Spanish',
+    'Korean',
+    'Mandarin',
+    'Japanese',
+    'French',
+    'German'
+  ];
 
   List<String> _languageItems;
 
@@ -34,11 +42,8 @@ class _LanguageInfoTabState extends State<LanguageInfoTab> {
                 _languageItems.removeWhere((String item) => item == language);
               }
             });
-            ScopedModel.of<OnboardingModel>(context,
-                rebuildOnChange: false)
+            ScopedModel.of<OnboardingModel>(context, rebuildOnChange: false)
                 .languages = _languageItems;
-            print (_languageItems);
-
           },
         ),
       );
@@ -62,51 +67,10 @@ class _LanguageInfoTabState extends State<LanguageInfoTab> {
           children: languageWidgets.toList(),
         ),
 
-
         Container(
           height: 32.0,
         ),
 
-
-
-//        Container(
-//          height: 32.0,
-//        ),
-//        Text(
-//          "Major area of study",
-//          style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
-//        ),
-//        DropdownButton(
-//          isExpanded: true,
-//          value: _majorValue,
-//          items: _majorItems,
-//          onChanged: (value) {
-//            setState(() {
-//              _majorValue = value;
-//            });
-//            ScopedModel.of<OnboardingModel>(context, rebuildOnChange: false)
-//                .major = value;
-//          },
-//        ),
-//        Container(
-//          height: 32.0,
-//        ),
-//        Text(
-//          "Year of study",
-//          style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
-//        ),
-//        DropdownButton(
-//          isExpanded: true,
-//          value: _yearOfStudyValue,
-//          items: _yearOfStudyItems,
-//          onChanged: (value) {
-//            setState(() {
-//              _yearOfStudyValue = value;
-//            });
-//            ScopedModel.of<OnboardingModel>(context, rebuildOnChange: false)
-//                .yearOfStudy = value;
-//          },
-//        ),
       ],
     );
   }
