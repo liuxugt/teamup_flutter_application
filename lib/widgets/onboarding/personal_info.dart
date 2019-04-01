@@ -83,7 +83,7 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
                       _genderValue = value;
                     });
                     ScopedModel.of<OnboardingModel>(context,
-                            rebuildOnChange: false)
+                        rebuildOnChange: false)
                         .gender = value;
                   },
 //                  onSaved: (value) => _gender = value,

@@ -11,7 +11,7 @@ class OnboardingModel extends Model{
 
 
   String headline = '';
-  String gender;
+  String gender = '';
   String birthDate;
   String major;
   String yearOfStudy;
@@ -31,6 +31,9 @@ class OnboardingModel extends Model{
 
     if(gender.isNotEmpty)
       attributes['gender'] = gender;
+
+    if(languages.length != 0)
+      attributes['languages'] = languages;
 
 //    if(birthDate.isNotEmpty)
 //      attributes['birth_date'] =
