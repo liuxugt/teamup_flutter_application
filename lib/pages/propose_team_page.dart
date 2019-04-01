@@ -1,4 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:teamup_app/models/user_model.dart';
+import 'package:teamup_app/objects/user.dart';
 
 class ProposeTeamPage extends StatefulWidget {
   final int maxGroupSize;
@@ -10,14 +14,42 @@ class ProposeTeamPage extends StatefulWidget {
 
 class _ProposeTeamPageState extends State<ProposeTeamPage> {
   final _formKey = GlobalKey<FormState>();
-  String _teamName;
-  String _teamDescription;
-  int _teamSize;
+
+  final List<String> _teamMateTraitOptions = [
+    "Member",
+    "Product Manager",
+    "Content Strategist",
+    "UX researcher",
+    "UX designer",
+    "UI designer",
+    "Interaction designer",
+    "Motion designer",
+    "Front-End designer",
+    "Front-End developer",
+    "Mobile app developer",
+    "Full-Stack Developer",
+    "Software Developer",
+    "Data Scientist",
+    "Quality Assurance",
+    "Technical Lead"
+  ];
+
+  List<String> _teamMatesToInvite = [];
+  String _teamName = "";
+  String _teamDescription = "";
   bool _isLoading = false;
+  List<String> _memberTraits;
+  List<User> _usersToInvite = [];
+
+  int get _teamSize => _memberTraits.length;
 
   @override
   void initState() {
-    _teamSize = widget.maxGroupSize;
+//    _teamSize = widget.maxGroupSize;
+    _memberTraits = ['Me'];
+    for (int i = 1; i < widget.maxGroupSize; i++) {
+      _memberTraits.add(_teamMateTraitOptions[0]);
+    }
   }
 
   bool _validateAndSave() {
@@ -42,16 +74,20 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
   Widget _makeBody() {
     return Padding(
       padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          _makeTeamNameInput(),
-          _makeTeamDescriptionInput(),
-          _makeTeamPreferenceInput(),
-          _makeInviteClassmatesButton(),
-          _makeTips(),
-          _makeFinishButton(),
-        ],
+      child: Form(
+        key: _formKey,
+        child: ListView(
+//        crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            _makeTeamNameInput(),
+            _makeTeamDescriptionInput(),
+            _makeTeamPreferenceInput(),
+            _makeInviteClassmatesButton(),
+            _makeInvitedUsersList(),
+            _makeTips(),
+            _makeFinishButton(),
+          ],
+        ),
       ),
     );
   }
@@ -90,7 +126,7 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
               hintText: 'Ideas',
             ),
             validator: (value) =>
-                value.isEmpty ? 'Team Name can\'t be empty' : null,
+                value.isEmpty ? 'Description can\'t be empty' : null,
             onSaved: (value) => _teamDescription = value,
           )
         ],
@@ -118,17 +154,17 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
 
   List<Widget> _makeTeamMemberIcons() {
     List<Widget> icons = [];
-    icons.add(_teamMateIcon(isCurrentUser: true));
-    for (int i = 1; i < _teamSize; i++) {
-      icons.add(_teamMateIcon());
+//    icons.add(_teamMateIcon());
+    for (int i = 0; i < _teamSize; i++) {
+      icons.add(_teamMateIcon(i));
     }
     return icons;
   }
 
-  Widget _teamMateIcon({isCurrentUser = false}) {
+  Widget _teamMateIcon(int idx) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.start,
+//      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         IconButton(
           iconSize: 48,
@@ -136,13 +172,50 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
             Icons.account_circle,
             color: Colors.grey[400],
           ),
-          onPressed: () {
-            //TODO: add popup to edit user
-          },
+          onPressed: () => idx == 0 ? null : _showEditTeamMate(idx),
         ),
-        isCurrentUser ? Text('Me') : Text('Member')
+        Container(
+          child: Center(
+              child: Text(
+            _memberTraits[idx],
+                textAlign: TextAlign.center,
+          )),
+          width: 70.0,
+        )
       ],
     );
+  }
+
+  _showEditTeamMate(int idx) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            title: Text('Edit teammate role'),
+            children: _makeDialogOptions(context, idx),
+          );
+        });
+  }
+
+  List<Widget> _makeDialogOptions(BuildContext context, int idx) {
+    List<Widget> options = [];
+    for (int i = 0; i < _teamMateTraitOptions.length; i++) {
+      options.add(SimpleDialogOption(
+        onPressed: () {
+          setState(() {
+            _memberTraits[idx] = _teamMateTraitOptions[i];
+          });
+          Navigator.of(context).pop();
+        },
+        child: Text(_teamMateTraitOptions[i]),
+      ));
+    }
+    options.add(FlatButton(
+      onPressed: () => Navigator.of(context).pop(),
+      child: Text("Cancel"),
+      textColor: Colors.blue,
+    ));
+    return options;
   }
 
   Widget _makeCounter() {
@@ -167,32 +240,64 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
 
   _incrementCount() {
     if (_teamSize < widget.maxGroupSize) {
-      _updateCounterBy(1);
+//      _updateCounterBy(1);
+      setState(() {
+        _memberTraits.add("Member");
+      });
     }
   }
 
   _decrementCount() {
     if (_teamSize > 1) {
-      _updateCounterBy(-1);
+//      _updateCounterBy(-1);
+      setState(() {
+        _memberTraits.removeLast();
+      });
     }
-  }
-
-  _updateCounterBy(int num) {
-    setState(() {
-      _teamSize += num;
-    });
   }
 
   Widget _makeInviteClassmatesButton() {
     return Center(
       child: FlatButton(
-          onPressed: () {},
+          onPressed: () => _openInviteTeamMates(context),
           child: Text(
             'invite classmates',
             style: TextStyle(color: Colors.blue, fontSize: 16.0),
           )),
     );
   }
+
+  _openInviteTeamMates(BuildContext context) async {
+    List<User> output = await Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => InviteTeamMatesScreen(
+              maxSelection: _teamSize - 1,
+            )));
+    print("Output from Invite Page: $output");
+    if(output != null && output.isNotEmpty){
+      setState(() {
+        _usersToInvite = output;
+      });
+    }
+  }
+
+  _makeInvitedUsersList(){
+    if(_usersToInvite.isEmpty)
+      return Container();
+
+    return Container(
+      child: ListView(
+        shrinkWrap: true,
+        physics: ClampingScrollPhysics(),
+        children: _usersToInvite.map((user){
+          return ListTile(
+            leading: CircleAvatar(backgroundImage: NetworkImage(user.photoURL),),
+            title: Text("${user.firstName} ${user.lastName}"),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
 
   Widget _makeTips() {
     return Padding(
@@ -208,15 +313,203 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
 
   Widget _makeFinishButton() {
     return Center(
-      child: _isLoading ? CircularProgressIndicator() : FlatButton(
-        onPressed: () {},
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
-          child: Text('DONE'),
-        ),
-        color: Colors.blue,
-        textColor: Colors.white,
+      child: _isLoading
+          ? CircularProgressIndicator()
+          : FlatButton(
+              onPressed: () {
+                _validateAndSave();
+              },
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
+                child: Text('DONE'),
+              ),
+              color: Colors.blue,
+              textColor: Colors.white,
+            ),
+    );
+  }
+}
+
+class InviteTeamMatesScreen extends StatefulWidget {
+  final int maxSelection;
+  InviteTeamMatesScreen({this.maxSelection});
+
+  @override
+  _InviteTeamMatesScreenState createState() => _InviteTeamMatesScreenState();
+}
+
+class _InviteTeamMatesScreenState extends State<InviteTeamMatesScreen> {
+//  Map<User, bool> _teamMatesSelectedMap = {};
+//  int get _numSelected => _teamMatesSelectedMap.length;
+
+  List<UserItem> items = [];
+  int _numSelected = 0;
+
+  List<User> _getSelectedUsers(){
+    List<User> selectedUsers = [];
+    for(UserItem item in items){
+      if(item.isCheck){
+        selectedUsers.add(item.user);
+      }
+    }
+    return selectedUsers;
+  }
+
+  bool _checkAndSelect(bool checkBoxSelected){
+    if(checkBoxSelected){
+      if(_numSelected < widget.maxSelection){
+        _numSelected++;
+        return true;
+      }
+      return false;
+    }else{
+      _numSelected--;
+      return true;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Invite Classmates (Up to ${widget.maxSelection})'),
       ),
+      body: _buildBody(),
+      floatingActionButton: FloatingActionButton(onPressed: () {
+        Navigator.of(context).pop(_getSelectedUsers());
+      },
+      child: Icon(Icons.check),),
+    );
+  }
+
+//  _checkUser(UserItem userItem, bool selected) {
+//    if (widget.maxSelection <= _numSelected) {
+//      for(UserItem item in items){
+//        if(item.user.id == userItem.user.id){
+//          setState(() {
+//
+//          });
+//        }
+//      }
+//      if (_teamMatesSelectedMap.containsKey(user)) {
+//        setState(() {
+//          print('selected');
+//          _teamMatesSelectedMap[user] = selected;
+//        });
+//      }
+//    }
+//  }
+
+
+//
+//  Widget _buildUserTile(UserItem userItem, BuildContext context) {
+//    return ListTile(
+//      onTap: null,
+//      leading: CircleAvatar(
+//        backgroundImage: NetworkImage(userItem.user.photoURL),
+//      ),
+//      trailing: Checkbox(
+//          value: userItem.isCheck,
+//          onChanged: (value) {
+//            print(value);
+//            if(value && widget.maxSelection > _numSelected){
+//              setState(() {
+//                userItem.isCheck = value;
+//                _numSelected++;
+//              });
+//            }else{
+//              setState(() {
+//                userItem.isCheck = value;
+//                _numSelected--;
+//              });
+//            }
+//          }),
+//      title: Text("${userItem.user.firstName} ${userItem.user.lastName}"),
+//      subtitle: Text('${userItem.user.email}'),
+//    );
+//  }
+
+  _buildBody() {
+    return ScopedModelDescendant<UserModel>(builder: (context, child, model) {
+      if (!model.hasCourse) return Center(child: Text('No Course!'));
+      return StreamBuilder<QuerySnapshot>(
+          stream: model.getClassMates(),
+          builder: (context, snapshot) {
+            //print(snapshot.data.documents);
+            if (snapshot.hasError) return Text('Error: %{snapshot.error}');
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                return Center(child: CircularProgressIndicator());
+              default:
+                return ListView(
+                  children:
+                      snapshot.data.documents.map((DocumentSnapshot document) {
+                    if (document?.data != null) {
+                      User user = User.fromSnapshotData(document.data);
+                      UserItem userItem = UserItem(user, false, _checkAndSelect);
+                      items.add(userItem);
+//                      _teamMatesSelectedMap[user] = false;
+                      return UserListItem(items.last);
+                    } else {
+                      return Container();
+                    }
+                  }).toList(),
+                );
+            }
+          });
+    });
+  }
+}
+//
+class UserItem {
+  User user;
+  bool isCheck;
+  Function(bool) itemCallback;
+  UserItem(this.user, this.isCheck, this.itemCallback);
+}
+
+class UserListItem extends StatefulWidget {
+  final UserItem userItem;
+
+  UserListItem(UserItem userItem)
+      : userItem = userItem,
+        super(key: new ObjectKey(userItem));
+
+  @override
+  UserItemState createState() {
+    return new UserItemState(userItem);
+  }
+}
+
+class UserItemState extends State<UserListItem> {
+  final UserItem userItem;
+
+  UserItemState(this.userItem);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: (){
+        if(userItem.itemCallback(!userItem.isCheck)){
+          setState(() {
+            userItem.isCheck = !userItem.isCheck;
+          });
+        }
+      },
+      leading: CircleAvatar(backgroundImage: NetworkImage(userItem.user.photoURL),),
+      trailing: Checkbox(
+          value: userItem.isCheck,
+          onChanged: (value) {
+            if(userItem.itemCallback(value)){
+              setState(() {
+                userItem.isCheck = value;
+              });
+            }
+          }
+          ),
+      title: Text("${userItem.user.firstName} ${userItem.user.lastName}"),
+      subtitle: Text('${userItem.user.email}'),
     );
   }
 }
