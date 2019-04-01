@@ -138,7 +138,11 @@ class API {
   }
 
 
-
+  Future<String> createNewTeamInCourse(String courseId, Team team) async {
+    DocumentReference teamRef = await _firestore.collection('/courses/$courseId/teams').add(team.toFireBaseMap());
+    await teamRef.updateData({'id': teamRef.documentID});
+    return teamRef.documentID;
+  }
 
 
 }

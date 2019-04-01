@@ -19,7 +19,6 @@ class Team {
     //TODO: make these null safe
 
     Map<String, dynamic> data = snap.data;
-
     name = data['name'];
     description = data['description'];
     _id = snap.documentID;
@@ -37,5 +36,20 @@ class Team {
     _id = data['id'];
     availableSpots = data['available_spots'];
     _leader = data['leader'];
+  }
+
+  Team({this.availableSpots, this.name, this.description, String leaderId}){
+    _leader = leaderId;
+    _id = "";
+  }
+
+  Map<String, dynamic> toFireBaseMap(){
+    return {
+      'name': name,
+      'description': description,
+      'available_spots': availableSpots,
+      'id': _id,
+      'leader': _leader
+    };
   }
 }

@@ -2,7 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/objects/course.dart';
-import 'package:teamup_app/objects/course_member.dart';
 import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/services/api.dart';
@@ -164,7 +163,20 @@ class UserModel extends Model {
   }
 
 
-
+  Future<bool> createTeamAndJoin(Team team) async{
+    try{
+      String teamId = await _api.createNewTeamInCourse(_currentCourse.id, team);
+      await _api.joinTeam(_currentUser.id, _currentCourse.id, teamId);
+      _currentTeam = await _api.getTeam(_currentCourse.id, teamId);
+      _error = "";
+      notifyListeners();
+      return true;
+    }catch(e){
+      _error = e.toString();
+      print(_error);
+    }
+    return false;
+  }
 
   Future<User> getUser(String uid) async {
     return _api.getUser(uid);

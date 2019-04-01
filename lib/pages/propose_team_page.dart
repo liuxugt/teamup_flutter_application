@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/models/user_model.dart';
+import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/objects/user.dart';
 
 class ProposeTeamPage extends StatefulWidget {
@@ -40,6 +41,8 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
   bool _isLoading = false;
   List<String> _memberTraits;
   List<User> _usersToInvite = [];
+  String _error = "";
+
 
   int get _teamSize => _memberTraits.length;
 
@@ -77,14 +80,18 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
       child: Form(
         key: _formKey,
         child: ListView(
+          scrollDirection: Axis.vertical,
 //        crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             _makeTeamNameInput(),
             _makeTeamDescriptionInput(),
-            _makeTeamPreferenceInput(),
+            _makeTeamMateCounter(),
+            _makeTeamMateIconList(),
+//            _makeTeamPreferenceInput(),
             _makeInviteClassmatesButton(),
             _makeInvitedUsersList(),
             _makeTips(),
+            _makeError(),
             _makeFinishButton(),
           ],
         ),
@@ -134,21 +141,23 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
     );
   }
 
-  Widget _makeTeamPreferenceInput() {
-    return Column(
-      children: <Widget>[
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: <Widget>[Text("Team members"), _makeCounter()],
-        ),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: _makeTeamMemberIcons(),
-          ),
-        )
-      ],
+  Widget _makeTeamMateCounter() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: <Widget>[Text("Team members"), _makeCounter()],
+    );
+  }
+
+  Widget _makeTeamMateIconList() {
+    return Container(
+      height: 100.0,
+      margin: EdgeInsets.symmetric(vertical: 16.0),
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+//        shrinkWrap: true,
+        physics: ClampingScrollPhysics(),
+        children: _makeTeamMemberIcons(),
+      ),
     );
   }
 
@@ -164,7 +173,6 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
   Widget _teamMateIcon(int idx) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
-//      crossAxisAlignment: CrossAxisAlignment.center,
       children: <Widget>[
         IconButton(
           iconSize: 48,
@@ -178,7 +186,7 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
           child: Center(
               child: Text(
             _memberTraits[idx],
-                textAlign: TextAlign.center,
+            textAlign: TextAlign.center,
           )),
           width: 70.0,
         )
@@ -273,31 +281,29 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
               maxSelection: _teamSize - 1,
             )));
     print("Output from Invite Page: $output");
-    if(output != null && output.isNotEmpty){
+    if (output != null && output.isNotEmpty) {
       setState(() {
         _usersToInvite = output;
       });
     }
   }
 
-  _makeInvitedUsersList(){
-    if(_usersToInvite.isEmpty)
-      return Container();
+  _makeInvitedUsersList() {
+    if (_usersToInvite.isEmpty) return Container();
 
-    return Container(
-      child: ListView(
-        shrinkWrap: true,
-        physics: ClampingScrollPhysics(),
-        children: _usersToInvite.map((user){
-          return ListTile(
-            leading: CircleAvatar(backgroundImage: NetworkImage(user.photoURL),),
-            title: Text("${user.firstName} ${user.lastName}"),
-          );
-        }).toList(),
-      ),
+    return ListView(
+      shrinkWrap: true,
+      physics: ClampingScrollPhysics(),
+      children: _usersToInvite.map((user) {
+        return ListTile(
+          leading: CircleAvatar(
+            backgroundImage: NetworkImage(user.photoURL),
+          ),
+          title: Text("${user.firstName} ${user.lastName}"),
+        );
+      }).toList(),
     );
   }
-
 
   Widget _makeTips() {
     return Padding(
@@ -311,13 +317,70 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
     );
   }
 
+  Widget _makeError(){
+    if(_error.isEmpty){
+      return Container();
+    }
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      child: Center(
+        child: Text(
+          _error,
+          style: TextStyle(color: Colors.red),
+        ),
+      ),
+    );
+  }
+
   Widget _makeFinishButton() {
     return Center(
       child: _isLoading
           ? CircularProgressIndicator()
           : FlatButton(
-              onPressed: () {
-                _validateAndSave();
+              onPressed: () async {
+                if (_validateAndSave()) {
+                  User currentUser =
+                      ScopedModel.of<UserModel>(context, rebuildOnChange: false)
+                          .currentUser;
+                  Team team = Team(
+                      availableSpots: _teamSize,
+                      name: _teamName,
+                      description: _teamDescription,
+                      leaderId: currentUser.id);
+                  setState(() {
+                    _isLoading = true;
+                  });
+                  bool successful = await ScopedModel.of<UserModel>(context,
+                          rebuildOnChange: false)
+                      .createTeamAndJoin(team);
+                  setState(() {
+                    _isLoading = false;
+                  });
+                  if (successful) {
+                    await showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Text("Team Created Succesfully!"),
+                            content: Text(
+                                "Your team has been created and you have been added to it!"),
+                            actions: <Widget>[
+                              FlatButton(
+                                onPressed: () {
+                                  Navigator.of(context).popUntil(ModalRoute.withName('/home'));
+                                },
+                                child: Text('Okay!'),
+                              )
+                            ],
+                          );
+                        });
+                  }else{
+                    setState(() {
+                      _error = ScopedModel.of<UserModel>(context,
+                          rebuildOnChange: false).error;
+                    });
+                  }
+                }
               },
               child: Padding(
                 padding:
@@ -340,30 +403,27 @@ class InviteTeamMatesScreen extends StatefulWidget {
 }
 
 class _InviteTeamMatesScreenState extends State<InviteTeamMatesScreen> {
-//  Map<User, bool> _teamMatesSelectedMap = {};
-//  int get _numSelected => _teamMatesSelectedMap.length;
-
   List<UserItem> items = [];
   int _numSelected = 0;
 
-  List<User> _getSelectedUsers(){
+  List<User> _getSelectedUsers() {
     List<User> selectedUsers = [];
-    for(UserItem item in items){
-      if(item.isCheck){
+    for (UserItem item in items) {
+      if (item.isCheck) {
         selectedUsers.add(item.user);
       }
     }
     return selectedUsers;
   }
 
-  bool _checkAndSelect(bool checkBoxSelected){
-    if(checkBoxSelected){
-      if(_numSelected < widget.maxSelection){
+  bool _checkAndSelect(bool checkBoxSelected) {
+    if (checkBoxSelected) {
+      if (_numSelected < widget.maxSelection) {
         _numSelected++;
         return true;
       }
       return false;
-    }else{
+    } else {
       _numSelected--;
       return true;
     }
@@ -376,59 +436,14 @@ class _InviteTeamMatesScreenState extends State<InviteTeamMatesScreen> {
         title: Text('Invite Classmates (Up to ${widget.maxSelection})'),
       ),
       body: _buildBody(),
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        Navigator.of(context).pop(_getSelectedUsers());
-      },
-      child: Icon(Icons.check),),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).pop(_getSelectedUsers());
+        },
+        child: Icon(Icons.check),
+      ),
     );
   }
-
-//  _checkUser(UserItem userItem, bool selected) {
-//    if (widget.maxSelection <= _numSelected) {
-//      for(UserItem item in items){
-//        if(item.user.id == userItem.user.id){
-//          setState(() {
-//
-//          });
-//        }
-//      }
-//      if (_teamMatesSelectedMap.containsKey(user)) {
-//        setState(() {
-//          print('selected');
-//          _teamMatesSelectedMap[user] = selected;
-//        });
-//      }
-//    }
-//  }
-
-
-//
-//  Widget _buildUserTile(UserItem userItem, BuildContext context) {
-//    return ListTile(
-//      onTap: null,
-//      leading: CircleAvatar(
-//        backgroundImage: NetworkImage(userItem.user.photoURL),
-//      ),
-//      trailing: Checkbox(
-//          value: userItem.isCheck,
-//          onChanged: (value) {
-//            print(value);
-//            if(value && widget.maxSelection > _numSelected){
-//              setState(() {
-//                userItem.isCheck = value;
-//                _numSelected++;
-//              });
-//            }else{
-//              setState(() {
-//                userItem.isCheck = value;
-//                _numSelected--;
-//              });
-//            }
-//          }),
-//      title: Text("${userItem.user.firstName} ${userItem.user.lastName}"),
-//      subtitle: Text('${userItem.user.email}'),
-//    );
-//  }
 
   _buildBody() {
     return ScopedModelDescendant<UserModel>(builder: (context, child, model) {
@@ -447,7 +462,8 @@ class _InviteTeamMatesScreenState extends State<InviteTeamMatesScreen> {
                       snapshot.data.documents.map((DocumentSnapshot document) {
                     if (document?.data != null) {
                       User user = User.fromSnapshotData(document.data);
-                      UserItem userItem = UserItem(user, false, _checkAndSelect);
+                      UserItem userItem =
+                          UserItem(user, false, _checkAndSelect);
                       items.add(userItem);
 //                      _teamMatesSelectedMap[user] = false;
                       return UserListItem(items.last);
@@ -461,6 +477,7 @@ class _InviteTeamMatesScreenState extends State<InviteTeamMatesScreen> {
     });
   }
 }
+
 //
 class UserItem {
   User user;
@@ -490,24 +507,25 @@ class UserItemState extends State<UserListItem> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: (){
-        if(userItem.itemCallback(!userItem.isCheck)){
+      onTap: () {
+        if (userItem.itemCallback(!userItem.isCheck)) {
           setState(() {
             userItem.isCheck = !userItem.isCheck;
           });
         }
       },
-      leading: CircleAvatar(backgroundImage: NetworkImage(userItem.user.photoURL),),
+      leading: CircleAvatar(
+        backgroundImage: NetworkImage(userItem.user.photoURL),
+      ),
       trailing: Checkbox(
           value: userItem.isCheck,
           onChanged: (value) {
-            if(userItem.itemCallback(value)){
+            if (userItem.itemCallback(value)) {
               setState(() {
                 userItem.isCheck = value;
               });
             }
-          }
-          ),
+          }),
       title: Text("${userItem.user.firstName} ${userItem.user.lastName}"),
       subtitle: Text('${userItem.user.email}'),
     );
