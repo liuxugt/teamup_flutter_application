@@ -14,7 +14,8 @@ class OnboardingModel extends Model{
   List<String> languages = [];
   String skills = '';
   String strengths = '';
-  List<Map<String, String>> iceBreakers;
+  List<bool> availabilities = [];
+  int iceBreakers = 0;
 
 
   submitAttributes() async {
@@ -35,6 +36,11 @@ class OnboardingModel extends Model{
 
     if(strengths.isNotEmpty)
       attributes['strengths'] = strengths.substring(strengths.indexOf(('.')) + 1);
+
+    if(availabilities.length != 0)
+      attributes['availabilities'] = availabilities;
+
+    attributes['icebreakers'] = iceBreakers;
 
     _api.updateUserAttributes(currentUserId, attributes);
   }

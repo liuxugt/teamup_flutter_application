@@ -10,36 +10,45 @@ class AvailabilityInfoTab extends StatefulWidget {
 class _AvailabilityInfoTabState extends State<AvailabilityInfoTab> {
   List<bool> _availabilities;
 
-  final hours = 16;
-  final days = 7;
+  static final hours = 12;
+  static final days = 7;
+
+  List<List<int>> index = List<List<int>>.generate(hours, (i) => List<int>.generate(days, (j) => i * days + j));
 
   @override
   void initState() {
-    _availabilities = new List(hours * days);
+    _availabilities = new List<bool>.filled(hours * days, false);
     super.initState();
   }
 
-  List<List<int>> someListsOfNumbers = [
-    List.generate(4, (int idx) => idx),
-    List.generate(4, (int idx) => idx + 4),
-    List.generate(4, (int idx) => idx + 8),
-  ];
+  List<TableRow> test() {
+    List<TableRow> res;
+    res = index.map((List<int> hour) => TableRow(
+        children: hour.map((int cur) => GestureDetector(
+          onTap: () {setState(() {
+            _availabilities[cur] = !_availabilities[cur];
+            ScopedModel.of<OnboardingModel>(context, rebuildOnChange: false).availabilities = _availabilities;
+          });
+          },
+          child: AnimatedContainer(duration: const Duration(milliseconds: 700),
+              height: 32.0,
+              color: _availabilities[cur]
+                  ? Colors.blue
+                  : Colors.white,
+              child: Center(
+                child: _availabilities[cur]
+                    ? Text("X")
+                    : Text(""),
+              )
+          ),
+        )).toList()
+    )).toList();
+    return res;
+  }
 
-  List<List<bool>> test = List.filled(7, List.filled(12, false));
-
-
-
-  Map<int, bool> pressedValues = Map.fromIterable(
-    List.generate(12, (int idx) => idx),
-    key: (item) => item,
-    value: (item) => false,
-  );
 
   @override
   Widget build(BuildContext context) {
-    print(test.length);
-    print(test[0].length);
-    print(test[0][0]);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -52,11 +61,11 @@ class _AvailabilityInfoTabState extends State<AvailabilityInfoTab> {
             children: <TextSpan>[
               TextSpan(text: 'What time are you'),
               TextSpan(
-                  text: ' unavailable ',
-                  style: TextStyle(
-                      fontStyle: FontStyle.italic,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.blue)),
+                text: ' unavailable ',
+                style: TextStyle(
+                  fontStyle: FontStyle.italic,
+                  fontWeight: FontWeight.w900,
+                  color: Colors.blue)),
               TextSpan(text: 'for team work?'),
             ],
           ),
@@ -66,34 +75,55 @@ class _AvailabilityInfoTabState extends State<AvailabilityInfoTab> {
         ),
         Container(
           height: 32.0,
-          child: Table(
-            border: TableBorder.all(),
-            children: someListsOfNumbers
-              .map((List<int> someList) => TableRow(
-                children: someList
-                  .map((int val) => GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        pressedValues[val] = !pressedValues[val];
-                      });
-                    },
-                    child: AnimatedContainer(
-                      duration: const Duration(milliseconds: 700),
-                      height: 56.0,
-                      color: pressedValues[val]
-                          ? Colors.red
-                          : Colors.green,
-                      child: Center(
-                        child: pressedValues[val]
-                            ? Text(val.toString())
-                            : Text(""),
-                      ))))
-                .toList()))
-            .toList())),
+          child:Row(children: <Widget>[
+            Expanded(
+              child: Text('S', textAlign: TextAlign.center),
+            ),
+            Expanded(
+              child: Text('M', textAlign: TextAlign.center),
+            ),
+            Expanded(
+              child: Text('T', textAlign: TextAlign.center),
+            ),
+            Expanded(
+              child: Text('W', textAlign: TextAlign.center),
+            ),
+            Expanded(
+              child: Text('T', textAlign: TextAlign.center),
+            ),
+            Expanded(
+              child: Text('F', textAlign: TextAlign.center),
+            ),
+            Expanded(
+              child: Text('S', textAlign: TextAlign.center),
+            ),
+          ],)
+        ),
         Container(
-          height: 32.0,
-        )
-      ],
-    );
+          child: Table(
+            border: TableBorder.all(color: Colors.grey),
+              children: test(),
+          ),
+        ),
+//        Container(
+//          height: 32.0,
+//          child:Row(
+//            children: [
+////              Expanded(
+////                flex: 2, // 20%
+////                child: Container(color: Colors.red),
+////              ),
+//              Expanded(
+//                flex: 10, // 60%
+//                child: Container(child: Table(
+//                  border: TableBorder.all(color: Colors.grey),
+//                  children: test(),
+//                ),
+//                ),
+//              )
+//            ]
+//          )
+//        )
+      ]);
   }
 }
