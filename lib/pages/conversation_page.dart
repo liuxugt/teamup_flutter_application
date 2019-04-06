@@ -1,28 +1,94 @@
 import 'package:flutter/material.dart';
+import 'package:teamup_app/objects/conversation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:teamup_app/objects/message.dart';
+import 'package:teamup_app/models/user_model.dart';
+import 'package:scoped_model/scoped_model.dart';
 
-class Bubble extends StatelessWidget {
-  Bubble({this.message, this.time, this.delivered, this.isMe});
+class ConversationPage extends StatefulWidget {
+  final Conversation _conversation;
+  final int _targetIndex;
+  ConversationPage(this._conversation, this._targetIndex);
 
-  final String message, time;
-  final delivered, isMe;
+  @override
+  ConversationPageState createState() => ConversationPageState(_conversation, _targetIndex);
+}
+
+class ConversationPageState extends State<ConversationPage>{
+  final Conversation _conversation;
+  final int _targetIndex;
+
+  ConversationPageState(this._conversation, this._targetIndex);
+
 
   @override
   Widget build(BuildContext context) {
-    final bg = isMe ? Colors.white : Colors.greenAccent.shade100;
-    final align = isMe ? CrossAxisAlignment.start : CrossAxisAlignment.end;
-    final icon = delivered ? Icons.done_all : Icons.done;
-    final radius = isMe
+    return Scaffold(
+      appBar: AppBar(
+        elevation: .9,
+        title: Text(
+          (_targetIndex == 0) ? _conversation.fullName1 : _conversation.fullName2,
+          style: TextStyle(color: Colors.white),
+        ),
+        actions: <Widget>[
+        ],
+      ),
+      body: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: StreamBuilder<QuerySnapshot>(
+            stream: _conversation.messageRef.orderBy("time", descending: true).snapshots(),
+            builder: (context, snapshot){
+              if(snapshot.hasError){
+                return Text("Error in ${snapshot.error}");
+              }
+              switch(snapshot.connectionState){
+                case ConnectionState.waiting:
+                  return Center(child: CircularProgressIndicator());
+                default:
+                  return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: snapshot.data.documents.map((document){
+                        return (document?.data != null) ?
+                        Bubble(Message.fromSnapshot(document)) : Divider();
+                      }).toList()
+                  );
+              }
+            },
+          )
+      ),
+      /*bottomSheet: Container(
+        color: Colors.green
+      ),*/
+    );
+  }
+}
+
+
+class Bubble extends StatelessWidget {
+  Bubble(this.message);
+  final Message message;
+
+  @override
+  Widget build(BuildContext context) {
+    final received = (ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentUser.id == message.from);
+    //print("the value of whether it is received is");
+    //print(received);
+    final bg = received ? Colors.white : Colors.greenAccent.shade100;
+    final align = received ? CrossAxisAlignment.start : CrossAxisAlignment.end;
+    print(align);
+    final String content = message.content;
+    final icon = Icons.done_all;
+    final radius = received
         ? BorderRadius.only(
-      topRight: Radius.circular(5.0),
-      bottomLeft: Radius.circular(10.0),
-      bottomRight: Radius.circular(5.0),
+      topRight: Radius.circular(10.0),
+      bottomLeft: Radius.circular(15.0),
+      bottomRight: Radius.circular(10.0),
     )
         : BorderRadius.only(
-      topLeft: Radius.circular(5.0),
-      bottomLeft: Radius.circular(5.0),
-      bottomRight: Radius.circular(10.0),
+      topLeft: Radius.circular(10.0),
+      bottomLeft: Radius.circular(10.0),
+      bottomRight: Radius.circular(15.0),
     );
-
 
     return Column(
       crossAxisAlignment: align,
@@ -44,14 +110,14 @@ class Bubble extends StatelessWidget {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.only(right: 48.0),
-                child: Text(message),
+                child: Text(content),
               ),
               Positioned(
                 bottom: 0.0,
                 right: 0.0,
                 child: Row(
                   children: <Widget>[
-                    Text(time,
+                    Text("12:00",
                         style: TextStyle(
                           color: Colors.black38,
                           fontSize: 10.0,
@@ -69,85 +135,6 @@ class Bubble extends StatelessWidget {
           ),
         )
       ],
-    );
-  }
-}
-
-class BubbleScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.blueGrey.shade50,
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: .9,
-        title: Text(
-          'Putra',
-          style: TextStyle(color: Colors.green),
-        ),
-        leading: IconButton(
-          icon: Icon(
-            Icons.arrow_back_ios,
-            color: Colors.green,
-          ),
-          onPressed: () {},
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.videocam,
-              color: Colors.green,
-            ),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.call,
-              color: Colors.green,
-            ),
-            onPressed: () {},
-          ),
-          IconButton(
-            icon: Icon(
-              Icons.more_vert,
-              color: Colors.green,
-            ),
-            onPressed: () {},
-          )
-        ],
-      ),
-      body: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Bubble(
-              message: 'Hi there, this is a message',
-              time: '12:00',
-              delivered: true,
-              isMe: false,
-            ),
-            Bubble(
-              message: 'Whatsapp like bubble talk',
-              time: '12:01',
-              delivered: true,
-              isMe: false,
-            ),
-            Bubble(
-              message: 'Nice one, Flutter is awesome',
-              time: '12:00',
-              delivered: true,
-              isMe: true,
-            ),
-            Bubble(
-              message: 'I\'ve told you so dude!',
-              time: '12:00',
-              delivered: true,
-              isMe: false,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
