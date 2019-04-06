@@ -199,6 +199,12 @@ class UserModel extends Model {
     return _currentCourse.availableTeamsStream;
   }
 
+  Stream<QuerySnapshot> getConvsersations(){
+    if(_currentCourse == null || _currentUser == null) return null;
+    return _currentCourse.conversationRef.where('related', arrayContains: _currentUser.id).snapshots();
+  }
+
+
 
   /*
   //Corresponding functions in notification system.
