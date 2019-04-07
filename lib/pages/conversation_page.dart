@@ -17,6 +17,8 @@ class ConversationPage extends StatefulWidget {
 class ConversationPageState extends State<ConversationPage>{
   final Conversation _conversation;
   final int _targetIndex;
+  String content;
+  TextEditingController _messageController = new TextEditingController();
 
   ConversationPageState(this._conversation, this._targetIndex);
 
@@ -56,9 +58,24 @@ class ConversationPageState extends State<ConversationPage>{
             },
           )
       ),
-      /*bottomSheet: Container(
-        color: Colors.green
-      ),*/
+      bottomSheet: Row(
+        children: <Widget>[
+          TextField(
+            maxLines: 3,
+            decoration: InputDecoration(hintText: 'I am a ...'),
+            onChanged: (value) => content = value,
+            controller: _messageController,
+          ),
+          RaisedButton(
+            child: Text("send"),
+            onPressed: (){
+              String toId = _conversation.related[_targetIndex];
+              ScopedModel.of<UserModel>(context, rebuildOnChange: true).sendRegularMessage(toId, _conversation.id, content);
+              _messageController.clear();
+            },
+          )
+        ],
+      ),
     );
   }
 }

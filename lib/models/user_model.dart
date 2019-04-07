@@ -205,6 +205,11 @@ class UserModel extends Model {
     return _currentCourse.conversationRef.where('related', arrayContains: _currentUser.id).snapshots();
   }
 
+  Future<void> sendRegularMessage(String toId, String conversationId, String content) async{
+    String type = "regular";
+    Message temp = Message(content, fromId, toId, "regular", "pending", "");
+    await _api.createMessage(courseId, conversationId, temp);
+  }
 
   Future<String> createApplication(String fromId, String toId, String courseId, String teamId) async {
     //QuerySnapshot currentConversation = await _currentCourse.conversationRef.where("related", arrayContains: fromId).where("related", arrayContains: toId).getDocuments();
