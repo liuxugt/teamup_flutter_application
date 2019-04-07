@@ -5,7 +5,8 @@ import 'package:teamup_app/objects/course.dart';
 import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/services/api.dart';
-import 'package:teamup_app/objects/notification.dart';
+import 'package:teamup_app/objects/message.dart';
+import 'package:teamup_app/objects/conversation.dart';
 
 class UserModel extends Model {
   //TODO: start moving database functions into the API
@@ -205,38 +206,43 @@ class UserModel extends Model {
   }
 
 
-
-  /*
-  //Corresponding functions in notification system.
-  Stream<QuerySnapshot> getSendAppllication(){
-    if(_currentUser == null || _currentCourse == null) return null;
-    return _currentCourse.applicationRef
-        .where('from', isEqualTo: _currentUser.id)
-        .snapshots();
+  Future<String> createApplication(String fromId, String toId, String courseId, String teamId) async {
+    //QuerySnapshot currentConversation = await _currentCourse.conversationRef.where("related", arrayContains: fromId).where("related", arrayContains: toId).getDocuments();
+    DocumentSnapshot team = await _currentCourse.teamsRef.document(teamId).get();
+    String content = "I send you an application. Please let me join your team ${team.data["name"]} in course $courseId";
+    Message temp = Message(content, fromId, toId, "application", "pending", teamId);
+    String conversationId;
+    print("here");
+    //if(currentConversation.documents.length != 0){
+    //  conversationId = currentConversation.documents[0].documentID;
+    //  await _api.createMessage(courseId, conversationId, temp);
+    //}
+    //else{
+      conversationId = await _api.createConversation(courseId, fromId, toId);
+      print("here");
+      await _api.createMessage(courseId, conversationId, temp);
+      print("here");
+    //}
+    return conversationId;
   }
 
-  Stream<QuerySnapshot> getReceivedApplication(){
-    if(_currentUser == null || _currentCourse == null) return null;
-    return _currentCourse.applicationRef
-        .where('to', isEqualTo: _currentUser.id)
-        .snapshots();
+  Future<void> acceptApplication(Message message, String conversationId) async {
+    DocumentReference temp = _currentCourse.conversationRef.document(conversationId).collection("messages").document(message.id);
+    temp.updateData({
+      "status": "responded"
+    });
+    DocumentSnapshot newSnapshot = await _userRef.document(message.from).get();
+    String courseId = _currentCourse.id;
+    if(newSnapshot.data["course_team"][courseId] == null){
+      _api.joinTeam(message.from, courseId, message.team);
+    }
   }
-
-  Stream<QuerySnapshot> getSendInvitation(){
-    if(_currentUser == null || _currentCourse == null) return null;
-    return _currentCourse.invitationRef
-        .where('from', isEqualTo: _currentUser.id)
-        .snapshots();
+  Future<void> rejectApplication(Message message, String conversationId) async {
+    DocumentReference temp = _currentCourse.conversationRef.document(conversationId).collection("messages").document(message.id);
+    temp.updateData({
+      "status": "responded"
+    });
   }
-
-  Stream<QuerySnapshot> getReceivedInvitation(){
-    if(_currentUser == null || _currentCourse == null) return null;
-    return _currentCourse.invitationRef
-        .where('to', isEqualTo: _currentUser.id)
-        .snapshots();
-  }
-  */
-
 
   //Functions in creating and response to applications.
   /*

@@ -36,7 +36,7 @@ class ConversationPageState extends State<ConversationPage>{
       body: Padding(
           padding: EdgeInsets.all(16.0),
           child: StreamBuilder<QuerySnapshot>(
-            stream: _conversation.messageRef.orderBy("time", descending: true).snapshots(),
+            stream: _conversation.messageRef.orderBy("time", descending: false).snapshots(),
             builder: (context, snapshot){
               if(snapshot.hasError){
                 return Text("Error in ${snapshot.error}");
@@ -49,7 +49,7 @@ class ConversationPageState extends State<ConversationPage>{
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: snapshot.data.documents.map((document){
                         return (document?.data != null) ?
-                        Bubble(Message.fromSnapshot(document)) : Divider();
+                        Bubble(Message.fromSnapshot(document), _conversation.id) : Divider();
                       }).toList()
                   );
               }
@@ -65,12 +65,13 @@ class ConversationPageState extends State<ConversationPage>{
 
 
 class Bubble extends StatelessWidget {
-  Bubble(this.message);
+  Bubble(this.message, this.conversationId);
   final Message message;
+  final String conversationId;
 
   @override
   Widget build(BuildContext context) {
-    final received = (ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentUser.id == message.from);
+    final received = (ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentUser.id != message.from);
     //print("the value of whether it is received is");
     //print(received);
     final bg = received ? Colors.white : Colors.greenAccent.shade100;
@@ -89,7 +90,8 @@ class Bubble extends StatelessWidget {
       bottomLeft: Radius.circular(10.0),
       bottomRight: Radius.circular(15.0),
     );
-
+    //print(message.type);
+    print(message.status);
     return Column(
       crossAxisAlignment: align,
       children: <Widget>[
@@ -112,6 +114,41 @@ class Bubble extends StatelessWidget {
                 padding: EdgeInsets.only(right: 48.0),
                 child: Text(content),
               ),
+              (received && message.type != "regular" && message.status == "pending") ?
+              Padding(
+                padding: EdgeInsets.only(right: 48.0, top: 20.0),
+                child: Row(
+                  children: <Widget>[
+                    RaisedButton(
+                      child: Text("Accept"),
+                      onPressed: (){
+                        if(message.type == "application"){
+                          ScopedModel.of<UserModel>(context).acceptApplication(message, conversationId);
+                        }
+                      },
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(right: 10.0)
+                    ),
+                    RaisedButton(
+                      child: Text("Reject"),
+                      onPressed: (){
+                        if(message.type=="application"){
+                          ScopedModel.of<UserModel>(context).rejectApplication(message, conversationId);
+                        }
+                      },
+                    )
+                  ],
+                )
+              ) :
+              (message.type != "regular" && message.status != "pending") ?
+              Padding(
+                  padding: EdgeInsets.only(right: 48.0, top: 20.0),
+                  child: Text("This has been responded")
+              ) :
+                  Padding(
+                    padding: EdgeInsets.only(right: 48.0, top: 20.0)
+                  ),
               Positioned(
                 bottom: 0.0,
                 right: 0.0,

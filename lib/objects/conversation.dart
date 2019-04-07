@@ -15,6 +15,7 @@ class Conversation{
   User _user1;
   User _user2;
   String _firstMessage;
+  String _id;
 
 
   Conversation.fromSnapshot(DocumentSnapshot snap) {
@@ -23,6 +24,7 @@ class Conversation{
     _userId2 = data["related"][1];
     _messageRef = snap.reference.collection("messages").reference();
     _firstMessage = null;
+    _id = snap.documentID;
   }
 
   setUser(BuildContext context) async{
@@ -31,9 +33,9 @@ class Conversation{
   }
 
   setFirstMessage() async{
-    QuerySnapshot temp = await _messageRef.orderBy("time", descending: true).limit(1).getDocuments();
-    print("get latest message");
-    print(temp.documents.length);
+    QuerySnapshot temp = await _messageRef.orderBy("time", descending: true).getDocuments();
+    //print("get latest message");
+    //print(temp.documents.length);
     if(temp.documents.isEmpty){
       _firstMessage = "";
     }
@@ -46,6 +48,7 @@ class Conversation{
   String get userId1 => _userId1;
   String get userId2 => _userId2;
   List<String> get related => [_userId1, _userId2];
+  String get id => _id;
 
   String get fullName1 => _user1.firstName + " " + _user1.lastName;
   String get fullName2 => _user2.firstName + " " + _user2.lastName;

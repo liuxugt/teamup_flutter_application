@@ -7,6 +7,8 @@ class Message{
   String _toId;
   String _type;
   String _status;
+  String _id;
+  String _team;
 
   Message.fromSnapshot(DocumentSnapshot messageSnap){
     _content = messageSnap.data["content"];
@@ -14,6 +16,17 @@ class Message{
     _toId = messageSnap.data["to"];
     _type = messageSnap.data["type"];
     _status = messageSnap.data["status"];
+    _team = messageSnap.data["team"];
+    _id = messageSnap.documentID;
+  }
+
+  Message(String content, String fromId, String toId, String type, String status, String team){
+    _content = content;
+    _fromId = fromId;
+    _toId = toId;
+    _type = type;
+    _status = status;
+    _team = team;
   }
 
   String get content => _content;
@@ -21,4 +34,6 @@ class Message{
   String get to => _toId;
   String get type => _type;
   String get status => _status;
+  String get id => _id;
+  String get team => _team;
 }

@@ -74,7 +74,7 @@ class _ListElementState extends State<ListElement> {
           }
           return ListTile(
             contentPadding: EdgeInsets.only(top: 10, left: 10),
-            title: Text("From " + name),
+            title: Text(name),
             subtitle: Text(_conv.firstMessage),
             onTap: (){
               Navigator.push(

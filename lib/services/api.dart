@@ -4,6 +4,8 @@ import 'package:teamup_app/objects/course.dart';
 import 'package:teamup_app/objects/course_member.dart';
 import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/objects/user.dart';
+import 'package:teamup_app/objects/conversation.dart';
+import 'package:teamup_app/objects/message.dart';
 
 class API {
   static final Firestore _firestore = Firestore.instance;
@@ -142,6 +144,37 @@ class API {
     DocumentReference teamRef = await _firestore.collection('/courses/$courseId/teams').add(team.toFireBaseMap());
     await teamRef.updateData({'id': teamRef.documentID});
     return teamRef.documentID;
+  }
+
+  Future<String> createMessage(String courseId, String conversationId, Message message) async {
+    DocumentReference messageRef = await _firestore.collection('/courses/$courseId/conversations/$conversationId/messages').add({
+      "from": message.from,
+      "to": message.to,
+      "time": FieldValue.serverTimestamp(),
+      "content": message.content,
+      "type": message.type,
+      "team": message.team,
+      "status": message.status
+    });
+    print("between");
+    await messageRef.updateData({
+      "id": messageRef.documentID
+    });
+    print("after creating message");
+    return messageRef.documentID;
+  }
+
+  Future<String> createConversation(String courseId, String Id1, String Id2) async {
+    DocumentReference conversationRef = await _firestore.collection('/courses/$courseId/conversations').add({
+      "related" : FieldValue.arrayUnion([Id1, Id2])
+    });
+    //print("here");
+    await conversationRef.updateData({
+      "id": conversationRef.documentID
+    });
+    print("after creating conversation");
+
+    return conversationRef.documentID;
   }
 
 }
