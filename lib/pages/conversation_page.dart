@@ -22,27 +22,61 @@ class ConversationPageState extends State<ConversationPage>{
 
   ConversationPageState(this._conversation, this._targetIndex);
 
-  Widget _buildBottomSheet(){
-    return Row(
-      children: <Widget>[
-        TextField(
-          maxLines: 3,
-          decoration: InputDecoration(hintText: 'I am a ...'),
-          onChanged: (value) => content = value,
-          controller: _messageController,
-        ),
-        RaisedButton(
-          child: Text("send"),
-          onPressed: (){
-            String toId = _conversation.related[_targetIndex];
-            ScopedModel.of<UserModel>(context, rebuildOnChange: true).sendRegularMessage(toId, _conversation.id, content);
-            _messageController.clear();
+  Widget buildListMessage(){
+    return Flexible(
+//        padding: EdgeInsets.all(16.0),
+        child: StreamBuilder<QuerySnapshot>(
+          stream: _conversation.messageRef.orderBy("time", descending: false).snapshots(),
+          builder: (context, snapshot){
+            if(snapshot.hasError){
+              return Text("Error in ${snapshot.error}");
+            }
+            switch(snapshot.connectionState){
+              case ConnectionState.waiting:
+                return Center(child: CircularProgressIndicator());
+              default:
+                return ListView(
+                  //crossAxisAlignment: CrossAxisAlignment.stretch,
+                  physics: ClampingScrollPhysics(),
+                    children: snapshot.data.documents.map((document){
+                      return (document?.data != null) ?
+                      Bubble(Message.fromSnapshot(document), _conversation.id) : Divider();
+                    }).toList()
+                );
+            }
           },
         )
-      ],
     );
   }
 
+  Widget buildInput(){
+    return Container(
+      child: Row(
+        children: <Widget>[
+          Flexible(
+              child: TextField(
+                controller: _messageController,
+                decoration: InputDecoration.collapsed(hintText: 'type your message here', hintStyle: TextStyle(color: Colors.grey)),
+                onChanged: (value) => content = value,
+              )
+          ),
+          Material(
+            child: new Container(
+              margin: new EdgeInsets.symmetric(horizontal: 8.0),
+              child: new IconButton(
+                  icon: new Icon(Icons.send),
+                  onPressed: (){
+                    String toId = _conversation.related[_targetIndex];
+                    ScopedModel.of<UserModel>(context, rebuildOnChange: true).sendRegularMessage(toId, _conversation.id, content);
+                    _messageController.clear();
+                    content = "";
+                  })
+            )
+          )
+        ],
+      )
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,30 +90,12 @@ class ConversationPageState extends State<ConversationPage>{
         actions: <Widget>[
         ],
       ),
-      body: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: StreamBuilder<QuerySnapshot>(
-            stream: _conversation.messageRef.orderBy("time", descending: false).snapshots(),
-            builder: (context, snapshot){
-              if(snapshot.hasError){
-                return Text("Error in ${snapshot.error}");
-              }
-              switch(snapshot.connectionState){
-                case ConnectionState.waiting:
-                  return Center(child: CircularProgressIndicator());
-                default:
-                  return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: snapshot.data.documents.map((document){
-                        return (document?.data != null) ?
-                        Bubble(Message.fromSnapshot(document), _conversation.id) : Divider();
-                      }).toList()
-                  );
-              }
-            },
-          )
-      ),
-      bottomSheet: _buildBottomSheet(),
+    body: Column(
+      children: <Widget>[
+        buildListMessage(),
+        buildInput()
+      ],
+    ),
     );
   }
 }
