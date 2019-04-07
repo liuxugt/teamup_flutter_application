@@ -42,6 +42,7 @@ class UserModel extends Model {
       FirebaseUser user = await _api.getCurrentUser();
       print('user ${user.uid} is loaded');
         _currentUser = await _api.getUser(user.uid);
+        print("get user");
         await _loadCourseAndTeam();
         return true;
     } catch (e) {
@@ -52,7 +53,17 @@ class UserModel extends Model {
   }
 
   Future<void> _loadCourseAndTeam([String id = ""]) async {
-    String courseId = (id.isEmpty) ? _currentUser.courseIds.first : id;
+    String courseId;
+    if(_currentUser.courseIds.isEmpty){
+      _currentCourse = null;
+      _currentTeam = null;
+      return;
+    }
+    else{
+      courseId = (id.isEmpty) ? _currentUser.courseIds.first : id;
+    }
+    print("get course");
+    print(courseId);
 
     _currentCourse = await _api.getCourse(courseId);
 
@@ -207,8 +218,8 @@ class UserModel extends Model {
 
   Future<void> sendRegularMessage(String toId, String conversationId, String content) async{
     String type = "regular";
-    Message temp = Message(content, fromId, toId, "regular", "pending", "");
-    await _api.createMessage(courseId, conversationId, temp);
+    Message temp = Message(content, currentUser.id, toId, "regular", "pending", "");
+    await _api.createMessage(currentCourse.id, conversationId, temp);
   }
 
   Future<String> createApplication(String fromId, String toId, String courseId, String teamId) async {

@@ -33,8 +33,8 @@ class ClassmatesList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<UserModel>(builder: (context, child, model) {
-      print("in classmateList");
-      print(model.currentCourse.name);
+      //print("in classmateList");
+      //print(model.currentCourse.name);
       if (!model.hasCourse) return Center(child: Text('No Courses'));
 
       return StreamBuilder<QuerySnapshot>(

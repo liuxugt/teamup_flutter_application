@@ -12,6 +12,7 @@ class API {
   static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
 
   Future<User> getUser(String uid) async {
+    print(uid);
     DocumentSnapshot user =
         await _firestore.collection('users').document(uid).get();
     return User.fromSnapshotData(user.data);

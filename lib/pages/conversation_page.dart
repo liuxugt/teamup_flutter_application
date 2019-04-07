@@ -22,6 +22,27 @@ class ConversationPageState extends State<ConversationPage>{
 
   ConversationPageState(this._conversation, this._targetIndex);
 
+  Widget _buildBottomSheet(){
+    return Row(
+      children: <Widget>[
+        TextField(
+          maxLines: 3,
+          decoration: InputDecoration(hintText: 'I am a ...'),
+          onChanged: (value) => content = value,
+          controller: _messageController,
+        ),
+        RaisedButton(
+          child: Text("send"),
+          onPressed: (){
+            String toId = _conversation.related[_targetIndex];
+            ScopedModel.of<UserModel>(context, rebuildOnChange: true).sendRegularMessage(toId, _conversation.id, content);
+            _messageController.clear();
+          },
+        )
+      ],
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -58,24 +79,7 @@ class ConversationPageState extends State<ConversationPage>{
             },
           )
       ),
-      bottomSheet: Row(
-        children: <Widget>[
-          TextField(
-            maxLines: 3,
-            decoration: InputDecoration(hintText: 'I am a ...'),
-            onChanged: (value) => content = value,
-            controller: _messageController,
-          ),
-          RaisedButton(
-            child: Text("send"),
-            onPressed: (){
-              String toId = _conversation.related[_targetIndex];
-              ScopedModel.of<UserModel>(context, rebuildOnChange: true).sendRegularMessage(toId, _conversation.id, content);
-              _messageController.clear();
-            },
-          )
-        ],
-      ),
+      bottomSheet: _buildBottomSheet(),
     );
   }
 }
