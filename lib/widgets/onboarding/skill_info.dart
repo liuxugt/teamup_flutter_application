@@ -19,8 +19,8 @@ class _SkillInfoTabState extends State<SkillInfoTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ListView(
+//      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Container(
           height: 32.0,
@@ -33,7 +33,7 @@ class _SkillInfoTabState extends State<SkillInfoTab> {
           height: 32.0,
         ),
         TextField(
-          maxLines: 20,
+          maxLines: 15,
           decoration: InputDecoration(
               hintText: 'e.g. javascript or project management',
               border: OutlineInputBorder()
