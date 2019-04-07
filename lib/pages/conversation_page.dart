@@ -109,8 +109,6 @@ class Bubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final received = (ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentUser.id != message.from);
-    //print("the value of whether it is received is");
-    //print(received);
     final bg = received ? Colors.white : Colors.greenAccent.shade100;
     final align = received ? CrossAxisAlignment.start : CrossAxisAlignment.end;
     print(align);
@@ -148,15 +146,18 @@ class Bubble extends StatelessWidget {
           child: Stack(
             children: <Widget>[
               Padding(
-                padding: EdgeInsets.only(right: 48.0),
+                padding: (message.type == "regular" ) ? EdgeInsets.only(right: 48.0) : (message.status == "pending") ? EdgeInsets.only(right: 48.0, bottom: 45.0) : EdgeInsets.only(right: 48.0, bottom: 20.0),
                 child: Text(content),
               ),
               (received && message.type != "regular" && message.status == "pending") ?
-              Padding(
-                padding: EdgeInsets.only(right: 48.0, top: 20.0),
+              Positioned(
+                //padding: EdgeInsets.only(right: 48.0, top: 20.0),
+                bottom: 0.0,
+                left: 0.0,
                 child: Row(
                   children: <Widget>[
-                    RaisedButton(
+                    FlatButton(
+                      textColor: Colors.blue,
                       child: Text("Accept"),
                       onPressed: (){
                         if(message.type == "application"){
@@ -167,8 +168,9 @@ class Bubble extends StatelessWidget {
                     Padding(
                       padding: EdgeInsets.only(right: 10.0)
                     ),
-                    RaisedButton(
+                    FlatButton(
                       child: Text("Reject"),
+                      textColor: Colors.red,
                       onPressed: (){
                         if(message.type=="application"){
                           ScopedModel.of<UserModel>(context).rejectApplication(message, conversationId);
@@ -179,13 +181,13 @@ class Bubble extends StatelessWidget {
                 )
               ) :
               (message.type != "regular" && message.status != "pending") ?
-              Padding(
-                  padding: EdgeInsets.only(right: 48.0, top: 20.0),
+              Positioned(
+                  //padding: EdgeInsets.only(right: 48.0, top: 20.0),
+                  bottom: 0.0,
+                  left: 0.0,
                   child: Text("This has been responded")
               ) :
-                  Padding(
-                    padding: EdgeInsets.only(right: 48.0, top: 20.0)
-                  ),
+                  Container(width: 0.0, height: 0.0),
               Positioned(
                 bottom: 0.0,
                 right: 0.0,
