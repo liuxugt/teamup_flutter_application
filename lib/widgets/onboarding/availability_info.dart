@@ -37,7 +37,7 @@ class _AvailabilityInfoTabState extends State<AvailabilityInfoTab> {
                   : Colors.white,
               child: Center(
                 child: _availabilities[cur]
-                    ? Text("X")
+                    ? Text("X", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))
                     : Text(""),
               )
           ),

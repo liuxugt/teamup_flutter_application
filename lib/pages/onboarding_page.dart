@@ -10,6 +10,7 @@ import 'package:teamup_app/widgets/onboarding/skill_info.dart';
 import 'package:teamup_app/widgets/onboarding/stength_info.dart';
 import 'package:teamup_app/widgets/onboarding/availability_info.dart';
 import 'package:teamup_app/widgets/onboarding/icebreaker_info.dart';
+import 'package:teamup_app/widgets/onboarding/profile_picture.dart';
 
 class OnboardingPage extends StatefulWidget {
   @override
@@ -26,7 +27,8 @@ class _OnboardingPageState extends State<OnboardingPage>
 
   @override
   void initState() {
-    _tabs = [HeadlineTab(), PersonalInfoTab(), LanguageInfoTab(), SkillInfoTab(), StrengthInfoTab(), AvailabilityInfoTab(), IcebreakerInfoTab()];
+    _tabs = [HeadlineTab(), PersonalInfoTab(), LanguageInfoTab(), SkillInfoTab(), StrengthInfoTab(),
+    AvailabilityInfoTab(), IcebreakerInfoTab(), ProfilePictureTab()];
     _tabController = new TabController(length: _tabs.length, vsync: this);
     super.initState();
   }
