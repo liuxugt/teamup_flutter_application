@@ -17,7 +17,7 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
   final _formKey = GlobalKey<FormState>();
 
   final List<String> _teamMateTraitOptions = [
-    "Member",
+    "Anyone",
     "Product Manager",
     "Content Strategist",
     "UX researcher",
@@ -346,7 +346,9 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
                       availableSpots: _teamSize,
                       name: _teamName,
                       description: _teamDescription,
-                      leaderId: currentUser.id);
+                      leaderId: currentUser.id,
+                      roles: _memberTraits.sublist(1)
+                  );
                   setState(() {
                     _isLoading = true;
                   });

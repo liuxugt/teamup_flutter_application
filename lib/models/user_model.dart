@@ -5,7 +5,8 @@ import 'package:teamup_app/objects/course.dart';
 import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/services/api.dart';
-import 'package:teamup_app/objects/notification.dart';
+import 'package:teamup_app/objects/message.dart';
+import 'package:teamup_app/objects/conversation.dart';
 
 class UserModel extends Model {
   //TODO: start moving database functions into the API
@@ -39,8 +40,9 @@ class UserModel extends Model {
   Future<bool> loadCurrentUser() async {
     try {
       FirebaseUser user = await _api.getCurrentUser();
-      print('user ${user.uid} is loaded');
+//      print('user ${user.uid} is loaded');
         _currentUser = await _api.getUser(user.uid);
+        print("get user");
         await _loadCourseAndTeam();
         return true;
     } catch (e) {
@@ -51,7 +53,17 @@ class UserModel extends Model {
   }
 
   Future<void> _loadCourseAndTeam([String id = ""]) async {
-    String courseId = (id.isEmpty) ? _currentUser.courseIds.first : id;
+    String courseId;
+    if(_currentUser.courseIds.isEmpty){
+      _currentCourse = null;
+      _currentTeam = null;
+      return;
+    }
+    else{
+      courseId = (id.isEmpty) ? _currentUser.courseIds.first : id;
+    }
+    print("get course");
+    print(courseId);
 
     _currentCourse = await _api.getCourse(courseId);
 
@@ -65,7 +77,9 @@ class UserModel extends Model {
 
   Future<bool> signInUser(String email, String password) async {
     try {
+      print("SignInUser (UserModel)");
       await _api.signInUser(email, password);
+      print("Got current user, loading current user...");
       return loadCurrentUser();
     } catch (error) {
       print("test");
@@ -178,6 +192,20 @@ class UserModel extends Model {
     return false;
   }
 
+  Future<bool> joinCourse(Course course) async {
+    try{
+      await _api.joinCourse(currentUser.id, course.id);
+      await loadCurrentUser();
+      _error = "";
+      return true;
+    }catch(e){
+      _error = e.toString();
+      print(_error);
+    }
+    return false;
+  }
+
+
   Future<User> getUser(String uid) async {
     return _api.getUser(uid);
   }
@@ -199,38 +227,61 @@ class UserModel extends Model {
     return _currentCourse.availableTeamsStream;
   }
 
-
-  /*
-  //Corresponding functions in notification system.
-  Stream<QuerySnapshot> getSendAppllication(){
-    if(_currentUser == null || _currentCourse == null) return null;
-    return _currentCourse.applicationRef
-        .where('from', isEqualTo: _currentUser.id)
-        .snapshots();
+  Stream<QuerySnapshot> getCourses(){
+    return _api.getCoursesStream();
   }
 
-  Stream<QuerySnapshot> getReceivedApplication(){
-    if(_currentUser == null || _currentCourse == null) return null;
-    return _currentCourse.applicationRef
-        .where('to', isEqualTo: _currentUser.id)
-        .snapshots();
+
+
+
+  Stream<QuerySnapshot> getConvsersations(){
+    if(_currentCourse == null || _currentUser == null) return null;
+    return _currentCourse.conversationRef.where('related', arrayContains: _currentUser.id).snapshots();
   }
 
-  Stream<QuerySnapshot> getSendInvitation(){
-    if(_currentUser == null || _currentCourse == null) return null;
-    return _currentCourse.invitationRef
-        .where('from', isEqualTo: _currentUser.id)
-        .snapshots();
+  Future<void> sendRegularMessage(String toId, String conversationId, String content) async{
+    String type = "regular";
+    Message temp = Message(content, currentUser.id, toId, "regular", "pending", "");
+    await _api.createMessage(currentCourse.id, conversationId, temp);
   }
 
-  Stream<QuerySnapshot> getReceivedInvitation(){
-    if(_currentUser == null || _currentCourse == null) return null;
-    return _currentCourse.invitationRef
-        .where('to', isEqualTo: _currentUser.id)
-        .snapshots();
+  Future<String> createApplication(String fromId, String toId, String courseId, String teamId) async {
+    //QuerySnapshot currentConversation = await _currentCourse.conversationRef.where("related", arrayContains: fromId).where("related", arrayContains: toId).getDocuments();
+    DocumentSnapshot team = await _currentCourse.teamsRef.document(teamId).get();
+    String content = "I send you an application. Please let me join your team ${team.data["name"]} in course $courseId";
+    Message temp = Message(content, fromId, toId, "application", "pending", teamId);
+    String conversationId;
+    print("here");
+    //if(currentConversation.documents.length != 0){
+    //  conversationId = currentConversation.documents[0].documentID;
+    //  await _api.createMessage(courseId, conversationId, temp);
+    //}
+    //else{
+      conversationId = await _api.createConversation(courseId, fromId, toId);
+      print("here");
+      await _api.createMessage(courseId, conversationId, temp);
+      print("here");
+    //}
+    return conversationId;
   }
-  */
 
+  Future<void> acceptApplication(Message message, String conversationId) async {
+    DocumentReference temp = _currentCourse.conversationRef.document(conversationId).collection("messages").document(message.id);
+    temp.updateData({
+      "status": "responded"
+    });
+    DocumentSnapshot newSnapshot = await _userRef.document(message.from).get();
+    String courseId = _currentCourse.id;
+    if(newSnapshot.data["course_team"][courseId] == null){
+      _api.joinTeam(message.from, courseId, message.team);
+    }
+  }
+  Future<void> rejectApplication(Message message, String conversationId) async {
+    DocumentReference temp = _currentCourse.conversationRef.document(conversationId).collection("messages").document(message.id);
+    temp.updateData({
+      "status": "responded"
+    });
+  }
 
   //Functions in creating and response to applications.
   /*

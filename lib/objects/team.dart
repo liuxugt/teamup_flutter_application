@@ -7,6 +7,7 @@ class Team {
   String _id;
   int availableSpots;
   String _leader;
+  List<dynamic> roles;
 
 
   String get id => _id;
@@ -24,6 +25,8 @@ class Team {
     _id = snap.documentID;
     availableSpots = data['available_spots'];
     _leader = data['leader'];
+    roles = data.containsKey("roles") ? data['roles'] : [];
+
   }
 
 
@@ -36,9 +39,10 @@ class Team {
     _id = data['id'];
     availableSpots = data['available_spots'];
     _leader = data['leader'];
+    roles = data.containsKey("roles") ? data['roles'] : [];
   }
 
-  Team({this.availableSpots, this.name, this.description, String leaderId}){
+  Team({this.availableSpots, this.name, this.description, this.roles, String leaderId}){
     _leader = leaderId;
     _id = "";
   }
@@ -49,7 +53,8 @@ class Team {
       'description': description,
       'available_spots': availableSpots,
       'id': _id,
-      'leader': _leader
+      'leader': _leader,
+      'roles': roles
     };
   }
 }

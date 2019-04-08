@@ -4,6 +4,8 @@ import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:teamup_app/objects/conversation.dart';
+import 'package:teamup_app/pages/conversation_page.dart';
 
 class TeamPage extends StatelessWidget {
   final Team team;
@@ -66,10 +68,19 @@ class TeamPage extends StatelessWidget {
 
       return FloatingActionButton(
           child: Icon(Icons.add),
-          onPressed: () {
-            //model.createApplications(model.currentUser.id, team.leader, team.id, model.currentCourse.id);
-            model.joinTeam(team);
-          });
+          onPressed: () async {
+            String conversationID = await model.createApplication(model.currentUser.id, team.leader, model.currentCourse.id, team.id);
+            DocumentSnapshot _conv = await model.currentCourse.conversationRef.document(conversationID).get();
+            Conversation conversation = Conversation.fromSnapshot(_conv);
+            int index = (model.currentUser.id == conversation.userId1) ? 0 : 1;
+            await conversation.setUser(context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ConversationPage(conversation, index))
+            );
+            },
+            //model.joinTeam(team);
+          );
     });
   }
 

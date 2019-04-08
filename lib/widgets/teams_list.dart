@@ -7,23 +7,81 @@ import 'package:teamup_app/pages/propose_team_page.dart';
 import 'package:teamup_app/pages/team_page.dart';
 
 class TeamsList extends StatelessWidget {
+  List<Widget> _makeTeamIcons(List<dynamic> teamRoles) {
+    List<Widget> iconList = [
+      Container(
+        height: 48,
+        child: Center(child: Text("we want")),
+      )
+    ];
+
+    Map<String, int> roleCountMap = {};
+    for (String role in teamRoles) {
+      if (roleCountMap.containsKey(role)) {
+        roleCountMap[role]++;
+      } else {
+        roleCountMap[role] = 1;
+      }
+    }
+    List<String> finalRoles = [];
+    roleCountMap.forEach((role, count){
+      if(count > 1) {
+        finalRoles.add("$role x${count.toString()}");
+      }else{
+        finalRoles.add(role);
+      }
+    });
+
+    for(String role in finalRoles){
+      iconList.add(Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Icon(
+            Icons.account_circle,
+            color: Colors.grey[400],
+          ),
+          Container(
+            child: Center(
+                child: Text(role.toString(),
+              textAlign: TextAlign.center,
+            )),
+            width: 70.0,
+          )
+        ],
+      ));
+    }
+    return iconList;
+  }
+
   Widget _makeTeamCard(Team team, BuildContext context) {
     return Card(
-      elevation: 0.0,
+      elevation: 2.0,
       margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      child: Container(
-        decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
-        child: ListTile(
-            isThreeLine: true,
-            title:
-                Text(team.name, style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(team.description),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => TeamPage(team: team)));
-            }),
+      child: Column(
+        children: <Widget>[
+          Container(
+            decoration: BoxDecoration(color: Color.fromRGBO(245, 245, 245, 1)),
+            child: ListTile(
+                isThreeLine: true,
+                title: Text(team.name,
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                subtitle: Text(team.description),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => TeamPage(team: team)));
+                }),
+          ),
+          Padding(
+            padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: _makeTeamIcons(team.roles),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -55,7 +113,9 @@ class TeamsList extends StatelessWidget {
                           style: TextStyle(
                               color: Colors.black, fontWeight: FontWeight.bold),
                         ),
-                        Container(height: 16.0,),
+                        Container(
+                          height: 16.0,
+                        ),
                         FlatButton(
                           child: Text(
                             'Propose a new Team',
@@ -63,11 +123,17 @@ class TeamsList extends StatelessWidget {
                           color: Colors.blue,
                           textColor: Colors.white,
                           onPressed: () {
-                            int courseGroupSize = ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentCourse.groupSize;
+                            int courseGroupSize = ScopedModel.of<UserModel>(
+                                    context,
+                                    rebuildOnChange: false)
+                                .currentCourse
+                                .groupSize;
                             Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ProposeTeamPage(maxGroupSize: courseGroupSize,)));
+                                    builder: (context) => ProposeTeamPage(
+                                          maxGroupSize: courseGroupSize,
+                                        )));
                           },
                         )
                       ],
