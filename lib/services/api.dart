@@ -123,6 +123,16 @@ class API {
   }
 
 
+  Future<void> joinCourse(String userId, String courseId) async {
+    DocumentReference courseRef = _firestore.document('/courses/$courseId');
+    DocumentReference userRef = _firestore.document('users/$userId');
+
+    await userRef.updateData({
+      "courses": FieldValue.arrayUnion([courseId]),
+      "course_team.$courseId": null,
+    });
+  }
+
   Future<void> updateUserAttributes(
       String uid, Map<String, dynamic> attributes) async {
     await _firestore
@@ -176,6 +186,10 @@ class API {
     print("after creating conversation");
 
     return conversationRef.documentID;
+  }
+
+  Stream<QuerySnapshot> getCoursesStream(){
+    return _firestore.collection('courses').snapshots();
   }
 
 }

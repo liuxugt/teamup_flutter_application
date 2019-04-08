@@ -40,7 +40,7 @@ class UserModel extends Model {
   Future<bool> loadCurrentUser() async {
     try {
       FirebaseUser user = await _api.getCurrentUser();
-      print('user ${user.uid} is loaded');
+//      print('user ${user.uid} is loaded');
         _currentUser = await _api.getUser(user.uid);
         print("get user");
         await _loadCourseAndTeam();
@@ -77,7 +77,9 @@ class UserModel extends Model {
 
   Future<bool> signInUser(String email, String password) async {
     try {
+      print("SignInUser (UserModel)");
       await _api.signInUser(email, password);
+      print("Got current user, loading current user...");
       return loadCurrentUser();
     } catch (error) {
       print("test");
@@ -190,6 +192,20 @@ class UserModel extends Model {
     return false;
   }
 
+  Future<bool> joinCourse(Course course) async {
+    try{
+      await _api.joinCourse(currentUser.id, course.id);
+      await loadCurrentUser();
+      _error = "";
+      return true;
+    }catch(e){
+      _error = e.toString();
+      print(_error);
+    }
+    return false;
+  }
+
+
   Future<User> getUser(String uid) async {
     return _api.getUser(uid);
   }
@@ -210,6 +226,13 @@ class UserModel extends Model {
     if (_currentCourse == null) return null;
     return _currentCourse.availableTeamsStream;
   }
+
+  Stream<QuerySnapshot> getCourses(){
+    return _api.getCoursesStream();
+  }
+
+
+
 
   Stream<QuerySnapshot> getConvsersations(){
     if(_currentCourse == null || _currentUser == null) return null;
