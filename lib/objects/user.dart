@@ -18,6 +18,15 @@ class User {
 //    print('courses : ${_courseIds.toString()}');
 //    print('uid: $_uid');
 //  }
+  //check if user is in a team for this course
+  bool inTeamForCourse(String courseId){
+    if(_courseTeam[courseId] == null){
+      return false;
+    }else{
+      return true;
+    }
+  }
+
 
 
   User.fromSnapshotData(Map<String, dynamic> data){
@@ -56,4 +65,7 @@ class User {
   String get email => _email;
   String get lastName => _lastName;
   String get photoURL => _photoURL;
+
+  //TODO: Make this check attributes
+  String get subtitle => _email;
 }

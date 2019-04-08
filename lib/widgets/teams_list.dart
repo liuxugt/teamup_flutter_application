@@ -24,15 +24,15 @@ class TeamsList extends StatelessWidget {
       }
     }
     List<String> finalRoles = [];
-    roleCountMap.forEach((role, count){
-      if(count > 1) {
+    roleCountMap.forEach((role, count) {
+      if (count > 1) {
         finalRoles.add("$role x${count.toString()}");
-      }else{
+      } else {
         finalRoles.add(role);
       }
     });
 
-    for(String role in finalRoles){
+    for (String role in finalRoles) {
       iconList.add(Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
@@ -42,9 +42,10 @@ class TeamsList extends StatelessWidget {
           ),
           Container(
             child: Center(
-                child: Text(role.toString(),
-              textAlign: TextAlign.center,
-            )),
+                child: Text(
+                  role.toString(),
+                  textAlign: TextAlign.center,
+                )),
             width: 70.0,
           )
         ],
@@ -90,82 +91,88 @@ class TeamsList extends StatelessWidget {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<UserModel>(builder: (context, child, model) {
       if (!model.hasCourse) return Center(child: Text('No Courses'));
-      return Column(
-          crossAxisAlignment: CrossAxisAlignment.start, //align to the left
-          children: <Widget>[
-            //Label for my team
-            Padding(
-              padding: EdgeInsets.all(20.0),
-              child: Text(
-                "My Team",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+      return StreamBuilder<QuerySnapshot>(
+          stream: model.getTeams(),
+          builder: (context, snapshot) {
+            List<Widget> children = [
+              //Label for my team
+              const Padding(
+                padding: EdgeInsets.all(20.0),
+                child: Text(
+                  "My Team",
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+                ),
               ),
-            ),
-            // if I am in a team show my team card, if not don't show
-            Center(
-              child: model.userInTeam
-                  ? _makeTeamCard(model.currentTeam, context)
-                  : Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          'Oops! You are not in a team yet!',
-                          style: TextStyle(
-                              color: Colors.black, fontWeight: FontWeight.bold),
-                        ),
-                        Container(
-                          height: 16.0,
-                        ),
-                        FlatButton(
-                          child: Text(
-                            'Propose a new Team',
-                          ),
-                          color: Colors.blue,
-                          textColor: Colors.white,
-                          onPressed: () {
-                            int courseGroupSize = ScopedModel.of<UserModel>(
-                                    context,
-                                    rebuildOnChange: false)
-                                .currentCourse
-                                .groupSize;
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ProposeTeamPage(
-                                          maxGroupSize: courseGroupSize,
-                                        )));
-                          },
-                        )
-                      ],
+              // if I am in a team show my team card, if not don't show
+              Center(
+                child: model.userInTeam
+                    ? _makeTeamCard(model.currentTeam, context)
+                    : Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    const Text(
+                      'Oops! You are not in a team yet!',
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold),
                     ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(20.0),
-              child: Text("Available Teams",
-                  style:
-                      TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
-            ),
-            Flexible(
-                child: StreamBuilder<QuerySnapshot>(
-                    stream: model.getTeams(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError)
-                        return Text('Error: %{snapshot.error}');
-                      switch (snapshot.connectionState) {
-                        case ConnectionState.waiting:
-                          return Center(child: CircularProgressIndicator());
-                        default:
-                          return ListView(
-                              children: snapshot.data.documents.map((document) {
-                            return (document?.data != null)
-                                ? _makeTeamCard(
-                                    Team.fromSnapshot(document), context)
-                                : Container(
-                                    height: 0.0,
-                                  );
-                          }).toList());
-                      }
-                    })),
+                    Container(
+                      height: 16.0,
+                    ),
+                    FlatButton(
+                      child: const Text(
+                        'Propose a new Team',
+                      ),
+                      color: Colors.blue,
+                      textColor: Colors.white,
+                      onPressed: () {
+                        int courseGroupSize = ScopedModel.of<UserModel>(
+                            context,
+                            rebuildOnChange: false)
+                            .currentCourse
+                            .groupSize;
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ProposeTeamPage(
+                                  maxGroupSize: courseGroupSize,
+                                )));
+                      },
+                    )
+                  ],
+                ),
+              ),
+              const Padding(
+                padding: EdgeInsets.all(20.0),
+                child: Text("Available Teams",
+                    style:
+                    TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
+              )
+            ];
+
+            if (snapshot.hasError) {
+              children.add(Text('Error: %{snapshot.error}'));
+              return ListView(children: children);
+            }
+            switch (snapshot.connectionState) {
+              case ConnectionState.waiting:
+                children.add(Center(child: CircularProgressIndicator()));
+                return ListView(
+                  children: children,
+                );
+              default:
+                List<Widget> queryList =
+                snapshot.data.documents.map((document) {
+                  return (document?.data != null)
+                      ? _makeTeamCard(Team.fromSnapshot(document), context)
+                      : Container(
+                    height: 0.0,
+                  );
+                }).toList();
+                children.addAll(queryList);
+                return ListView(children: children);
+            }
+          });
 //            Padding(
 //              padding: EdgeInsets.all(20.0),
 //              child: Text("Full Teams"),
@@ -186,7 +193,6 @@ class TeamsList extends StatelessWidget {
 //                              }).toList());
 //                      }
 //                    }))
-          ]);
     });
   }
 }

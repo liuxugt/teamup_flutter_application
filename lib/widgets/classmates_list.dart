@@ -6,28 +6,40 @@ import 'package:teamup_app/pages/profile_page.dart';
 import 'package:teamup_app/objects/user.dart';
 
 class ClassmatesList extends StatelessWidget {
-
-
   Widget _makeClassmateCard(User user, BuildContext context) {
-    return Card(
-      elevation: 1.0,
-      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      child: Container(
-        decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
-        child: ListTile(
-          leading: CircleAvatar(backgroundImage: NetworkImage(user.photoURL)),
-            title: Text('${user.firstName} ${user.lastName}',
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(user.email),
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ProfilePage(user: user,)));
-            }
-            ),
-      ),
-    );
+//    return Card(
+//      elevation: 1.0,
+//      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+//      child: Container(
+//        decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
+//        child:
+    return ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+        leading: CircleAvatar(
+          backgroundImage: NetworkImage(user.photoURL),
+          radius: 24.0,
+        ),
+        title: Text('${user.firstName} ${user.lastName}',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(user.subtitle),
+        trailing: Container(
+            width: 64.0,
+            child: Center(child: user.inTeamForCourse(
+                ScopedModel.of<UserModel>(context, rebuildOnChange: false)
+                    .currentCourse
+                    .id)
+                ? Text("TEAMED", style: TextStyle(color: Color.fromRGBO(161, 166, 187, 1.0)),)
+                : Icon(Icons.brightness_1, color: Color.fromRGBO(90, 133, 236, 1.0), size: 22.0,),)),
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ProfilePage(
+                    user: user,
+                  )));
+        });
+//      ),
+//    );
   }
 
   @override
@@ -40,7 +52,15 @@ class ClassmatesList extends StatelessWidget {
       return StreamBuilder<QuerySnapshot>(
           stream: model.getClassMates(),
           builder: (context, snapshot) {
-            //print(snapshot.data.documents);
+//            List<Widget> children = [
+////              const Padding(
+////                padding: EdgeInsets.all(20.0),
+////                child: Text(
+////                  "A",
+////                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0),
+////                ),
+////              )
+//            ];
             if (snapshot.hasError) return Text('Error: %{snapshot.error}');
             switch (snapshot.connectionState) {
               case ConnectionState.waiting:
@@ -48,13 +68,13 @@ class ClassmatesList extends StatelessWidget {
               default:
                 return ListView(
                   children:
-                      snapshot.data.documents.map((DocumentSnapshot document) {
+                  snapshot.data.documents.map((DocumentSnapshot document) {
                     return (document?.data != null)
                         ? _makeClassmateCard(
-                            User.fromSnapshotData(document.data), context)
+                        User.fromSnapshotData(document.data), context)
                         : Container(
-                            height: 0.0,
-                          );
+                      height: 0.0,
+                    );
                   }).toList(),
                 );
             }

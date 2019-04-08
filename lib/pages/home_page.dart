@@ -21,9 +21,9 @@ class HomePage extends StatelessWidget {
         ),
         bottomNavigationBar: TabBar(
           tabs: <Widget>[
-            Tab(icon: Icon(Icons.person)),
-            Tab(icon: Icon(Icons.group)),
-            Tab(icon: Icon(Icons.mail)),
+            Tab(icon: Icon(Icons.person), child: Text("Classmates"),),
+            Tab(icon: Icon(Icons.group), child: Text("Teams"),),
+            Tab(icon: Icon(Icons.mail), child: Text("Inbox"),),
           ],
           labelColor: Colors.blue,
           unselectedLabelColor: Colors.grey,

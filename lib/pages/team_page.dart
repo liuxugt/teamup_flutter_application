@@ -12,20 +12,24 @@ class TeamPage extends StatelessWidget {
   TeamPage({this.team});
 
   Widget _makeClassmateCard(User user, BuildContext context) {
-    return Card(
-      elevation: 2.0,
-      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      child: Container(
-        decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
-        child: ListTile(
-          leading: CircleAvatar(
+    return
+//      Card(
+//      elevation: 2.0,
+//      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+//      child: Container(
+//        decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
+//        child:
+      ListTile(
+        contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+        leading: CircleAvatar(
             backgroundImage: NetworkImage(user.photoURL),
-          ),
-          title: Text('${user.firstName} ${user.lastName}'),
-          subtitle: Text(user.email),
+            radius: 24.0
         ),
-      ),
-    );
+        title: Text('${user.firstName} ${user.lastName}', style: TextStyle(fontWeight: FontWeight.bold),),
+        subtitle: Text(user.subtitle, style: TextStyle(color: Colors.black),),
+      );
+//      ),
+//    );
   }
 
   _buildMemberList(BuildContext context) {
@@ -40,9 +44,9 @@ class TeamPage extends StatelessWidget {
             default:
               return ListView(
                   children: snapshot.data.documents.map((document) {
-                return _makeClassmateCard(
-                    User.fromSnapshotData(document.data), context);
-              }).toList());
+                    return _makeClassmateCard(
+                        User.fromSnapshotData(document.data), context);
+                  }).toList());
           }
         });
   }
@@ -67,20 +71,20 @@ class TeamPage extends StatelessWidget {
       //show a join button if the team isn't full and the user is not on a team
 
       return FloatingActionButton(
-          child: Icon(Icons.add),
-          onPressed: () async {
-            String conversationID = await model.createApplication(model.currentUser.id, team.leader, model.currentCourse.id, team.id);
-            DocumentSnapshot _conv = await model.currentCourse.conversationRef.document(conversationID).get();
-            Conversation conversation = Conversation.fromSnapshot(_conv);
-            int index = (model.currentUser.id == conversation.userId1) ? 0 : 1;
-            await conversation.setUser(context);
-            Navigator.push(
+        child: Icon(Icons.add),
+        onPressed: () async {
+          String conversationID = await model.createApplication(model.currentUser.id, team.leader, model.currentCourse.id, team.id);
+          DocumentSnapshot _conv = await model.currentCourse.conversationRef.document(conversationID).get();
+          Conversation conversation = Conversation.fromSnapshot(_conv);
+          int index = (model.currentUser.id == conversation.userId1) ? 0 : 1;
+          await conversation.setUser(context);
+          Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => ConversationPage(conversation, index))
-            );
-            },
-            //model.joinTeam(team);
           );
+        },
+        //model.joinTeam(team);
+      );
     });
   }
 
@@ -95,21 +99,21 @@ class TeamPage extends StatelessWidget {
           Padding(
               padding: EdgeInsets.all(20.0),
               child: Text(
-                "Description",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+                "Project Ideas",
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20.0, color: Color.fromRGBO(161, 166, 187, 1.0)),
               )),
           Padding(
             padding: EdgeInsets.only(left: 20.0, bottom: 10.0),
             child: Text(
               team.description,
-              style: TextStyle(fontSize: 18.0),
+              style: TextStyle(fontSize: 18.0, color: Color.fromRGBO(90, 96, 116, 1.0)),
             ),
           ),
           Padding(
-              padding: EdgeInsets.all(20.0),
+              padding: EdgeInsets.only(left: 20.0, top: 20.0),
               child: Text(
                 "Team Members",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20.0, color: Color.fromRGBO(161, 166, 187, 1.0)),
               )),
           Flexible(
             child: _buildMemberList(context),
