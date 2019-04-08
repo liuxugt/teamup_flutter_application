@@ -8,14 +8,15 @@ class OnboardingModel extends Model{
 
   String headline = '';
   String gender = '';
-  String birthDate;
   String major;
   String yearOfStudy;
+  DateTime birthDate;
   List<String> languages = [];
   String skills = '';
   String strengths = '';
   List<bool> availabilities = [];
   int iceBreakers = 0;
+
 
 
   submitAttributes() async {
@@ -41,6 +42,7 @@ class OnboardingModel extends Model{
       attributes['availabilities'] = availabilities;
 
     attributes['icebreakers'] = iceBreakers;
+    attributes['birthdate'] = birthDate;
 
     _api.updateUserAttributes(currentUserId, attributes);
   }

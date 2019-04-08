@@ -39,6 +39,23 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
     return items;
   }
 
+  DateTime _birthDate = DateTime.now();
+
+  Future<Null> _selectDate(BuildContext context) async {
+    final DateTime picked = await showDatePicker(
+        context: context,
+        initialDate: _birthDate,
+        firstDate: DateTime(1990, 8),
+        lastDate: DateTime(2020, 12));
+    if (picked != null && picked != _birthDate)
+      setState(() {
+        _birthDate = picked;
+        ScopedModel.of<OnboardingModel>(context,
+            rebuildOnChange: false)
+            .birthDate = _birthDate;
+      });
+  }
+
   String _genderValue;
   String _majorValue;
   String _yearOfStudyValue;
@@ -96,9 +113,10 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
                   "Date of Birth",
                   style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
                 ),
-                Text(
-                    //TODO: Fill this in with a datepicker of some sort
-                    "Date-Picker")
+                RaisedButton(
+                onPressed: () => _selectDate(context),
+                child: Text('Select date')
+                ),
               ],
             )
           ],
