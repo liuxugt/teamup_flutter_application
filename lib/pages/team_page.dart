@@ -110,6 +110,13 @@ class TeamPage extends StatelessWidget {
             ),
           ),
           Padding(
+              padding: EdgeInsets.all(20.0),
+              child: Text(
+                "Vacancies",
+                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20.0, color: Color.fromRGBO(161, 166, 187, 1.0)),
+              )),
+
+          Padding(
               padding: EdgeInsets.only(left: 20.0, top: 20.0),
               child: Text(
                 "Team Members",
