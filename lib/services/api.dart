@@ -1,10 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:teamup_app/objects/course.dart';
-import 'package:teamup_app/objects/course_member.dart';
 import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/objects/user.dart';
-import 'package:teamup_app/objects/conversation.dart';
+//import 'package:teamup_app/objects/conversation.dart';
 import 'package:teamup_app/objects/message.dart';
 
 class API {
@@ -124,7 +123,7 @@ class API {
 
 
   Future<void> joinCourse(String userId, String courseId) async {
-    DocumentReference courseRef = _firestore.document('/courses/$courseId');
+//    DocumentReference courseRef = _firestore.document('/courses/$courseId');
     DocumentReference userRef = _firestore.document('users/$userId');
 
     await userRef.updateData({
@@ -173,9 +172,9 @@ class API {
     return messageRef.documentID;
   }
 
-  Future<String> createConversation(String courseId, String Id1, String Id2) async {
+  Future<String> createConversation(String courseId, String id1, String id2) async {
     DocumentReference conversationRef = await _firestore.collection('/courses/$courseId/conversations').add({
-      "related" : FieldValue.arrayUnion([Id1, Id2])
+      "related" : FieldValue.arrayUnion([id1, id2])
     });
     //print("here");
     await conversationRef.updateData({

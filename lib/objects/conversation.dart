@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:scoped_model/scoped_model.dart';
-import 'package:teamup_app/models/user_model.dart';
-import 'package:flutter/material.dart';
+//import 'package:scoped_model/scoped_model.dart';
+//import 'package:teamup_app/models/user_model.dart';
+//import 'package:flutter/material.dart';
 import 'package:teamup_app/objects/user.dart';
 
 class Conversation{
   String _userId1;
   String _userId2;
   CollectionReference _messageRef;
-  String _firstName1;
-  String _lastName1;
-  String _firstName2;
-  String _lastName2;
+//  String _firstName1;
+//  String _lastName1;
+//  String _firstName2;
+//  String _lastName2;
   User _user1;
   User _user2;
   String _firstMessage;

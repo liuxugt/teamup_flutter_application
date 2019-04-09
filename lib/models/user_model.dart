@@ -6,7 +6,6 @@ import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/services/api.dart';
 import 'package:teamup_app/objects/message.dart';
-import 'package:teamup_app/objects/conversation.dart';
 
 class UserModel extends Model {
   //TODO: start moving database functions into the API
@@ -240,7 +239,6 @@ class UserModel extends Model {
   }
 
   Future<void> sendRegularMessage(String toId, String conversationId, String content) async{
-    String type = "regular";
     Message temp = Message(content, currentUser.id, toId, "regular", "pending", "");
     await _api.createMessage(currentCourse.id, conversationId, temp);
   }

@@ -4,8 +4,8 @@ import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:teamup_app/objects/conversation.dart';
-import 'package:teamup_app/pages/conversation_page.dart';
+//import 'package:teamup_app/objects/conversation.dart';
+//import 'package:teamup_app/pages/conversation_page.dart';
 import 'package:teamup_app/pages/profile_page.dart';
 
 class TeamPage extends StatelessWidget {
@@ -91,8 +91,8 @@ class TeamPage extends StatelessWidget {
   }
 
   _onLeaveTeamPressed(BuildContext context) async {
-    User currentUser =
-        ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentUser;
+//    User currentUser =
+//        ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentUser;
     await showDialog(
         context: context,
         builder: (context) {

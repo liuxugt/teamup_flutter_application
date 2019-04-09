@@ -23,5 +23,6 @@ class Application{
 
   String get fromId => _fromId;
   String get toId => _toId;
-  String get Status => _status;
+  String get status => _status;
+  String get teamId => _teamId;
 }

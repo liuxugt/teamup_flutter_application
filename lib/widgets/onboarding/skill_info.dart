@@ -9,13 +9,13 @@ class SkillInfoTab extends StatefulWidget {
 
 class _SkillInfoTabState extends State<SkillInfoTab> {
 
-  String _skills;
-
-  @override
-  void initState() {
-    _skills = '';
-    super.initState();
-  }
+//  String _skills;
+//
+//  @override
+//  void initState() {
+//    _skills = '';
+//    super.initState();
+//  }
 
   @override
   Widget build(BuildContext context) {

@@ -35,7 +35,6 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
     "Technical Lead"
   ];
 
-  List<String> _teamMatesToInvite = [];
   String _teamName = "";
   String _teamDescription = "";
   bool _isLoading = false;
@@ -53,6 +52,7 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
     for (int i = 1; i < widget.maxGroupSize; i++) {
       _memberTraits.add(_teamMateTraitOptions[0]);
     }
+    super.initState();
   }
 
   bool _validateAndSave() {

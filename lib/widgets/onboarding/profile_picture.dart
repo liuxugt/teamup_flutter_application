@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'package:scoped_model/scoped_model.dart';
-import 'package:teamup_app/models/onboarding_model.dart';
+//import 'package:scoped_model/scoped_model.dart';
+//import 'package:teamup_app/models/onboarding_model.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ProfilePictureTab extends StatefulWidget {
