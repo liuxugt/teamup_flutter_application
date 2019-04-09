@@ -163,11 +163,13 @@ class TeamsList extends StatelessWidget {
               default:
                 List<Widget> queryList =
                 snapshot.data.documents.map((document) {
-                  return (document?.data != null)
-                      ? _makeTeamCard(Team.fromSnapshot(document), context)
-                      : Container(
-                    height: 0.0,
-                  );
+                  if (document?.data != null){
+                    Team team = Team.fromSnapshot(document);
+                    if(team.id != model.currentTeam.id){
+                      return _makeTeamCard(team, context);
+                    }
+                  }
+                  return Container(height: 0.0,);
                 }).toList();
                 children.addAll(queryList);
                 return ListView(children: children);
