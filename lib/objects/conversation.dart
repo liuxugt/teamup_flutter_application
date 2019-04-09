@@ -27,9 +27,14 @@ class Conversation{
     _id = snap.documentID;
   }
 
-  setUser(BuildContext context) async{
-    _user1 = await ScopedModel.of<UserModel>(context, rebuildOnChange: true).getUser(_userId1);
-    _user2 = await ScopedModel.of<UserModel>(context, rebuildOnChange: true).getUser(_userId2);
+//  setUser(BuildContext context) async{
+//    _user1 = await ScopedModel.of<UserModel>(context, rebuildOnChange: true).getUser(_userId1);
+//    _user2 = await ScopedModel.of<UserModel>(context, rebuildOnChange: true).getUser(_userId2);
+//  }
+
+  setUsers(User user1, User user2){
+    _user1 = user1;
+    _user2 = user2;
   }
 
   setFirstMessage() async{

@@ -6,6 +6,7 @@ import 'package:teamup_app/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:teamup_app/objects/conversation.dart';
 import 'package:teamup_app/pages/conversation_page.dart';
+import 'package:teamup_app/pages/profile_page.dart';
 
 class TeamPage extends StatelessWidget {
   final Team team;
@@ -38,38 +39,36 @@ class TeamPage extends StatelessWidget {
   }
 
   Widget _makeClassmateCard(User user, BuildContext context) {
-    return
-//      Card(
-//      elevation: 2.0,
-//      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-//      child: Container(
-//        decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
-//        child:
-        ListTile(
+    return ListTile(
       contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
       leading: CircleAvatar(
           backgroundImage: NetworkImage(user.photoURL), radius: 24.0),
-      title:
-      RichText(
+      title: RichText(
         text: TextSpan(
           text: '${user.firstName} ${user.lastName}',
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black, fontSize: 16.0),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: Colors.black, fontSize: 16.0),
           children: <TextSpan>[
-            (user.id == team.leader) ? TextSpan(text: ' (Team Lead)', style: TextStyle(color: Colors.blue)) : TextSpan(text: ""),
+            (user.id == team.leader)
+                ? TextSpan(
+                    text: ' (Team Lead)', style: TextStyle(color: Colors.blue))
+                : TextSpan(text: ""),
           ],
         ),
       ),
-//      Text(
-//        '${user.firstName} ${user.lastName}',
-//        style: TextStyle(fontWeight: FontWeight.bold),
-//      ),
       subtitle: Text(
         user.subtitle,
         style: TextStyle(color: Colors.black),
       ),
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ProfilePage(
+                      user: user,
+                    )));
+      },
     );
-//      ),
-//    );
   }
 
   _buildMemberList(BuildContext context) {
@@ -91,18 +90,49 @@ class TeamPage extends StatelessWidget {
         });
   }
 
+  _onLeaveTeamPressed(BuildContext context) async {
+    User currentUser =
+        ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentUser;
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Confirm leaving Team"),
+            content: Text("Are you sure you would like to leave this team?"),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Cancel'),
+              ),
+              FlatButton(
+                onPressed: () async {
+                  await ScopedModel.of<UserModel>(context,
+                          rebuildOnChange: true)
+                      .leaveCurrentTeam();
+                  Navigator.of(context).pop();
+                },
+                child: Text('Yes'),
+              ),
+            ],
+          );
+        });
+  }
+
   _buildFAB(BuildContext context) {
     return ScopedModelDescendant<UserModel>(
         rebuildOnChange: true,
         builder: (context, child, model) {
-          //if this team is the user's team, show the leave team button
-          if (model.userInTeam && model.currentTeam.id == team.id)
+          //if the current user is the team leader
+
+          //if this team is the user's team and they are not the leader, show the leave team button
+          if (model.userInTeam &&
+              model.currentTeam.id == team.id &&
+              model.currentUser.id != team.id)
             return FloatingActionButton(
                 child: Icon(Icons.remove),
-                onPressed: () {
-                  print('pressed to leave');
-                  model.leaveCurrentTeam();
-                });
+                onPressed: () => _onLeaveTeamPressed(context));
 
           //if the user is in a team or the team is full, don't show anything
           if (team.isFull || model.userInTeam)
@@ -115,23 +145,57 @@ class TeamPage extends StatelessWidget {
           return FloatingActionButton(
             child: Icon(Icons.add),
             onPressed: () async {
-              String conversationID = await model.createApplication(
-                  model.currentUser.id,
-                  team.leader,
-                  model.currentCourse.id,
-                  team.id);
-              DocumentSnapshot _conv = await model.currentCourse.conversationRef
-                  .document(conversationID)
-                  .get();
-              Conversation conversation = Conversation.fromSnapshot(_conv);
-              int index =
-                  (model.currentUser.id == conversation.userId1) ? 0 : 1;
-              await conversation.setUser(context);
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) =>
-                          ConversationPage(conversation, index)));
+              if(await model.createApplication(team)){
+                await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text("Application Confirmation"),
+                        content: Text(
+                            "Your application has been successfully sent, check your inbox for updates!"),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text("Okay!"),
+                            onPressed: () => Navigator.of(context).pop(),
+                          )
+                        ],
+                      );
+                    });
+              }else{
+                await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text("Error"),
+                        content: Text(
+                            "Oops! Looks like something went wrong! Error: ${model.error}"),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text("Okay"),
+                            onPressed: () => Navigator.of(context).pop(),
+                          )
+                        ],
+                      );
+                    });
+              }
+
+//              String conversationID = await model.createApplication(
+//                  model.currentUser.id,
+//                  team.leader,
+//                  model.currentCourse.id,
+//                  team.id);
+//              DocumentSnapshot _conv = await model.currentCourse.conversationRef
+//                  .document(conversationID)
+//                  .get();
+//              Conversation conversation = Conversation.fromSnapshot(_conv);
+//              int index =
+//                  (model.currentUser.id == conversation.userId1) ? 0 : 1;
+//              await conversation.setUser(context);
+//              Navigator.push(
+//                  context,
+//                  MaterialPageRoute(
+//                      builder: (context) =>
+//                          ConversationPage(conversation, index)));
             },
             //model.joinTeam(team);
           );

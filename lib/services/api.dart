@@ -167,11 +167,9 @@ class API {
       "team": message.team,
       "status": message.status
     });
-    print("between");
     await messageRef.updateData({
       "id": messageRef.documentID
     });
-    print("after creating message");
     return messageRef.documentID;
   }
 
@@ -183,7 +181,7 @@ class API {
     await conversationRef.updateData({
       "id": conversationRef.documentID
     });
-    print("after creating conversation");
+//    print("after creating conversation");
 
     return conversationRef.documentID;
   }

@@ -245,24 +245,33 @@ class UserModel extends Model {
     await _api.createMessage(currentCourse.id, conversationId, temp);
   }
 
-  Future<String> createApplication(String fromId, String toId, String courseId, String teamId) async {
+  Future<bool> createApplication(Team team) async {
     //QuerySnapshot currentConversation = await _currentCourse.conversationRef.where("related", arrayContains: fromId).where("related", arrayContains: toId).getDocuments();
-    DocumentSnapshot team = await _currentCourse.teamsRef.document(teamId).get();
-    String content = "I send you an application. Please let me join your team ${team.data["name"]} in course $courseId";
-    Message temp = Message(content, fromId, toId, "application", "pending", teamId);
-    String conversationId;
-    print("here");
-    //if(currentConversation.documents.length != 0){
-    //  conversationId = currentConversation.documents[0].documentID;
-    //  await _api.createMessage(courseId, conversationId, temp);
+//    DocumentSnapshot team = await _currentCourse.teamsRef.document(teamId).get();
+//    Team team = await _api.getTeam(_currentCourse.id, teamId);
+
+    try {
+      String content = "Hey, I would like to join your team: ${team
+          .name} in ${_currentCourse.id}";
+      Message temp = Message(
+          content, _currentUser.id, team.leader, "application", "pending",
+          team.id);
+      //if(currentConversation.documents.length != 0){
+      //  conversationId = currentConversation.documents[0].documentID;
+      //  await _api.createMessage(courseId, conversationId, temp);
+      //}
+      //else{
+      String conversationId = await _api.createConversation(
+          _currentCourse.id, _currentUser.id, team.leader);
+      await _api.createMessage(_currentCourse.id, conversationId, temp);
+      _error = "";
+      return true;
+    }catch(e){
+      _error = e.toString();
+    }
+    return false;
     //}
-    //else{
-      conversationId = await _api.createConversation(courseId, fromId, toId);
-      print("here");
-      await _api.createMessage(courseId, conversationId, temp);
-      print("here");
-    //}
-    return conversationId;
+//    return conversationId;
   }
 
   Future<void> acceptApplication(Message message, String conversationId) async {

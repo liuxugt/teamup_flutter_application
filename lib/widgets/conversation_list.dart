@@ -3,6 +3,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:flutter/material.dart';
 import 'package:teamup_app/models/user_model.dart';
 import 'package:teamup_app/objects/conversation.dart';
+import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/pages/conversation_page.dart';
 
 
@@ -50,7 +51,11 @@ class _ListElementState extends State<ListElement> {
   _ListElementState(this._conv);
 
   _loadUser() async {
-    await _conv.setUser(context);
+    User user1 = await ScopedModel.of<UserModel>(context, rebuildOnChange: false).getUser(_conv.userId1);
+    User user2 = await ScopedModel.of<UserModel>(context, rebuildOnChange: false).getUser(_conv.userId2);
+
+//    await _conv.setUser(context);
+    await _conv.setUsers(user1, user2);
     await _conv.setFirstMessage();
     return _conv;
   }
