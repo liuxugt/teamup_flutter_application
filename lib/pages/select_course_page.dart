@@ -67,7 +67,6 @@ class SelectCoursePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text("Join Course"),),
       body: ScopedModelDescendant<UserModel>(builder: (context, child, model) {
-        if (!model.hasCourse) return Center(child: Text('No Courses'));
         return StreamBuilder<QuerySnapshot>(
             stream: model.getCourses(),
             builder: (context, snapshot) {

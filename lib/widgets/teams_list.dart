@@ -165,7 +165,7 @@ class TeamsList extends StatelessWidget {
                 snapshot.data.documents.map((document) {
                   if (document?.data != null){
                     Team team = Team.fromSnapshot(document);
-                    if(team.id != model.currentTeam.id){
+                    if(model.currentTeam == null || team.id != model.currentTeam.id){
                       return _makeTeamCard(team, context);
                     }
                   }
