@@ -23,7 +23,6 @@ class SelectCoursePage extends StatelessWidget {
               FlatButton(
                 onPressed: () async {
                   await ScopedModel.of<UserModel>(context, rebuildOnChange: true).joinCourse(course);
-                  // TODO: make this join course
                   Navigator.of(context).pop();
                 },
                 child: Text('Yes'),
