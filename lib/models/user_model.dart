@@ -272,7 +272,7 @@ class UserModel extends Model {
 
   Future<bool> acceptApplication(Message message, String conversationId) async {
     try {
-      _api.updateMessageStatus(_currentCourse.id, conversationId, message.id);
+      await _api.updateMessageStatus(_currentCourse.id, conversationId, message.id);
 //    DocumentReference temp = _currentCourse.conversationRef.document(conversationId).collection("messages").document(message.id);
 //    temp.updateData({
 //      "status": "responded"
@@ -302,11 +302,12 @@ class UserModel extends Model {
   }
 
   Future<void> rejectApplication(Message message, String conversationId) async {
-    DocumentReference temp = _currentCourse.conversationRef
-        .document(conversationId)
-        .collection("messages")
-        .document(message.id);
-    temp.updateData({"status": "responded"});
+    await _api.updateMessageStatus(_currentCourse.id, conversationId, message.id);
+//    DocumentReference temp = _currentCourse.conversationRef
+//        .document(conversationId)
+//        .collection("messages")
+//        .document(message.id);
+//    temp.updateData({"status": "responded"});
   }
 
   //Functions in creating and response to applications.
