@@ -116,7 +116,7 @@ class Bubble extends StatelessWidget {
     final align = received ? MainAxisAlignment.start : MainAxisAlignment.end;
     print(align);
     final String content = message.content;
-    final icon = Icons.done;
+//    final icon = Icons.done;
     final radius = received
         ? BorderRadius.only(
             topRight: Radius.circular(10.0),
