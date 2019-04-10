@@ -18,8 +18,8 @@ class _IcebreakerInfoTabState extends State<IcebreakerInfoTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ListView(
+//      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Container(
           height: 32.0,
@@ -36,19 +36,20 @@ class _IcebreakerInfoTabState extends State<IcebreakerInfoTab> {
           child: new ListView(
             scrollDirection: Axis.vertical,
             children: <Widget>[
-
               Container(
                 height: 180.0,
+                alignment: Alignment.center,
                 decoration: new BoxDecoration(
                   image: DecorationImage(
                     image: new AssetImage(
-                        'assets/avengers.jpg'),
+                        'assets/avengers.jpg',),
                     fit: BoxFit.fill,
                   ),
                   shape: BoxShape.rectangle,
                 ),
                 child: new RadioListTile<int>(
-                  title: const Text('Marvel'),
+                  activeColor: Colors.white,
+                  title: const Text('Marvel', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 48.0),),
                   value: 0,
                   groupValue: _res,
                   onChanged: (int value) { setState(() { _res = value;
@@ -57,6 +58,7 @@ class _IcebreakerInfoTabState extends State<IcebreakerInfoTab> {
               ),
               Container(
                 height: 180.0,
+                alignment: Alignment.center,
                 decoration: new BoxDecoration(
                   image: DecorationImage(
                     image: new AssetImage(
@@ -66,8 +68,9 @@ class _IcebreakerInfoTabState extends State<IcebreakerInfoTab> {
                   shape: BoxShape.rectangle,
                 ),
                 child: new RadioListTile<int>(
-                  title: const Text('DC'),
+                  title: const Text('DC',style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 48.0)),
                   value: 1,
+                  activeColor: Colors.white,
                   groupValue: _res,
                   onChanged: (int value) { setState(() { _res = value;
                   ScopedModel.of<OnboardingModel>(context, rebuildOnChange: false).iceBreakers = _res;}); },
