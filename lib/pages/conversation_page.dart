@@ -158,10 +158,11 @@ class Bubble extends StatelessWidget {
                     maxWidth: 300.0,
                   ),
                 ),
-                (received &&
-                        message.type != "regular" &&
-                        message.status == "pending")
-                    ? Row(
+
+                (message.type == "regular" || !received)
+                ? Container(height: 0.0,)
+                : message.status == "pending"
+                  ? Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           FlatButton(
@@ -196,14 +197,10 @@ class Bubble extends StatelessWidget {
                           )
                         ],
                       )
-                    : (received && message.type != "regular" && message.status != "pending")
-                        ? Text(
+                    :Text(
                             "You have responded to this",
                             style: TextStyle(
                                 fontSize: 18.0, fontStyle: FontStyle.italic),
-                          )
-                        : Container(
-                            height: 0.0,
                           )
               ],
             )

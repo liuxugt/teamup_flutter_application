@@ -52,6 +52,9 @@ class Conversation{
   CollectionReference get messageRef => _messageRef;
   String get userId1 => _userId1;
   String get userId2 => _userId2;
+  User get user1 => _user1;
+  User get user2 => _user2;
+
   List<String> get related => [_userId1, _userId2];
   String get id => _id;
 

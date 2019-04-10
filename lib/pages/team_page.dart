@@ -126,10 +126,13 @@ class TeamPage extends StatelessWidget {
         builder: (context, child, model) {
           //if the current user is the team leader
 
+
+
+
           //if this team is the user's team and they are not the leader, show the leave team button
-          if (model.userInTeam &&
-              model.currentTeam.id == team.id &&
-              model.currentUser.id != team.id)
+          if (model.userInTeam && //user is in a team
+              model.currentTeam.id == team.id && //this is their team
+              model.currentUser.id != team.leader) //they are not the leader
             return FloatingActionButton(
                 child: Icon(Icons.remove),
                 onPressed: () => _onLeaveTeamPressed(context));

@@ -7,7 +7,13 @@ import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/pages/conversation_page.dart';
 
 
-class ConversationList extends StatelessWidget{
+class ConversationList extends StatefulWidget{
+  @override
+  _ConversationListState createState() => _ConversationListState();
+}
+
+class _ConversationListState extends State<ConversationList> with AutomaticKeepAliveClientMixin<ConversationList> {
+
   @override
   build(BuildContext context){
     return ScopedModelDescendant<UserModel>(builder: (context, child, model) {
@@ -32,6 +38,9 @@ class ConversationList extends StatelessWidget{
         });
     });
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
 
 class ListElement extends StatefulWidget {
@@ -62,24 +71,29 @@ class _ListElementState extends State<ListElement> {
 
   @override
   Widget build(BuildContext context){
-    return Column(
-      children: [FutureBuilder(
+    return FutureBuilder(
         future: _loadUser(),
         builder: (context, AsyncSnapshot<dynamic> conv){
           if(!conv.hasData) return Container();
+
           String name;
           int index;
-          if(conv.data.related[0] == ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentUser.id){
-            name = conv.data.fullName2;
+          if(_conv.related[0] == ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentUser.id){
+            name = _conv.fullName2;
             index = 1;
           }
           else{
-            name = conv.data.fullName1;
+            name = _conv.fullName1;
             index = 0;
           }
           return ListTile(
-            contentPadding: EdgeInsets.only(top: 10, left: 10),
-            title: Text(name),
+            contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+            leading: CircleAvatar(
+              backgroundImage: NetworkImage(_conv.user1.photoURL),
+              radius: 24.0,
+            ),
+            title: Text(name,
+                style: TextStyle(fontWeight: FontWeight.bold)),
             subtitle: Text(_conv.firstMessage),
             onTap: (){
               Navigator.push(
@@ -88,8 +102,6 @@ class _ListElementState extends State<ListElement> {
             },
           );
         },
-      ),
-    Divider()]
-    );
+      );
   }
 }
