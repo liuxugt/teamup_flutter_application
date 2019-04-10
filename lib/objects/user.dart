@@ -11,7 +11,13 @@ class User {
   String _photoURL;
   bool onboardComplete;
 
-  List<String> _languages;
+  List<String> _languages = [];
+  DateTime _birthdate;
+  String _gender;
+  String _headline;
+  String _skills;
+  String _strengths;
+
 
 //  _printVariables(){
 //    print('first name: $_firstName');
@@ -54,8 +60,29 @@ class User {
         _courseTeam[key] = value
       );
     }
+
+    if (data.containsKey('attributes')) {
+      if (data['attributes']['skills'] is String)
+        _skills = data['attributes']['skills'];
+
+      if (data['attributes']['headline'] is String)
+        _headline = data['attributes']['headline'];
+
+      if (data['attributes']['strengths'] is String)
+        _strengths = data['attributes']['strengths'];
+
+      if (data['attributes']['languages'] is List && data['attributes']['languages'].length > 0)
+        for (int i = 0; i < data['attributes']['languages'].length; i++) {
+          _languages.add(data['attributes']['languages'][i]);
+        }
+    }
+
+
+
+
+
     onboardComplete = data['onboard_complete'];
-//    _printVariables();
+//    _birthdate = data['attributes']['birthdate'];
   }
 
 
@@ -67,6 +94,12 @@ class User {
   String get email => _email;
   String get lastName => _lastName;
   String get photoURL => _photoURL;
+
+  String get skills => _skills;
+  String get headline => _headline;
+  DateTime get birthdate => _birthdate;
+  String get strengths => _strengths;
+  List<String> get languages => _languages;
 
   //TODO: Make this check attributes
   String get subtitle => _email;

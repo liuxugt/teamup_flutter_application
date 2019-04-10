@@ -37,6 +37,12 @@ class ProfilePage extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
           ),
         ),
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Text(user.headline == null ? "" : user.headline,
+            style: TextStyle(fontSize: 16.0, color: Colors.black54),
+          ),
+        ),
 // TODO: Add headline here
 //        Padding(
 //          padding: const EdgeInsets.all(4.0),
@@ -61,6 +67,51 @@ class ProfilePage extends StatelessWidget {
                           fontWeight: FontWeight.bold, fontSize: 16.0),
                     ),
                     Text(user.email,
+                        style: TextStyle(fontSize: 16.0, color: Colors.black54))
+                  ],
+                ),
+                Container(
+                  height: 16.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      "Skill",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16.0),
+                    ),
+                    Text(user.skills == null ? "" : user.skills,
+                        style: TextStyle(fontSize: 16.0, color: Colors.black54))
+                  ],
+                ),
+                Container(
+                  height: 16.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      "Strength",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16.0),
+                    ),
+                    Text(user.strengths == null ? "" : user.strengths,
+                        style: TextStyle(fontSize: 16.0, color: Colors.black54))
+                  ],
+                ),
+                Container(
+                  height: 16.0,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      "Languages",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16.0),
+                    ),
+                    Text(user.languages.length == 0 ? "" : user.languages.toString().replaceAll(new RegExp('[\\[\\]]'), ''),
                         style: TextStyle(fontSize: 16.0, color: Colors.black54))
                   ],
                 ),
