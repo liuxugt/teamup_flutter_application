@@ -24,7 +24,7 @@ class _OnboardingPageState extends State<OnboardingPage>
 
   TabController _tabController;
   List<Widget> _tabs;
-
+  bool _isFinishLoading = false;
   @override
   void initState() {
     _tabs = [HeadlineTab(), PersonalInfoTab(), LanguageInfoTab(), SkillInfoTab(), StrengthInfoTab(),
@@ -80,14 +80,22 @@ class _OnboardingPageState extends State<OnboardingPage>
                     Container(
                         child: (_tabController.index ==
                             _tabController.length - 1)
-                            ? FlatButton(
+                            ? (_isFinishLoading)
+                            ? CircularProgressIndicator()
+                            : FlatButton(
                                 child: Text("FINISH"),
-                                onPressed: () {
-                                  onboardingModel.submitAttributes();
-//                                  ScopedModel.of<OnboardingModel>(context,
-//                                          rebuildOnChange: false)
-//                                      .submitAttributes();
-                                  Navigator.of(context).pop();
+                                onPressed: () async {
+                                  setState(() {
+                                    _isFinishLoading = true;
+                                  });
+                                  await onboardingModel.submitAttributes();
+                                  setState(() {
+                                    _isFinishLoading = false;
+                                  });
+                                  await ScopedModel.of<UserModel>(context, rebuildOnChange: false).loadCurrentUser();
+                                  ScopedModel.of<UserModel>(context, rebuildOnChange: false).refresh();
+//                                  Navigator.of(context).pop();
+                                  Navigator.pushReplacementNamed(context, '/home');
                                 },
                               )
                             : FlatButton(

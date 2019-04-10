@@ -127,6 +127,11 @@ class UserModel extends Model {
     }
   }
 
+
+  void refresh(){
+    notifyListeners();
+  }
+
   Future<bool> joinTeam(Team team) async {
     try {
       String courseId = _currentCourse.id;

@@ -61,14 +61,14 @@ class CustomDrawer extends StatelessWidget {
 
   List<Widget> _buildSettingsWidgets(BuildContext context) {
     return [
-      ListTile(
-        title: Text("Onboarding"),
-        leading: Icon(Icons.person),
-        onTap: (){
-          Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => OnboardingPage()));
-        },
-      ),
+//      ListTile(
+//        title: Text("Onboarding"),
+//        leading: Icon(Icons.person),
+//        onTap: (){
+//          Navigator.of(context).push(MaterialPageRoute(
+//              builder: (context) => OnboardingPage()));
+//        },
+//      ),
       ListTile(
         leading: Icon(Icons.add),
         title: Text("Add Course"),

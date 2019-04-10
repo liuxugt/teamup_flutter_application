@@ -6,10 +6,15 @@ import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/objects/conversation.dart';
 import 'package:teamup_app/objects/message.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'dart:io';
 
 class API {
+
   static final Firestore _firestore = Firestore.instance;
   static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  static final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
+
 
   Future<User> getUser(String uid) async {
     print(uid);
@@ -192,4 +197,18 @@ class API {
     return _firestore.collection('courses').snapshots();
   }
 
+  Future<String> uploadPicture (String filename, File file) async {
+    final StorageReference ref = _firebaseStorage.ref().child(filename);
+    final StorageUploadTask task = ref.putFile(file);
+    String url = await (await task.onComplete).ref.getDownloadURL();
+    return url;
+  }
+  
+  Future<void> updateUserPhoto (String uid, String url) async{
+    await _firestore.document('/users/$uid').updateData({'photo_url' : url});
+  }
+  
+  Future<void> markOnboardingComplete (String uid) async {
+    await _firestore.document('/users/$uid').updateData({'onboard_complete' : true});
+  }
 }

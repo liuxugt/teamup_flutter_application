@@ -3,6 +3,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/models/user_model.dart';
 import 'package:teamup_app/pages/home_page.dart';
 import 'package:teamup_app/pages/login_signup_page.dart';
+import 'package:teamup_app/pages/onboarding_page.dart';
 import 'package:teamup_app/pages/root_page.dart';
 
 void main() => runApp(MyApp());
@@ -21,7 +22,8 @@ class MyApp extends StatelessWidget {
             routes: {
               '/': (context) => RootPage(),
               '/home': (context) => HomePage(),
-              '/login': (context) => LoginSignUpPage()
+              '/login': (context) => LoginSignUpPage(),
+              '/onboarding': (context) => OnboardingPage()
             }));
   }
 }

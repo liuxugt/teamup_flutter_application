@@ -39,7 +39,14 @@ class _IcebreakerInfoTabState extends State<IcebreakerInfoTab> {
 
               Container(
                 height: 180.0,
-                color: Colors.red,
+                decoration: new BoxDecoration(
+                  image: DecorationImage(
+                    image: new AssetImage(
+                        'assets/avengers.jpg'),
+                    fit: BoxFit.fill,
+                  ),
+                  shape: BoxShape.rectangle,
+                ),
                 child: new RadioListTile<int>(
                   title: const Text('Marvel'),
                   value: 0,
@@ -50,7 +57,14 @@ class _IcebreakerInfoTabState extends State<IcebreakerInfoTab> {
               ),
               Container(
                 height: 180.0,
-                color: Colors.blue,
+                decoration: new BoxDecoration(
+                  image: DecorationImage(
+                    image: new AssetImage(
+                        'assets/dc.jpg'),
+                    fit: BoxFit.fill,
+                  ),
+                  shape: BoxShape.rectangle,
+                ),
                 child: new RadioListTile<int>(
                   title: const Text('DC'),
                   value: 1,

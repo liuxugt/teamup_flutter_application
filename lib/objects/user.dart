@@ -11,6 +11,8 @@ class User {
   String _photoURL;
   bool onboardComplete;
 
+  List<String> _languages;
+
 //  _printVariables(){
 //    print('first name: $_firstName');
 //    print('last name: $_lastName');

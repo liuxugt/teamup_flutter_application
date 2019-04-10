@@ -17,6 +17,7 @@ class _ProfilePictureTabState extends State<ProfilePictureTab> {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image = image;
+      ScopedModel.of<OnboardingModel>(context, rebuildOnChange: false).image = _image;
     });
   }
 
@@ -63,7 +64,8 @@ class _ProfilePictureTabState extends State<ProfilePictureTab> {
           tooltip: 'Pick Image',
           child: Icon(Icons.add_a_photo),
           ),
-        )
+        ),
+
       ],
     );
   }

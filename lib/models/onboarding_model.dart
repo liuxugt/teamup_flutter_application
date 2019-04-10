@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/services/api.dart';
+import 'dart:io';
 
 class OnboardingModel extends Model{
 
@@ -16,6 +17,8 @@ class OnboardingModel extends Model{
   String strengths = '';
   List<bool> availabilities = [];
   int iceBreakers = 0;
+  File image;
+  String pictureURL;
 
 
 
@@ -44,7 +47,14 @@ class OnboardingModel extends Model{
     attributes['icebreakers'] = iceBreakers;
     attributes['birthdate'] = birthDate;
 
-    _api.updateUserAttributes(currentUserId, attributes);
+
+    if (image != null) {
+      pictureURL = await _api.uploadPicture(currentUserId, image);
+      await _api.updateUserPhoto(currentUserId, pictureURL);
+    }
+
+    await _api.updateUserAttributes(currentUserId, attributes);
+    await _api.markOnboardingComplete(currentUserId);
   }
 
 

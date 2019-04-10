@@ -224,7 +224,11 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
       });
       if (_formMode == FormMode.LOGIN) {
        if(await ScopedModel.of<UserModel>(context, rebuildOnChange: false).signInUser(_email, _password)){
-         Navigator.pushReplacementNamed(context, '/home');
+         if(ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentUser.onboardComplete){
+           Navigator.pushReplacementNamed(context, '/home');
+         }else{
+           Navigator.pushReplacementNamed(context, '/onboarding');
+         }
        }
       } else {
         if(await ScopedModel.of<UserModel>(context, rebuildOnChange: false).registerUser(_email, _password, _firstName, _lastName)){

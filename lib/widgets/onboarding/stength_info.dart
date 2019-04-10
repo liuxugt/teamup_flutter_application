@@ -42,7 +42,14 @@ class _StrengthInfoTabState extends State<StrengthInfoTab> {
 
               Container(
                 width: 240.0,
-                color: Colors.red,
+                decoration: new BoxDecoration(
+                  image: DecorationImage(
+                    image: new AssetImage(
+                        'assets/thinking.png'),
+                    fit: BoxFit.contain,
+                  ),
+                  shape: BoxShape.circle,
+                ),
                 child: new RadioListTile<Strengths>(
                   title: const Text('Strategic Thinking'),
                   value: Strengths.strategicThinking,
@@ -53,7 +60,15 @@ class _StrengthInfoTabState extends State<StrengthInfoTab> {
               ),
               Container(
                 width: 240.0,
-                color: Colors.blue,
+                decoration: new BoxDecoration(
+                  image: DecorationImage(
+                    image: new AssetImage(
+                        'assets/influencing.png'),
+                    fit: BoxFit.contain,
+                    alignment: Alignment(1.0, 1.0),
+                  ),
+                  shape: BoxShape.circle,
+                ),
                 child: new RadioListTile<Strengths>(
                   title: const Text('Influencing'),
                   value: Strengths.influencing,
@@ -64,7 +79,14 @@ class _StrengthInfoTabState extends State<StrengthInfoTab> {
               ),
               Container(
                 width: 240.0,
-                color: Colors.yellow,
+                decoration: new BoxDecoration(
+                  image: DecorationImage(
+                    image: new AssetImage(
+                        'assets/executing.png'),
+                    fit: BoxFit.fill,
+                  ),
+                  shape: BoxShape.circle,
+                ),
                 child: new RadioListTile<Strengths>(
                   title: const Text('Executing'),
                   value: Strengths.executing,
@@ -75,7 +97,14 @@ class _StrengthInfoTabState extends State<StrengthInfoTab> {
               ),
               Container(
                 width: 240.0,
-                color: Colors.green,
+                decoration: new BoxDecoration(
+                  image: DecorationImage(
+                    image: new AssetImage(
+                        'assets/relationbuilding.png'),
+                    fit: BoxFit.fill,
+                  ),
+                  shape: BoxShape.circle,
+                ),
                 child: new  RadioListTile<Strengths>(
                   title: const Text('Relationship Building'),
                   value: Strengths.relationshipBuilding,
