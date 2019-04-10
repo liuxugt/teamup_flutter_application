@@ -102,5 +102,5 @@ class User {
   List<String> get languages => _languages;
 
   //TODO: Make this check attributes
-  String get subtitle => _email;
+  String get subtitle => (_headline != null && _headline.isNotEmpty) ? _headline :_email;
 }

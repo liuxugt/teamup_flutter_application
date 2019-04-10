@@ -39,7 +39,7 @@ class ProfilePage extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.all(4.0),
-          child: Text(user.headline == null ? "" : user.headline,
+          child: Text(user.subtitle,
             style: TextStyle(fontSize: 16.0, color: Colors.black54),
           ),
         ),
@@ -70,24 +70,31 @@ class ProfilePage extends StatelessWidget {
                         style: TextStyle(fontSize: 16.0, color: Colors.black54))
                   ],
                 ),
+                (user.skills == null || user.skills.isEmpty) ? Container() :
                 Container(
                   height: 16.0,
                 ),
+                (user.skills == null || user.skills.isEmpty) ? Container() :
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      "Skill",
+                      "Skills",
                       style: TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 16.0),
                     ),
-                    Text(user.skills == null ? "" : user.skills,
-                        style: TextStyle(fontSize: 16.0, color: Colors.black54))
+                    Container(
+                      width: 200.0,
+                      child: Text(user.skills,
+                          style: TextStyle(fontSize: 16.0, color: Colors.black54), textAlign: TextAlign.end,),
+                    )
                   ],
                 ),
+                (user.strengths == null || user.strengths.isEmpty) ? Container() :
                 Container(
                   height: 16.0,
                 ),
+                (user.strengths == null || user.strengths.isEmpty) ? Container() :
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -96,13 +103,15 @@ class ProfilePage extends StatelessWidget {
                       style: TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 16.0),
                     ),
-                    Text(user.strengths == null ? "" : user.strengths,
-                        style: TextStyle(fontSize: 16.0, color: Colors.black54))
+                    Text(user.strengths,
+                        style: TextStyle(fontSize: 16.0, color: Colors.black54), textAlign: TextAlign.end)
                   ],
                 ),
+                (user.languages.isEmpty) ? Container() :
                 Container(
                   height: 16.0,
                 ),
+                (user.languages.isEmpty) ? Container() :
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
@@ -111,8 +120,11 @@ class ProfilePage extends StatelessWidget {
                       style: TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 16.0),
                     ),
-                    Text(user.languages.length == 0 ? "" : user.languages.toString().replaceAll(new RegExp('[\\[\\]]'), ''),
-                        style: TextStyle(fontSize: 16.0, color: Colors.black54))
+                    Container(
+                      width: 200.0,
+                      child: Text(user.languages.toString().replaceAll(new RegExp('[\\[\\]]'), ''),
+                          style: TextStyle(fontSize: 16.0, color: Colors.black54), textAlign: TextAlign.end,),
+                    )
                   ],
                 ),
                 //TODO: Add all the attributes for a user here
