@@ -21,8 +21,8 @@ class SelectCoursePage extends StatelessWidget {
                 child: Text('Cancel'),
               ),
               FlatButton(
-                onPressed: () async {
-                  await ScopedModel.of<UserModel>(context, rebuildOnChange: true).joinCourse(course);
+                onPressed: () {
+                  ScopedModel.of<UserModel>(context, rebuildOnChange: true).joinCourse(course);
                   Navigator.of(context).pop();
                 },
                 child: Text('Yes'),
