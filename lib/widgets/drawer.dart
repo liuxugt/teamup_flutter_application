@@ -5,7 +5,6 @@ import 'package:teamup_app/models/user_model.dart';
 import 'package:teamup_app/pages/onboarding_page.dart';
 import 'package:teamup_app/pages/profile_page.dart';
 import 'package:teamup_app/pages/select_course_page.dart';
-import 'package:teamup_app/pages/user_page.dart';
 
 class CustomDrawer extends StatelessWidget {
   @override

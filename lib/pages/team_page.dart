@@ -4,32 +4,71 @@ import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:teamup_app/objects/conversation.dart';
-import 'package:teamup_app/pages/conversation_page.dart';
+//import 'package:teamup_app/objects/conversation.dart';
+//import 'package:teamup_app/pages/conversation_page.dart';
+import 'package:teamup_app/pages/profile_page.dart';
 
 class TeamPage extends StatelessWidget {
   final Team team;
   TeamPage({this.team});
 
+  List<Widget> _makeTeamIcons(List<dynamic> teamRoles) {
+    List<Widget> iconList = [];
+
+    for (String role in teamRoles) {
+      iconList.add(Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Icon(
+            Icons.account_circle,
+            color: Colors.grey[400],
+            size: 48.0,
+          ),
+          Container(
+            child: Center(
+                child: Text(
+              role.toString(),
+              textAlign: TextAlign.center,
+            )),
+            width: 70.0,
+          )
+        ],
+      ));
+    }
+    return iconList;
+  }
+
   Widget _makeClassmateCard(User user, BuildContext context) {
-    return
-//      Card(
-//      elevation: 2.0,
-//      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-//      child: Container(
-//        decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
-//        child:
-      ListTile(
-        contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-        leading: CircleAvatar(
-            backgroundImage: NetworkImage(user.photoURL),
-            radius: 24.0
+    return ListTile(
+      contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      leading: CircleAvatar(
+          backgroundImage: NetworkImage(user.photoURL), radius: 24.0),
+      title: RichText(
+        text: TextSpan(
+          text: '${user.firstName} ${user.lastName}',
+          style: TextStyle(
+              fontWeight: FontWeight.bold, color: Colors.black, fontSize: 16.0),
+          children: <TextSpan>[
+            (user.id == team.leader)
+                ? TextSpan(
+                    text: ' (Team Lead)', style: TextStyle(color: Colors.blue))
+                : TextSpan(text: ""),
+          ],
         ),
-        title: Text('${user.firstName} ${user.lastName}', style: TextStyle(fontWeight: FontWeight.bold),),
-        subtitle: Text(user.subtitle, style: TextStyle(color: Colors.black),),
-      );
-//      ),
-//    );
+      ),
+      subtitle: Text(
+        user.subtitle,
+        style: TextStyle(color: Colors.black),
+      ),
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => ProfilePage(
+                      user: user,
+                    )));
+      },
+    );
   }
 
   _buildMemberList(BuildContext context) {
@@ -44,48 +83,126 @@ class TeamPage extends StatelessWidget {
             default:
               return ListView(
                   children: snapshot.data.documents.map((document) {
-                    return _makeClassmateCard(
-                        User.fromSnapshotData(document.data), context);
-                  }).toList());
+                return _makeClassmateCard(
+                    User.fromSnapshotData(document.data), context);
+              }).toList());
           }
         });
   }
 
-  _buildFAB(BuildContext context) {
-    return ScopedModelDescendant<UserModel>(rebuildOnChange: true, builder: (context, child, model) {
-      //if this team is the user's team, show the leave team button
-      if (model.userInTeam && model.currentTeam.id == team.id)
-        return FloatingActionButton(
-            child: Icon(Icons.remove),
-            onPressed: () {
-              print('pressed to leave');
-              model.leaveCurrentTeam();
-            });
-
-      //if the user is in a team or the team is full, don't show anything
-      if (team.isFull || model.userInTeam)
-        return Container(
-          height: 0.0,
-        );
-
-      //show a join button if the team isn't full and the user is not on a team
-
-      return FloatingActionButton(
-        child: Icon(Icons.add),
-        onPressed: () async {
-          String conversationID = await model.createApplication(model.currentUser.id, team.leader, model.currentCourse.id, team.id);
-          DocumentSnapshot _conv = await model.currentCourse.conversationRef.document(conversationID).get();
-          Conversation conversation = Conversation.fromSnapshot(_conv);
-          int index = (model.currentUser.id == conversation.userId1) ? 0 : 1;
-          await conversation.setUser(context);
-          Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ConversationPage(conversation, index))
+  _onLeaveTeamPressed(BuildContext context) async {
+//    User currentUser =
+//        ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentUser;
+    await showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("Confirm leaving Team"),
+            content: Text("Are you sure you would like to leave this team?"),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: Text('Cancel'),
+              ),
+              FlatButton(
+                onPressed: () async {
+                  await ScopedModel.of<UserModel>(context,
+                          rebuildOnChange: true)
+                      .leaveCurrentTeam();
+                  Navigator.of(context).pop();
+                },
+                child: Text('Yes'),
+              ),
+            ],
           );
-        },
-        //model.joinTeam(team);
-      );
-    });
+        });
+  }
+
+  _buildFAB(BuildContext context) {
+    return ScopedModelDescendant<UserModel>(
+        rebuildOnChange: true,
+        builder: (context, child, model) {
+          //if the current user is the team leader
+
+
+
+
+          //if this team is the user's team and they are not the leader, show the leave team button
+          if (model.userInTeam && //user is in a team
+              model.currentTeam.id == team.id && //this is their team
+              model.currentUser.id != team.leader) //they are not the leader
+            return FloatingActionButton(
+                child: Icon(Icons.remove),
+                onPressed: () => _onLeaveTeamPressed(context));
+
+          //if the user is in a team or the team is full, don't show anything
+          if (team.isFull || model.userInTeam)
+            return Container(
+              height: 0.0,
+            );
+
+          //show a join button if the team isn't full and the user is not on a team
+
+          return FloatingActionButton(
+            child: Icon(Icons.add),
+            onPressed: () async {
+              if(await model.createApplication(team)){
+                await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text("Application Confirmation"),
+                        content: Text(
+                            "Your application has been successfully sent, check your inbox for updates!"),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text("Okay!"),
+                            onPressed: () => Navigator.of(context).pop(),
+                          )
+                        ],
+                      );
+                    });
+              }else{
+                await showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        title: Text("Error"),
+                        content: Text(
+                            "Oops! Looks like something went wrong! Error: ${model.error}"),
+                        actions: <Widget>[
+                          FlatButton(
+                            child: Text("Okay"),
+                            onPressed: () => Navigator.of(context).pop(),
+                          )
+                        ],
+                      );
+                    });
+              }
+
+//              String conversationID = await model.createApplication(
+//                  model.currentUser.id,
+//                  team.leader,
+//                  model.currentCourse.id,
+//                  team.id);
+//              DocumentSnapshot _conv = await model.currentCourse.conversationRef
+//                  .document(conversationID)
+//                  .get();
+//              Conversation conversation = Conversation.fromSnapshot(_conv);
+//              int index =
+//                  (model.currentUser.id == conversation.userId1) ? 0 : 1;
+//              await conversation.setUser(context);
+//              Navigator.push(
+//                  context,
+//                  MaterialPageRoute(
+//                      builder: (context) =>
+//                          ConversationPage(conversation, index)));
+            },
+            //model.joinTeam(team);
+          );
+        });
   }
 
   @override
@@ -93,39 +210,59 @@ class TeamPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text(team.name)),
       floatingActionButton: _buildFAB(context),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-              padding: EdgeInsets.all(20.0),
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(20.0, 20.0, 20.0, 0.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 20.0),
+                child: Text(
+                  "Project Ideas",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20.0,
+                      color: Color.fromRGBO(161, 166, 187, 1.0)),
+                )),
+            Padding(
+              padding: EdgeInsets.only(bottom: 10.0),
               child: Text(
-                "Project Ideas",
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20.0, color: Color.fromRGBO(161, 166, 187, 1.0)),
-              )),
-          Padding(
-            padding: EdgeInsets.only(left: 20.0, bottom: 10.0),
-            child: Text(
-              team.description,
-              style: TextStyle(fontSize: 18.0, color: Color.fromRGBO(90, 96, 116, 1.0)),
+                team.description,
+                style: TextStyle(
+                    fontSize: 18.0, color: Color.fromRGBO(90, 96, 116, 1.0)),
+              ),
             ),
-          ),
-          Padding(
-              padding: EdgeInsets.all(20.0),
-              child: Text(
-                "Vacancies",
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20.0, color: Color.fromRGBO(161, 166, 187, 1.0)),
-              )),
-
-          Padding(
-              padding: EdgeInsets.only(left: 20.0, top: 20.0),
-              child: Text(
-                "Team Members",
-                style: TextStyle(fontWeight: FontWeight.w600, fontSize: 20.0, color: Color.fromRGBO(161, 166, 187, 1.0)),
-              )),
-          Flexible(
-            child: _buildMemberList(context),
-          )
-        ],
+            Padding(
+                padding: EdgeInsets.symmetric(vertical: 20.0),
+                child: Text(
+                  "Vacancies",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20.0,
+                      color: Color.fromRGBO(161, 166, 187, 1.0)),
+                )),
+            Container(
+              height: 96.0,
+              child: ListView(
+                scrollDirection: Axis.horizontal,
+                physics: ClampingScrollPhysics(),
+                children: _makeTeamIcons(team.roles),
+              ),
+            ),
+            Padding(
+                padding: EdgeInsets.only(top: 20.0),
+                child: Text(
+                  "Team Members",
+                  style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: 20.0,
+                      color: Color.fromRGBO(161, 166, 187, 1.0)),
+                )),
+            Flexible(
+              child: _buildMemberList(context),
+            )
+          ],
+        ),
       ),
     );
   }

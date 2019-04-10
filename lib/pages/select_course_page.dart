@@ -21,9 +21,8 @@ class SelectCoursePage extends StatelessWidget {
                 child: Text('Cancel'),
               ),
               FlatButton(
-                onPressed: () async {
-                  await ScopedModel.of<UserModel>(context, rebuildOnChange: true).joinCourse(course);
-                  // TODO: make this join course
+                onPressed: () {
+                  ScopedModel.of<UserModel>(context, rebuildOnChange: true).joinCourse(course);
                   Navigator.of(context).pop();
                 },
                 child: Text('Yes'),
@@ -67,7 +66,6 @@ class SelectCoursePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text("Join Course"),),
       body: ScopedModelDescendant<UserModel>(builder: (context, child, model) {
-        if (!model.hasCourse) return Center(child: Text('No Courses'));
         return StreamBuilder<QuerySnapshot>(
             stream: model.getCourses(),
             builder: (context, snapshot) {

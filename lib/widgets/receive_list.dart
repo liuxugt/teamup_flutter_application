@@ -1,9 +1,9 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
-import 'package:scoped_model/scoped_model.dart';
-import 'package:teamup_app/models/user_model.dart';
-import 'package:teamup_app/objects/notification.dart';
-import 'package:teamup_app/pages/notification_page.dart';
+//import 'package:cloud_firestore/cloud_firestore.dart';
+//import 'package:flutter/material.dart';
+//import 'package:scoped_model/scoped_model.dart';
+//import 'package:teamup_app/models/user_model.dart';
+//import 'package:teamup_app/objects/notification.dart';
+//import 'package:teamup_app/pages/notification_page.dart';
 
 /*
 class ReceiveList extends StatelessWidget{

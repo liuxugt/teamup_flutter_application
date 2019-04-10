@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/models/onboarding_model.dart';
-import 'package:teamup_app/models/user_model.dart';
-import 'package:teamup_app/widgets/notifications_list.dart';
 import 'package:teamup_app/widgets/onboarding/headline.dart';
 import 'package:teamup_app/widgets/onboarding/personal_info.dart';
 import 'package:teamup_app/widgets/onboarding/language_info.dart';
@@ -11,6 +9,7 @@ import 'package:teamup_app/widgets/onboarding/stength_info.dart';
 import 'package:teamup_app/widgets/onboarding/availability_info.dart';
 import 'package:teamup_app/widgets/onboarding/icebreaker_info.dart';
 import 'package:teamup_app/widgets/onboarding/profile_picture.dart';
+import 'package:teamup_app/models/user_model.dart';
 
 class OnboardingPage extends StatefulWidget {
   @override

@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:scoped_model/scoped_model.dart';
-import 'package:teamup_app/models/user_model.dart';
-import 'package:flutter/material.dart';
+//import 'package:scoped_model/scoped_model.dart';
+//import 'package:teamup_app/models/user_model.dart';
+//import 'package:flutter/material.dart';
 import 'package:teamup_app/objects/user.dart';
 
 class Conversation{
   String _userId1;
   String _userId2;
   CollectionReference _messageRef;
-  String _firstName1;
-  String _lastName1;
-  String _firstName2;
-  String _lastName2;
+//  String _firstName1;
+//  String _lastName1;
+//  String _firstName2;
+//  String _lastName2;
   User _user1;
   User _user2;
   String _firstMessage;
@@ -27,9 +27,14 @@ class Conversation{
     _id = snap.documentID;
   }
 
-  setUser(BuildContext context) async{
-    _user1 = await ScopedModel.of<UserModel>(context, rebuildOnChange: true).getUser(_userId1);
-    _user2 = await ScopedModel.of<UserModel>(context, rebuildOnChange: true).getUser(_userId2);
+//  setUser(BuildContext context) async{
+//    _user1 = await ScopedModel.of<UserModel>(context, rebuildOnChange: true).getUser(_userId1);
+//    _user2 = await ScopedModel.of<UserModel>(context, rebuildOnChange: true).getUser(_userId2);
+//  }
+
+  setUsers(User user1, User user2){
+    _user1 = user1;
+    _user2 = user2;
   }
 
   setFirstMessage() async{
@@ -47,6 +52,9 @@ class Conversation{
   CollectionReference get messageRef => _messageRef;
   String get userId1 => _userId1;
   String get userId2 => _userId2;
+  User get user1 => _user1;
+  User get user2 => _user2;
+
   List<String> get related => [_userId1, _userId2];
   String get id => _id;
 

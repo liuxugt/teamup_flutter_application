@@ -6,12 +6,10 @@ import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/services/api.dart';
 import 'package:teamup_app/objects/message.dart';
-import 'package:teamup_app/objects/conversation.dart';
 
 class UserModel extends Model {
   //TODO: start moving database functions into the API
   final API _api = API();
-
 
   User _currentUser;
   Course _currentCourse;
@@ -41,10 +39,10 @@ class UserModel extends Model {
     try {
       FirebaseUser user = await _api.getCurrentUser();
 //      print('user ${user.uid} is loaded');
-        _currentUser = await _api.getUser(user.uid);
-        print("get user");
-        await _loadCourseAndTeam();
-        return true;
+      _currentUser = await _api.getUser(user.uid);
+      print("get user");
+      await _loadCourseAndTeam();
+      return true;
     } catch (e) {
       print("Error loading user: " + e.toString());
       _error = e.toString();
@@ -54,12 +52,11 @@ class UserModel extends Model {
 
   Future<void> _loadCourseAndTeam([String id = ""]) async {
     String courseId;
-    if(_currentUser.courseIds.isEmpty){
+    if (_currentUser.courseIds.isEmpty) {
       _currentCourse = null;
       _currentTeam = null;
       return;
-    }
-    else{
+    } else {
       courseId = (id.isEmpty) ? _currentUser.courseIds.first : id;
     }
     print("get course");
@@ -67,11 +64,12 @@ class UserModel extends Model {
 
     _currentCourse = await _api.getCourse(courseId);
 
-    if(courseId == ""){
+    if (courseId == "") {
       _currentTeam = null;
-    }
-    else{
-      _currentTeam = (_currentUser.courseTeam[courseId] != null) ? await _api.getTeam(courseId, _currentUser.courseTeam[courseId]) : null;
+    } else {
+      _currentTeam = (_currentUser.courseTeam[courseId] != null)
+          ? await _api.getTeam(courseId, _currentUser.courseTeam[courseId])
+          : null;
     }
   }
 
@@ -110,7 +108,7 @@ class UserModel extends Model {
       _currentTeam = null;
       _error = "";
       return true;
-    }catch(error){
+    } catch (error) {
       _error = error.toString();
       print(_error);
     }
@@ -121,7 +119,7 @@ class UserModel extends Model {
     try {
       await _loadCourseAndTeam(courseId);
       notifyListeners();
-    }catch(error){
+    } catch (error) {
       _error = error.toString();
       print(_error);
     }
@@ -141,7 +139,6 @@ class UserModel extends Model {
 //      DocumentReference teamRef = _currentCourse.teamsRef.document(team.id);
       //if user is not part of a team and the team is not full
       if (!userInTeam && !team.isFull) {
-
         await _api.joinTeam(userId, courseId, teamId);
 
         //set the current team
@@ -158,7 +155,6 @@ class UserModel extends Model {
     return false;
   }
 
-
   Future<bool> leaveCurrentTeam() async {
     try {
       String courseId = _currentCourse.id;
@@ -168,7 +164,8 @@ class UserModel extends Model {
 
       _currentUser.teamIds.remove(_currentTeam.id);
       print(_currentUser.courseTeam);
-      _currentUser.courseTeam.update(_currentCourse.id, (dynamic val) => null, ifAbsent: () => null);
+      _currentUser.courseTeam.update(_currentCourse.id, (dynamic val) => null,
+          ifAbsent: () => null);
       //set local team to null
       _currentTeam = null;
       _error = "";
@@ -181,16 +178,15 @@ class UserModel extends Model {
     return false;
   }
 
-
-  Future<bool> createTeamAndJoin(Team team) async{
-    try{
+  Future<bool> createTeamAndJoin(Team team) async {
+    try {
       String teamId = await _api.createNewTeamInCourse(_currentCourse.id, team);
       await _api.joinTeam(_currentUser.id, _currentCourse.id, teamId);
       _currentTeam = await _api.getTeam(_currentCourse.id, teamId);
       _error = "";
       notifyListeners();
       return true;
-    }catch(e){
+    } catch (e) {
       _error = e.toString();
       print(_error);
     }
@@ -198,18 +194,17 @@ class UserModel extends Model {
   }
 
   Future<bool> joinCourse(Course course) async {
-    try{
+    try {
       await _api.joinCourse(currentUser.id, course.id);
       await loadCurrentUser();
       _error = "";
       return true;
-    }catch(e){
+    } catch (e) {
       _error = e.toString();
       print(_error);
     }
     return false;
   }
-
 
   Future<User> getUser(String uid) async {
     return _api.getUser(uid);
@@ -222,9 +217,11 @@ class UserModel extends Model {
     return _userRef.where('teams', arrayContains: teamId).snapshots();
   }
 
-  Stream<QuerySnapshot> getClassMates(){
-    if(_currentCourse == null) return null;
-    return _userRef.where('courses', arrayContains: _currentCourse.id).snapshots();
+  Stream<QuerySnapshot> getClassMates() {
+    if (_currentCourse == null) return null;
+    return _userRef
+        .where('courses', arrayContains: _currentCourse.id)
+        .snapshots();
   }
 
   Stream<QuerySnapshot> getTeams() {
@@ -232,60 +229,90 @@ class UserModel extends Model {
     return _currentCourse.availableTeamsStream;
   }
 
-  Stream<QuerySnapshot> getCourses(){
+  Stream<QuerySnapshot> getCourses() {
     return _api.getCoursesStream();
   }
 
-
-
-
-  Stream<QuerySnapshot> getConvsersations(){
-    if(_currentCourse == null || _currentUser == null) return null;
-    return _currentCourse.conversationRef.where('related', arrayContains: _currentUser.id).snapshots();
+  Stream<QuerySnapshot> getConvsersations() {
+    if (_currentCourse == null || _currentUser == null) return null;
+    return _currentCourse.conversationRef
+        .where('related', arrayContains: _currentUser.id)
+        .snapshots();
   }
 
-  Future<void> sendRegularMessage(String toId, String conversationId, String content) async{
-    String type = "regular";
-    Message temp = Message(content, currentUser.id, toId, "regular", "pending", "");
+  Future<void> sendRegularMessage(
+      String toId, String conversationId, String content) async {
+    Message temp =
+        Message(content, currentUser.id, toId, "regular", "pending", "");
     await _api.createMessage(currentCourse.id, conversationId, temp);
   }
 
-  Future<String> createApplication(String fromId, String toId, String courseId, String teamId) async {
+  Future<bool> createApplication(Team team) async {
     //QuerySnapshot currentConversation = await _currentCourse.conversationRef.where("related", arrayContains: fromId).where("related", arrayContains: toId).getDocuments();
-    DocumentSnapshot team = await _currentCourse.teamsRef.document(teamId).get();
-    String content = "I send you an application. Please let me join your team ${team.data["name"]} in course $courseId";
-    Message temp = Message(content, fromId, toId, "application", "pending", teamId);
-    String conversationId;
-    print("here");
-    //if(currentConversation.documents.length != 0){
-    //  conversationId = currentConversation.documents[0].documentID;
-    //  await _api.createMessage(courseId, conversationId, temp);
+//    DocumentSnapshot team = await _currentCourse.teamsRef.document(teamId).get();
+//    Team team = await _api.getTeam(_currentCourse.id, teamId);
+
+    try {
+      String content =
+          "Hey, I would like to join your team: ${team.name} in ${_currentCourse.id}";
+      Message temp = Message(content, _currentUser.id, team.leader,
+          "application", "pending", team.id);
+      //if(currentConversation.documents.length != 0){
+      //  conversationId = currentConversation.documents[0].documentID;
+      //  await _api.createMessage(courseId, conversationId, temp);
+      //}
+      //else{
+      String conversationId = await _api.createConversation(
+          _currentCourse.id, _currentUser.id, team.leader);
+      await _api.createMessage(_currentCourse.id, conversationId, temp);
+      _error = "";
+      return true;
+    } catch (e) {
+      _error = e.toString();
+    }
+    return false;
     //}
-    //else{
-      conversationId = await _api.createConversation(courseId, fromId, toId);
-      print("here");
-      await _api.createMessage(courseId, conversationId, temp);
-      print("here");
-    //}
-    return conversationId;
+//    return conversationId;
   }
 
-  Future<void> acceptApplication(Message message, String conversationId) async {
-    DocumentReference temp = _currentCourse.conversationRef.document(conversationId).collection("messages").document(message.id);
-    temp.updateData({
-      "status": "responded"
-    });
-    DocumentSnapshot newSnapshot = await _userRef.document(message.from).get();
-    String courseId = _currentCourse.id;
-    if(newSnapshot.data["course_team"][courseId] == null){
-      _api.joinTeam(message.from, courseId, message.team);
+  Future<bool> acceptApplication(Message message, String conversationId) async {
+    try {
+      await _api.updateMessageStatus(_currentCourse.id, conversationId, message.id);
+//    DocumentReference temp = _currentCourse.conversationRef.document(conversationId).collection("messages").document(message.id);
+//    temp.updateData({
+//      "status": "responded"
+//    });
+
+      Team team = await _api.getTeam(_currentCourse.id, message.team);
+      User user = await _api.getUser(message.from);
+      if (!user.inTeamForCourse(_currentCourse.id) && !team.isFull) {
+        _api.joinTeam(message.from, _currentCourse.id, message.team);
+        String confirmationContent = "Welcome to team ${team.name}!";
+        Message confirmationMessage = Message(confirmationContent, message.from,
+            message.to, "regular", "", team.id);
+        _api.createMessage(_currentCourse.id, conversationId, confirmationMessage);
+      }
+
+//    DocumentSnapshot newSnapshot = await _userRef.document(message.from).get();
+//    String courseId = _currentCourse.id;
+//    if(newSnapshot.data["course_team"][courseId] == null){
+//      _api.joinTeam(message.from, courseId, message.team);
+//    }
+      _error = "";
+      return true;
+    } catch (e) {
+      _error = e.toString();
     }
+    return false;
   }
+
   Future<void> rejectApplication(Message message, String conversationId) async {
-    DocumentReference temp = _currentCourse.conversationRef.document(conversationId).collection("messages").document(message.id);
-    temp.updateData({
-      "status": "responded"
-    });
+    await _api.updateMessageStatus(_currentCourse.id, conversationId, message.id);
+//    DocumentReference temp = _currentCourse.conversationRef
+//        .document(conversationId)
+//        .collection("messages")
+//        .document(message.id);
+//    temp.updateData({"status": "responded"});
   }
 
   //Functions in creating and response to applications.
