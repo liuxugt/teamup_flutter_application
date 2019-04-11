@@ -522,7 +522,7 @@ class UserItemState extends State<UserListItem> {
       leading: CircleAvatar(
         backgroundImage: NetworkImage(userItem.user.photoURL),
       ),
-      trailing: Checkbox(
+      trailing: (userItem.user.id != ScopedModel.of<UserModel>(context).currentUser.id) ? Checkbox(
           value: userItem.isCheck,
           onChanged: (value) {
             if (userItem.itemCallback(value)) {
@@ -530,7 +530,7 @@ class UserItemState extends State<UserListItem> {
                 userItem.isCheck = value;
               });
             }
-          }),
+          }) : Container(height: 0.0, width: 0.0,),
       title: Text("${userItem.user.firstName} ${userItem.user.lastName}"),
       subtitle: Text('${userItem.user.email}'),
     );
