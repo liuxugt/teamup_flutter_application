@@ -288,8 +288,8 @@ class UserModel extends Model {
       if (!user.inTeamForCourse(_currentCourse.id) && !team.isFull) {
         _api.joinTeam(message.from, _currentCourse.id, message.team);
         String confirmationContent = "Welcome to team ${team.name}!";
-        Message confirmationMessage = Message(confirmationContent, message.from,
-            message.to, "regular", "", team.id);
+        Message confirmationMessage = Message(confirmationContent, message.to,
+            message.from, "regular", "", team.id);
         _api.createMessage(_currentCourse.id, conversationId, confirmationMessage);
       }
 
@@ -308,110 +308,59 @@ class UserModel extends Model {
 
   Future<void> rejectApplication(Message message, String conversationId) async {
     await _api.updateMessageStatus(_currentCourse.id, conversationId, message.id);
+  }
+
+  Future<bool> createInvitation(Team team, String userId) async {
+    try {
+      String content =
+          "Hey, I would like you to join my team: ${team.name} in ${_currentCourse.id}";
+      Message temp = Message(content, team.leader, userId,
+          "invitation", "pending", _currentTeam.id);
+      String conversationId = await _api.createConversation(
+          _currentCourse.id, _currentUser.id, userId);
+      print("the team is" + temp.team);
+      await _api.createMessage(_currentCourse.id, conversationId, temp);
+      _error = "";
+      return true;
+    } catch (e) {
+      _error = e.toString();
+    }
+    return false;
+    //}
+//    return conversationId;
+  }
+
+  Future<bool> acceptInvitation(Message message, String conversationId) async {
+    try {
+      print("accept invitation");
+      await _api.updateMessageStatus(_currentCourse.id, conversationId, message.id);
+
+      Team team = await _api.getTeam(_currentCourse.id, message.team);
+      User user = await _api.getUser(message.to);
+      if (!user.inTeamForCourse(_currentCourse.id) && !team.isFull) {
+        print("will join the team");
+        _api.joinTeam(message.to, _currentCourse.id, message.team);
+        _currentTeam = team;
+        String confirmationContent = "Welcome to team ${team.name}!";
+        Message confirmationMessage = Message(confirmationContent, message.from,
+            message.to, "regular", "", team.id);
+        _api.createMessage(_currentCourse.id, conversationId, confirmationMessage);
+      }
+
+      _error = "";
+      return true;
+    } catch (e) {
+      _error = e.toString();
+    }
+    return false;
+  }
+
+  Future<void> rejectInvitation(Message message, String conversationId) async {
+    await _api.updateMessageStatus(_currentCourse.id, conversationId, message.id);
 //    DocumentReference temp = _currentCourse.conversationRef
 //        .document(conversationId)
 //        .collection("messages")
 //        .document(message.id);
 //    temp.updateData({"status": "responded"});
   }
-
-  //Functions in creating and response to applications.
-  /*
-  Future<void> createApplications(String fromID, String toID, String teamID, String courseID) async{
-
-    DocumentSnapshot fromRef = await _currentCourse.membersRef.document(fromID).get();
-    DocumentSnapshot toRef = await _currentCourse.membersRef.document(toID).get();
-    DocumentSnapshot teamRef = await _currentCourse.teamsRef.document(teamID).get();
-    DocumentReference application = await _currentCourse.applicationRef.add({
-      'from' : fromID,
-      'to': toID,
-      'status': "pending",
-      'team': teamID,
-      'fromName': fromRef.data["email"],
-      'toName': toRef.data["email"],
-      'teamName': teamRef.data["name"]
-    });
-    application.updateData({
-      "id": application.documentID
-    });
-  }
-
-  Future<void> acceptApplication(Notifi notification) async{
-    DocumentReference from = _currentCourse.membersRef.document(notification.from);
-    DocumentReference team = _currentCourse.teamsRef.document(notification.team);
-    DocumentSnapshot teamSnapshot = await team.get();
-    DocumentSnapshot fromSnapshot = await from.get();
-    if(teamSnapshot.data["available_spots"] > 0 && fromSnapshot.data["team"] == null){
-      DocumentReference note = _currentCourse.applicationRef.document(notification.id);
-      note.updateData({
-        "status": "accepted"
-      });
-      from.updateData({
-        "team": notification.team
-      });
-      team.updateData({
-        "available_spots": teamSnapshot.data["available_spots"] - 1
-      });
-    }
-    else{
-      print("error in adding applicant into team");
-    }
-  }
-
-  Future<void> rejectApplication(Notifi notification) async{
-    DocumentReference note = _currentCourse.applicationRef.document(notification.id);
-    note.updateData({
-      "status": "rejected"
-    });
-  }
-
-  Future <void> createInvitations(String fromID, String toID, String teamID, String courseID) async{
-    DocumentSnapshot fromRef = await _currentCourse.membersRef.document(fromID).get();
-    DocumentSnapshot toRef = await _currentCourse.membersRef.document(toID).get();
-    DocumentSnapshot teamRef = await _currentCourse.teamsRef.document(teamID).get();
-
-    DocumentReference invitation = await _currentCourse.invitationRef.add({
-      'from': fromID,
-      'to': toID,
-      'status': 'pending',
-      'team': teamID,
-      'fromName': fromRef.data["email"],
-      'toName': toRef.data['email'],
-      'teamName': teamRef.data["name"]
-    });
-    invitation.updateData({
-      "id": invitation.documentID
-    });
-  }
-
-  Future<void> acceptInvitation(Notifi notification) async{
-    DocumentReference to = _currentCourse.membersRef.document(notification.to);
-    DocumentReference team = _currentCourse.teamsRef.document(notification.from);
-    DocumentSnapshot teamSnapshot = await team.get();
-    DocumentSnapshot toSnapshot = await to.get();
-    if(teamSnapshot.data["available_spots"] > 0 && toSnapshot.data["team"] == null){
-      DocumentReference note = _currentCourse.invitationRef.document(notification.id);
-      note.updateData({
-        "status": "accepted"
-      });
-      to.updateData({
-        "team": notification.team
-      });
-      team.updateData({
-        "available_spots": teamSnapshot.data["available_spots"] - 1
-      });
-    }
-    else{
-      print("error in accepting invitaitons");
-    }
-  }
-
-  Future<void> rejectInvitation(Notifi notification) async{
-    DocumentReference note = _currentCourse.invitationRef.document(notification.id);
-    note.updateData({
-      "status": "rejected"
-    });
-  }
-  */
-
 }

@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:teamup_app/objects/user.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:teamup_app/models/user_model.dart';
+import 'package:teamup_app/objects/team.dart';
 
 
 class ProfilePage extends StatelessWidget {
@@ -133,12 +136,47 @@ class ProfilePage extends StatelessWidget {
     );
   }
 
+  Widget _makeFAB(BuildContext context){
+    if(user.inTeamForCourse(
+        ScopedModel.of<UserModel>(context, rebuildOnChange: false)
+            .currentCourse
+            .id) || !ScopedModel.of<UserModel>(context, rebuildOnChange: false).userInTeam){
+      print("here");
+      return Container(height: 0.0);
+    }
+    else{
+      return FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () async {
+          Team current = ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentTeam;
+          print("Team Id to send invitation is");
+          print(current.id);
+          await ScopedModel.of<UserModel>(context, rebuildOnChange: false).createInvitation(current, user.id);
+            print("here");
+            return AlertDialog(
+              title: Text("Invitation Confirmation"),
+              content: Text(
+                  "Your Invitation has been successfully sent, check your inbox for updates!"),
+              actions: <Widget>[
+                FlatButton(
+                  child: Text("Okay!"),
+                  onPressed: () => Navigator.of(context).pop(),
+                )
+              ],
+            );
+        },
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
       return Scaffold(
           appBar: AppBar(
             title: Text('${user.firstName} ${user.lastName}'),
           ),
-          body: _makeBody());
+          body: _makeBody(),
+          floatingActionButton: _makeFAB(context),
+      );
   }
 }

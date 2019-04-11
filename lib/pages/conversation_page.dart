@@ -179,6 +179,10 @@ class Bubble extends StatelessWidget {
                                 ScopedModel.of<UserModel>(context)
                                     .acceptApplication(message, conversationId);
                               }
+                              else{
+                                ScopedModel.of<UserModel>(context)
+                                    .acceptInvitation(message, conversationId);
+                              }
                             },
                           ),
                           Padding(padding: EdgeInsets.only(right: 10.0)),
@@ -193,12 +197,16 @@ class Bubble extends StatelessWidget {
                                 ScopedModel.of<UserModel>(context)
                                     .rejectApplication(message, conversationId);
                               }
+                              else if(message.type == 'invitation'){
+                                ScopedModel.of<UserModel>(context)
+                                    .rejectInvitation(message, conversationId);
+                              }
                             },
                           )
                         ],
                       )
                     :Text(
-                            "You have responded to this",
+                            "You have ${message.status} to this",
                             style: TextStyle(
                                 fontSize: 18.0, fontStyle: FontStyle.italic),
                           )

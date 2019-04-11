@@ -355,6 +355,9 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
                   bool successful = await ScopedModel.of<UserModel>(context,
                           rebuildOnChange: false)
                       .createTeamAndJoin(team);
+                  _usersToInvite.forEach((user) => {
+                    ScopedModel.of<UserModel>(context, rebuildOnChange: false).createInvitation(team, user.id)
+                  });
                   setState(() {
                     _isLoading = false;
                   });
