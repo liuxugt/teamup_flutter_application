@@ -25,8 +25,8 @@ class _StrengthInfoTabState extends State<StrengthInfoTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ListView(
+//      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Container(
           height: 32.0,
