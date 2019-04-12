@@ -28,8 +28,8 @@ class _ProfilePictureTabState extends State<ProfilePictureTab> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ListView(
+//      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Container(
           height: 32.0,
@@ -48,11 +48,13 @@ class _ProfilePictureTabState extends State<ProfilePictureTab> {
           textAlign: TextAlign.center,
         ),
 
-        Container(
-          child:  Center(
+        Center(
+          //TODO: check width and height constraints to show full image
+          child:  Container(
+            width: 300.0,
             child: _image == null
             ? Text('No image selected.')
-                : Image.file(_image),
+                : Image.file(_image, fit: BoxFit.contain),
             ),
         ),
         Container(

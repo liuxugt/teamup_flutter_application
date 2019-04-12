@@ -50,12 +50,14 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
     if (picked != null && picked != _birthDate)
       setState(() {
         _birthDate = picked;
+        _birthDateUpdated = true;
         ScopedModel.of<OnboardingModel>(context,
             rebuildOnChange: false)
             .birthDate = _birthDate;
       });
   }
 
+  bool _birthDateUpdated = false;
   String _genderValue;
   String _majorValue;
   String _yearOfStudyValue;
@@ -113,10 +115,13 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
                   "Date of Birth",
                   style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
                 ),
-                RaisedButton(
+                FlatButton(
                 onPressed: () => _selectDate(context),
                 child: Text('Select date')
                 ),
+                (_birthDateUpdated)
+                ? Text("${_birthDate.day}/${_birthDate.month}/${_birthDate.year}")
+                : Container(height: 0.0,)
               ],
             )
           ],
