@@ -150,7 +150,7 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
 
   Widget _makeTeamMateIconList() {
     return Container(
-      height: 100.0,
+      height: 120.0,
       margin: EdgeInsets.symmetric(vertical: 16.0),
       child: ListView(
         scrollDirection: Axis.horizontal,
@@ -250,7 +250,7 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
     if (_teamSize < widget.maxGroupSize) {
 //      _updateCounterBy(1);
       setState(() {
-        _memberTraits.add("Member");
+        _memberTraits.add(_teamMateTraitOptions[0]);
       });
     }
   }

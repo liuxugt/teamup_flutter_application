@@ -4,6 +4,7 @@ import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/models/user_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:teamup_app/pages/edit_team_page.dart';
 //import 'package:teamup_app/objects/conversation.dart';
 //import 'package:teamup_app/pages/conversation_page.dart';
 import 'package:teamup_app/pages/profile_page.dart';
@@ -120,19 +121,28 @@ class TeamPage extends StatelessWidget {
         });
   }
 
+  _onEditTeamPressed(BuildContext context) async {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) => EditTeamPage(providedTeam: team,))
+    );
+  }
+
   _buildFAB(BuildContext context) {
     return ScopedModelDescendant<UserModel>(
         rebuildOnChange: true,
         builder: (context, child, model) {
           //if the current user is the team leader
-
-
-
+          if(model.userInTeam && model.currentUser.id == team.leader)
+            return FloatingActionButton(
+              child: Icon(Icons.edit),
+              onPressed: () => _onEditTeamPressed(context),
+            );
 
           //if this team is the user's team and they are not the leader, show the leave team button
           if (model.userInTeam && //user is in a team
-              model.currentTeam.id == team.id && //this is their team
-              model.currentUser.id != team.leader) //they are not the leader
+              model.currentTeam.id == team.id //this is their team
+              && model.currentUser.id != team.leader
+              ) //they are not the leader
             return FloatingActionButton(
                 child: Icon(Icons.remove),
                 onPressed: () => _onLeaveTeamPressed(context));

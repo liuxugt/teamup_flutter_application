@@ -9,11 +9,9 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:io';
 
 class API {
-
   static final Firestore _firestore = Firestore.instance;
   static final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   static final FirebaseStorage _firebaseStorage = FirebaseStorage.instance;
-
 
   Future<User> getUser(String uid) async {
     print(uid);
@@ -123,6 +121,16 @@ class API {
     await teamRef.updateData({'available_spots': ++team.availableSpots});
   }
 
+  Future<void> modifyTeam(String courseId, Team team) async {
+    DocumentReference teamRef =
+        _firestore.document('/courses/$courseId/teams/${team.id}');
+    await teamRef.updateData({
+      'roles': team.roles,
+      'name': team.name,
+      'description' : team.description
+    });
+  }
+
   Future<void> joinCourse(String userId, String courseId) async {
 //    DocumentReference courseRef = _firestore.document('/courses/$courseId');
     DocumentReference userRef = _firestore.document('users/$userId');
@@ -198,19 +206,20 @@ class API {
     return _firestore.collection('courses').snapshots();
   }
 
-  Future<String> uploadPicture (String filename, File file) async {
+  Future<String> uploadPicture(String filename, File file) async {
     final StorageReference ref = _firebaseStorage.ref().child(filename);
     final StorageUploadTask task = ref.putFile(file);
     String url = await (await task.onComplete).ref.getDownloadURL();
     return url;
   }
-  
-  Future<void> updateUserPhoto (String uid, String url) async{
-    await _firestore.document('/users/$uid').updateData({'photo_url' : url});
-  }
-  
-  Future<void> markOnboardingComplete (String uid) async {
-    await _firestore.document('/users/$uid').updateData({'onboard_complete' : true});
+
+  Future<void> updateUserPhoto(String uid, String url) async {
+    await _firestore.document('/users/$uid').updateData({'photo_url': url});
   }
 
+  Future<void> markOnboardingComplete(String uid) async {
+    await _firestore
+        .document('/users/$uid')
+        .updateData({'onboard_complete': true});
+  }
 }

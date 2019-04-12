@@ -57,7 +57,8 @@ class Team {
       'roles': roles
     };
   }
-  void set id(String id){
+
+  set id(String id){
     this._id = id;
   }
 }

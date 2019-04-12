@@ -8,7 +8,6 @@ import 'package:teamup_app/services/api.dart';
 import 'package:teamup_app/objects/message.dart';
 
 class UserModel extends Model {
-  //TODO: start moving database functions into the API
   final API _api = API();
 
   User _currentUser;
@@ -75,12 +74,9 @@ class UserModel extends Model {
 
   Future<bool> signInUser(String email, String password) async {
     try {
-      print("SignInUser (UserModel)");
       await _api.signInUser(email, password);
-      print("Got current user, loading current user...");
       return loadCurrentUser();
     } catch (error) {
-      print("test");
       _error = error.toString();
       print(_error);
     }
@@ -115,9 +111,15 @@ class UserModel extends Model {
     return false;
   }
 
-  void changeCourse(String courseId) async {
+  void changeCourse({String courseId = ""}) async {
     try {
-      await _loadCourseAndTeam(courseId);
+      if(courseId.isEmpty){
+        if(currentCourse != null){
+          await _loadCourseAndTeam(currentCourse.id);
+        }
+      }else{
+        await _loadCourseAndTeam(courseId);
+      }
       notifyListeners();
     } catch (error) {
       _error = error.toString();
@@ -163,7 +165,6 @@ class UserModel extends Model {
       await _api.leaveTeam(userId, courseId, _currentTeam.id);
 
       _currentUser.teamIds.remove(_currentTeam.id);
-      print(_currentUser.courseTeam);
       _currentUser.courseTeam.update(_currentCourse.id, (dynamic val) => null,
           ifAbsent: () => null);
       //set local team to null
@@ -184,6 +185,18 @@ class UserModel extends Model {
       await _api.joinTeam(_currentUser.id, _currentCourse.id, teamId);
       _currentTeam = await _api.getTeam(_currentCourse.id, teamId);
       _error = "";
+      notifyListeners();
+      return true;
+    } catch (e) {
+      _error = e.toString();
+      print(_error);
+    }
+    return false;
+  }
+
+  Future<bool> modifyTeam(Team team) async {
+    try {
+      await _api.modifyTeam(_currentCourse.id, team);
       notifyListeners();
       return true;
     } catch (e) {
@@ -338,7 +351,7 @@ class UserModel extends Model {
       Team team = await _api.getTeam(_currentCourse.id, message.team);
       User user = await _api.getUser(message.to);
       if (!user.inTeamForCourse(_currentCourse.id) && !team.isFull) {
-        print("will join the team");
+//        print("will join the team");
         _api.joinTeam(message.to, _currentCourse.id, message.team);
         _currentTeam = team;
         String confirmationContent = "Welcome to team ${team.name}!";
