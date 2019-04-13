@@ -130,6 +130,26 @@ class ProfilePage extends StatelessWidget {
                     )
                   ],
                 ),
+                (user.languages.isEmpty) ? Container() :
+                Container(
+                  height: 16.0,
+                ),
+                (user.languages.isEmpty) ? Container() :
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      "Languages",
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, fontSize: 16.0),
+                    ),
+                    Container(
+                      width: 200.0,
+                      child: Text(user.languages.toString().replaceAll(new RegExp('[\\[\\]]'), ''),
+                        style: TextStyle(fontSize: 16.0, color: Colors.black54), textAlign: TextAlign.end,),
+                    )
+                  ],
+                ),
                 //TODO: Add all the attributes for a user here
               ],
             )

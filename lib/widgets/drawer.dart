@@ -76,6 +76,15 @@ class CustomDrawer extends StatelessWidget {
               builder: (context) => SelectCoursePage()));
         },
       ),
+      Padding(
+        padding: EdgeInsets.only(left: 20),
+        child: Text("Setting")
+      ),
+      ListTile(
+        leading: Icon(Icons.settings),
+        title: Text("Edit profile"),
+        onTap:(){},
+      ),
       ListTile(
         leading: Icon(Icons.exit_to_app),
         title: Text("Sign Out"),

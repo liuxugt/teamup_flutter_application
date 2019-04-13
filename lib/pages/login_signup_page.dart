@@ -52,6 +52,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomPadding: false,
         appBar: AppBar(
           title: _formMode == FormMode.LOGIN ? Text('Login') : Text('Sign Up'),
         ),
@@ -68,7 +69,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
         child: Form(
           key: _formKey,
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
               _showNameInput(),

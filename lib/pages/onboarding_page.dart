@@ -54,58 +54,61 @@ class _OnboardingPageState extends State<OnboardingPage>
                 ),
               ),
               Padding(
-                padding: EdgeInsets.symmetric(vertical: 18.0, horizontal: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Container(
-                        child: (_tabController.index > 0)
-                            ? FlatButton(
-                                child: Text("BACK"),
-                                onPressed: () {
-                                  _tabController.animateTo(
-                                      _tabController.index - 1);
-                                  setState(() {});
-                                },
-                              )
-                            : FlatButton(
-                                child: Text(""),
-                                onPressed: () {
-                                },
-                             )),
-                    TabPageSelector(
-                      controller: _tabController,
-                    ),
-                    Container(
-                        child: (_tabController.index ==
-                            _tabController.length - 1)
-                            ? (_isFinishLoading)
-                            ? CircularProgressIndicator()
-                            : FlatButton(
-                                child: Text("FINISH"),
-                                onPressed: () async {
-                                  setState(() {
-                                    _isFinishLoading = true;
-                                  });
-                                  await onboardingModel.submitAttributes();
-                                  setState(() {
-                                    _isFinishLoading = false;
-                                  });
-                                  await ScopedModel.of<UserModel>(context, rebuildOnChange: false).loadCurrentUser();
-                                  ScopedModel.of<UserModel>(context, rebuildOnChange: false).refresh();
+                padding: EdgeInsets.symmetric(vertical: 18.0, horizontal: 0.0),
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      Container(
+                          child: (_tabController.index > 0)
+                              ? FlatButton(
+                            child: Text("BACK"),
+                            onPressed: () {
+                              _tabController.animateTo(
+                                  _tabController.index - 1);
+                              setState(() {});
+                            },
+                          )
+                              : FlatButton(
+                            child: Text(""),
+                            onPressed: () {
+                            },
+                          )),
+                      TabPageSelector(
+                        controller: _tabController,
+                      ),
+                      Container(
+                          child: (_tabController.index ==
+                              _tabController.length - 1)
+                              ? (_isFinishLoading)
+                              ? CircularProgressIndicator()
+                              : FlatButton(
+                            child: Text("FINISH"),
+                            onPressed: () async {
+                              setState(() {
+                                _isFinishLoading = true;
+                              });
+                              await onboardingModel.submitAttributes();
+                              setState(() {
+                                _isFinishLoading = false;
+                              });
+                              await ScopedModel.of<UserModel>(context, rebuildOnChange: false).loadCurrentUser();
+                              ScopedModel.of<UserModel>(context, rebuildOnChange: false).refresh();
 //                                  Navigator.of(context).pop();
-                                  Navigator.pushReplacementNamed(context, '/home');
-                                },
-                              )
-                            : FlatButton(
-                                onPressed: () {
-                                  _tabController.animateTo(
-                                      _tabController.index + 1);
-                                  setState(() {});
-                                },
-                                child: Text("NEXT"))),
-                  ],
-                ),
+                              Navigator.pushReplacementNamed(context, '/home');
+                            },
+                          )
+                              : FlatButton(
+                              onPressed: () {
+                                _tabController.animateTo(
+                                    _tabController.index + 1);
+                                setState(() {});
+                              },
+                              child: Text("NEXT"))),
+                    ],
+                  ),
+                )
               )
             ],
           ),
