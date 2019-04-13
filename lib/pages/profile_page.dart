@@ -42,7 +42,7 @@ class ProfilePage extends StatelessWidget {
         ),
         Padding(
           padding: const EdgeInsets.all(4.0),
-          child: Text(user.subtitle,
+          child: Text(user.email,
             style: TextStyle(fontSize: 16.0, color: Colors.black54),
           ),
         ),
@@ -65,11 +65,11 @@ class ProfilePage extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     Text(
-                      "Email",
+                      "headline",
                       style: TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 16.0),
                     ),
-                    Text(user.email,
+                    Text(user.subtitle,
                         style: TextStyle(fontSize: 16.0, color: Colors.black54))
                   ],
                 ),
@@ -175,16 +175,21 @@ class ProfilePage extends StatelessWidget {
           print(current.id);
           await ScopedModel.of<UserModel>(context, rebuildOnChange: false).createInvitation(current, user.id);
             print("here");
-            return AlertDialog(
-              title: Text("Invitation Confirmation"),
-              content: Text(
-                  "Your Invitation has been successfully sent, check your inbox for updates!"),
-              actions: <Widget>[
-                FlatButton(
-                  child: Text("Okay!"),
-                  onPressed: () => Navigator.of(context).pop(),
-                )
-              ],
+            showDialog(
+              context: context,
+              builder: (context){
+                return AlertDialog(
+                  title: Text("Invitation Confirmation"),
+                  content: Text(
+                      "Your Invitation has been successfully sent, check your inbox for updates!"),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: Text("Okay!"),
+                      onPressed: () => Navigator.of(context).pop(),
+                    )
+                  ],
+                );
+              }
             );
         },
       );

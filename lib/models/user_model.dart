@@ -377,25 +377,25 @@ class UserModel extends Model {
 //    temp.updateData({"status": "responded"});
   }
 
-  Future<void> updateUser(String headline, String skills, String strengths) async{
+  Future<void> updateUser(String headline, String skills, String strengths, List<String> languages) async{
     _currentUser.setHeadline = headline;
     _currentUser.setSkills = skills;
     _currentUser.setStrengths = strengths;
     Map<String, dynamic> attributes = {};
 
-    if(headline.isNotEmpty)
+    if(headline != null)
       attributes['headline'] = headline;
 
     if(_currentUser.gender != null && _currentUser.gender.isNotEmpty)
       attributes['gender'] = _currentUser.gender;
 
-    if(_currentUser.languages != null && _currentUser.languages.length != 0)
-      attributes['languages'] = _currentUser.languages;
+    if(languages != null)
+      attributes['languages'] = languages;
 
-    if(skills.isNotEmpty)
+    if(skills != null)
       attributes['skills'] = skills;
 
-    if(strengths.isNotEmpty)
+    if(strengths != null)
       attributes['strengths'] = strengths.substring(strengths.indexOf(('.')) + 1);
 
     await _api.updateUserAttributes(_currentUser.id, attributes);
