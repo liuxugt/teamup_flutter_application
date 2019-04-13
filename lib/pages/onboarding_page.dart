@@ -72,8 +72,7 @@ class _OnboardingPageState extends State<OnboardingPage>
                           )
                               : FlatButton(
                             child: Text(""),
-                            onPressed: () {
-                            },
+                            onPressed: null,
                           )),
                       TabPageSelector(
                         controller: _tabController,

@@ -14,16 +14,27 @@ class _AvailabilityInfoTabState extends State<AvailabilityInfoTab> {
   static final days = 7;
 
   List<List<int>> index = List<List<int>>.generate(hours, (i) => List<int>.generate(days, (j) => i * days + j));
+  List<Container> hourList = [];
 
   @override
   void initState() {
     _availabilities = new List<bool>.filled(hours * days, false);
     super.initState();
+    hourList.add(Container(height: 16, child: Text(""),));
+    for (int i = 0; i < hours; i++) {
+      hourList.add(
+        Container(height: 32,
+          child:  Text("${i + 8}"),
+          alignment: Alignment(0.0, 0.0)),);
+    }
   }
 
   List<TableRow> test() {
     List<TableRow> res;
     res = index.map((List<int> hour) => TableRow(
+        decoration: new BoxDecoration(
+//          border: Border.all(color: Colors.red),
+        ),
         children: hour.map((int cur) => GestureDetector(
           onTap: () {setState(() {
             _availabilities[cur] = !_availabilities[cur];
@@ -41,7 +52,7 @@ class _AvailabilityInfoTabState extends State<AvailabilityInfoTab> {
                     : Text(""),
               )
           ),
-        )).toList()
+        )).toList(),
     )).toList();
     return res;
   }
@@ -73,57 +84,118 @@ class _AvailabilityInfoTabState extends State<AvailabilityInfoTab> {
         Container(
           height: 32.0,
         ),
-        Container(
-          height: 32.0,
-          child:Row(children: <Widget>[
-            Expanded(
-              child: Text('S', textAlign: TextAlign.center),
-            ),
-            Expanded(
-              child: Text('M', textAlign: TextAlign.center),
-            ),
-            Expanded(
-              child: Text('T', textAlign: TextAlign.center),
-            ),
-            Expanded(
-              child: Text('W', textAlign: TextAlign.center),
-            ),
-            Expanded(
-              child: Text('T', textAlign: TextAlign.center),
-            ),
-            Expanded(
-              child: Text('F', textAlign: TextAlign.center),
-            ),
-            Expanded(
-              child: Text('S', textAlign: TextAlign.center),
-            ),
-          ],)
-        ),
-        Container(
-          child: Table(
-            border: TableBorder.all(color: Colors.grey),
-              children: test(),
-          ),
-        ),
 //        Container(
 //          height: 32.0,
-//          child:Row(
-//            children: [
-////              Expanded(
-////                flex: 2, // 20%
-////                child: Container(color: Colors.red),
-////              ),
-//              Expanded(
-//                flex: 10, // 60%
-//                child: Container(child: Table(
+//          child:Row(children: <Widget>[
+//            Container(width: 32,),
+//            Expanded(
+//              child: Text('S', textAlign: TextAlign.center),
+//            ),
+//            Expanded(
+//              child: Text('M', textAlign: TextAlign.center),
+//            ),
+//            Expanded(
+//              child: Text('T', textAlign: TextAlign.center),
+//            ),
+//            Expanded(
+//              child: Text('W', textAlign: TextAlign.center),
+//            ),
+//            Expanded(
+//              child: Text('T', textAlign: TextAlign.center),
+//            ),
+//            Expanded(
+//              child: Text('F', textAlign: TextAlign.center),
+//            ),
+//            Expanded(
+//              child: Text('S', textAlign: TextAlign.center),
+//            ),
+//          ],)
+//        ),
+        Container(
+          height: 600,
+          child: ListView(
+            scrollDirection: Axis.horizontal,
+            children: <Widget>[
+              Container(
+                width: 32,
+                child: Column(children: hourList,
+                ),
+              ),
+//              Container(
+////                width: 300,
+//                child: Table(
+//                  defaultColumnWidth: FixedColumnWidth(48.0),
 //                  border: TableBorder.all(color: Colors.grey),
 //                  children: test(),
+////                  children: new List.from(test())..insert(0, TableRow(
+////                    decoration: new BoxDecoration(
+////                      border: Border.all(color: Colors.red),
+////                    ),
+////
+////                    children: [
+////                      Text("S"),
+////                      Text("M"),
+////                      Text("T"),
+////                      Text("W"),
+////                      Text("T"),
+////                      Text("F"),
+////                      Text("S"),
+////                    ]
 //                ),
-//                ),
-//              )
-//            ]
-//          )
-//        )
+//              ),
+              Container(
+                child: Column(
+                  children: <Widget>[
+                    Container(
+                      child:Row(
+                        children: <Widget>[
+                          Container(
+                              width: 48,
+                              child: Text("S", textAlign: TextAlign.center)),
+                          Container(
+                              width: 48,
+                              child: Text("M", textAlign: TextAlign.center)),
+                          Container(
+                              width: 48,
+                              child: Text("T", textAlign: TextAlign.center)),
+                          Container(
+                              width: 48,
+                              child: Text("W", textAlign: TextAlign.center)),
+                          Container(
+                              width: 48,
+                              child: Text("T", textAlign: TextAlign.center)),
+                          Container(
+                              width: 48,
+                              child: Text("F", textAlign: TextAlign.center)),
+                          Container(
+                              width: 48,
+                              child: Text("S", textAlign: TextAlign.center)),
+                        ],
+                      ),),
+                    Container(
+                      child: Row(
+                        children: <Widget>[
+                          Table(
+                            defaultColumnWidth: FixedColumnWidth(48.0),
+                            border: TableBorder.all(color: Colors.grey),
+                            children: test(),
+                          )
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+
+//                child: Table(
+//                defaultColumnWidth: FixedColumnWidth(48.0),
+//                border: TableBorder.all(color: Colors.grey),
+//                children: test(),
+//                )
+              )
+            ],
+          )
+        ),
       ]);
   }
 }
