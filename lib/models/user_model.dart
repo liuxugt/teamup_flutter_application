@@ -376,4 +376,28 @@ class UserModel extends Model {
 //        .document(message.id);
 //    temp.updateData({"status": "responded"});
   }
+
+  Future<void> updateUser(String headline, String skills, String strengths) async{
+    _currentUser.setHeadline = headline;
+    _currentUser.setSkills = skills;
+    _currentUser.setStrengths = strengths;
+    Map<String, dynamic> attributes = {};
+
+    if(headline.isNotEmpty)
+      attributes['headline'] = headline;
+
+    if(_currentUser.gender != null && _currentUser.gender.isNotEmpty)
+      attributes['gender'] = _currentUser.gender;
+
+    if(_currentUser.languages != null && _currentUser.languages.length != 0)
+      attributes['languages'] = _currentUser.languages;
+
+    if(skills.isNotEmpty)
+      attributes['skills'] = skills;
+
+    if(strengths.isNotEmpty)
+      attributes['strengths'] = strengths.substring(strengths.indexOf(('.')) + 1);
+
+    await _api.updateUserAttributes(_currentUser.id, attributes);
+  }
 }

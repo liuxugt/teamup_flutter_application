@@ -130,6 +130,7 @@ class ProfilePage extends StatelessWidget {
                     )
                   ],
                 ),
+                /*
                 (user.languages.isEmpty) ? Container() :
                 Container(
                   height: 16.0,
@@ -150,6 +151,7 @@ class ProfilePage extends StatelessWidget {
                     )
                   ],
                 ),
+                */
                 //TODO: Add all the attributes for a user here
               ],
             )

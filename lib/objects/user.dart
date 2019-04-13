@@ -96,10 +96,15 @@ class User {
   String get photoURL => _photoURL;
 
   String get skills => _skills;
+  String get gender => _gender;
   String get headline => _headline;
   DateTime get birthdate => _birthdate;
   String get strengths => _strengths;
   List<String> get languages => _languages;
+
+  set setSkills(String skill) => _skills = skill;
+  set setHeadline(String headline) => _headline = headline;
+  set setStrengths(String strength) => _strengths = strength;
 
   //TODO: Make this check attributes
   String get subtitle => (_headline != null && _headline.isNotEmpty) ? _headline :_email;

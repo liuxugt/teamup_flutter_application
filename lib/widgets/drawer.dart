@@ -5,6 +5,7 @@ import 'package:teamup_app/models/user_model.dart';
 //import 'package:teamup_app/pages/onboarding_page.dart';
 import 'package:teamup_app/pages/profile_page.dart';
 import 'package:teamup_app/pages/select_course_page.dart';
+import 'package:teamup_app/pages/profile_edit_page.dart';
 
 class CustomDrawer extends StatelessWidget {
   @override
@@ -83,7 +84,13 @@ class CustomDrawer extends StatelessWidget {
       ListTile(
         leading: Icon(Icons.settings),
         title: Text("Edit profile"),
-        onTap:(){},
+        onTap:(){
+          Navigator.push(context,
+              MaterialPageRoute(
+                  builder: (context) => ProfileEditPage(
+                    user: ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentUser
+                  )));
+        },
       ),
       ListTile(
         leading: Icon(Icons.exit_to_app),
