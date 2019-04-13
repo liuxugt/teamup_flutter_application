@@ -166,6 +166,24 @@ class Bubble extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: <Widget>[
                           FlatButton(
+                            child: Row(children: [
+                              Icon(Icons.clear),
+                              Text("Ignore", style: TextStyle(fontSize: 18.0)),
+                            ]),
+                            textColor: Colors.red,
+                            onPressed: () {
+                              if (message.type == "application") {
+                                ScopedModel.of<UserModel>(context)
+                                    .rejectApplication(message, conversationId);
+                              }
+                              else if(message.type == 'invitation'){
+                                ScopedModel.of<UserModel>(context)
+                                    .rejectInvitation(message, conversationId);
+                              }
+                            },
+                          ),
+                          Padding(padding: EdgeInsets.only(right: 10.0)),
+                          FlatButton(
                             textColor: Colors.blue,
                             child: Row(
                               children: <Widget>[
@@ -185,24 +203,6 @@ class Bubble extends StatelessWidget {
                               }
                             },
                           ),
-                          Padding(padding: EdgeInsets.only(right: 10.0)),
-                          FlatButton(
-                            child: Row(children: [
-                              Icon(Icons.clear),
-                              Text("Ignore", style: TextStyle(fontSize: 18.0)),
-                            ]),
-                            textColor: Colors.red,
-                            onPressed: () {
-                              if (message.type == "application") {
-                                ScopedModel.of<UserModel>(context)
-                                    .rejectApplication(message, conversationId);
-                              }
-                              else if(message.type == 'invitation'){
-                                ScopedModel.of<UserModel>(context)
-                                    .rejectInvitation(message, conversationId);
-                              }
-                            },
-                          )
                         ],
                       )
                     :Text(
