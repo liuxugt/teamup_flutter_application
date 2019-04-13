@@ -51,8 +51,7 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
       setState(() {
         _birthDate = picked;
         _birthDateUpdated = true;
-        ScopedModel.of<OnboardingModel>(context,
-            rebuildOnChange: false)
+        ScopedModel.of<OnboardingModel>(context, rebuildOnChange: false)
             .birthDate = _birthDate;
       });
   }
@@ -102,7 +101,7 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
                       _genderValue = value;
                     });
                     ScopedModel.of<OnboardingModel>(context,
-                        rebuildOnChange: false)
+                            rebuildOnChange: false)
                         .gender = value;
                   },
 //                  onSaved: (value) => _gender = value,
@@ -116,12 +115,13 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
                   style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
                 ),
                 FlatButton(
-                onPressed: () => _selectDate(context),
-                child: Text('Select date')
-                ),
-                (_birthDateUpdated)
-                ? Text("${_birthDate.day}/${_birthDate.month}/${_birthDate.year}")
-                : Container(height: 0.0,)
+                    onPressed: () => _selectDate(context),
+                    child: Text(
+                      (_birthDateUpdated)
+                          ? "${_birthDate.day}/${_birthDate.month}/${_birthDate.year}"
+                          : 'Select Date',
+                      style: TextStyle(fontSize: 18.0, color: Colors.blue),
+                    )),
               ],
             )
           ],

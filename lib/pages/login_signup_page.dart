@@ -54,7 +54,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
     return Scaffold(
         resizeToAvoidBottomPadding: false,
         appBar: AppBar(
-          title: _formMode == FormMode.LOGIN ? Text('Login') : Text('Sign Up'),
+          title: Text(_formMode == FormMode.LOGIN ? 'Login' : 'Sign Up')
         ),
         body: _showBody()
     );
@@ -64,21 +64,26 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
 
   Widget _showBody() {
-    return Container(
-        padding: EdgeInsets.all(24.0),
+    return Center(
+//        padding: EdgeInsets.all(24.0),
         child: Form(
           key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              _showNameInput(),
-              _showEmailInput(),
-              _showPasswordInput(),
-              _showPrimaryButton(),
-              _showSecondaryButton(),
-              _showErrorMessage(),
-            ],
+          child: Container(
+            padding: EdgeInsets.all(24.0),
+          child: ListView(
+            shrinkWrap: true,
+            physics: ClampingScrollPhysics(),
+//            mainAxisAlignment: MainAxisAlignment.start,
+//            crossAxisAlignment: CrossAxisAlignment.center,
+              children: <Widget>[
+                _showNameInput(),
+                _showEmailInput(),
+                _showPasswordInput(),
+                _showPrimaryButton(),
+                _showSecondaryButton(),
+                _showErrorMessage(),
+              ],
+            ),
           ),
         ));
   }
@@ -193,10 +198,13 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
           return AlertDialog(
             title: Text('Signup Successful'),
             content: Text(
-                'Your account has been successfully created, you may now login with password ' + _password),
+                'Your account has been successfully created, you may now login'),
             actions: <Widget>[
               FlatButton(
                 onPressed: () {
+                  setState(() {
+                    _formMode = FormMode.LOGIN;
+                  });
                   Navigator.of(context).pop();
                 },
                 child: Text('Okay'),
@@ -207,14 +215,16 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   }
 
   Widget _showPrimaryButton() {
-      return RaisedButton(
-        color: Colors.blue,
-        onPressed: _onPrimaryButtonPressed,
-        child: _formMode == FormMode.LOGIN
-            ? Text('Login',
-                style: TextStyle(fontSize: 20.0, color: Colors.white))
-            : Text('Create account',
-                style: TextStyle(fontSize: 20.0, color: Colors.white)),
+      return Center(
+        child: RaisedButton(
+          color: Colors.blue,
+          onPressed: _onPrimaryButtonPressed,
+          child: _formMode == FormMode.LOGIN
+              ? Text('Login',
+                  style: TextStyle(fontSize: 20.0, color: Colors.white))
+              : Text('Create account',
+                  style: TextStyle(fontSize: 20.0, color: Colors.white)),
+        ),
       );
   }
 

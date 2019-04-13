@@ -16,6 +16,17 @@ class MyApp extends StatelessWidget {
     return ScopedModel<UserModel>(
         model: userModel,
         child: MaterialApp(
+            theme: ThemeData(
+                scaffoldBackgroundColor: Colors.white,
+                appBarTheme: AppBarTheme(
+                  iconTheme: IconThemeData.fallback(),
+                    color: Colors.white,
+                    elevation: 1.0,
+                    textTheme: TextTheme(
+                        title: TextStyle(
+                            color: Colors.black,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.w500)))),
             title: "TeamUp",
             debugShowCheckedModeBanner: false,
             initialRoute: '/',
