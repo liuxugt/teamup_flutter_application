@@ -26,7 +26,7 @@ class _OnboardingPageState extends State<OnboardingPage>
   bool _isFinishLoading = false;
   @override
   void initState() {
-    _tabs = [HeadlineTab(), PersonalInfoTab(), LanguageInfoTab(), SkillInfoTab(), StrengthInfoTab(),
+    _tabs = [PersonalInfoTab(), HeadlineTab(), LanguageInfoTab(), SkillInfoTab(), StrengthInfoTab(),
     AvailabilityInfoTab(), IcebreakerInfoTab(), ProfilePictureTab()];
     _tabController = new TabController(length: _tabs.length, vsync: this);
     super.initState();
@@ -72,8 +72,8 @@ class _OnboardingPageState extends State<OnboardingPage>
                           )
                               : FlatButton(
                             child: Text(""),
-                            onPressed: () {
-                            },
+                            onPressed: null,
+
                           )),
                       TabPageSelector(
                         controller: _tabController,

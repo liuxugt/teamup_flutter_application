@@ -14,6 +14,7 @@ class _ProfilePictureTabState extends State<ProfilePictureTab> {
   File _image;
 
   Future getImage() async {
+    //TODO: add max height and width to compress
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image = image;

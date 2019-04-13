@@ -50,7 +50,10 @@ class CustomDrawer extends StatelessWidget {
         accountEmail: Text(user.email),
         currentAccountPicture: CircleAvatar(
             backgroundImage: NetworkImage(user.photoURL)),
-        decoration: BoxDecoration(color: Colors.blue),
+        decoration: BoxDecoration(
+            gradient: LinearGradient(
+                colors: [Color.fromRGBO(90, 133, 236, 1), Color.fromRGBO(149, 138, 224, 1)])
+        ),
         onDetailsPressed: (){
           Navigator.of(context).push(MaterialPageRoute(
               builder: (context) => ProfilePage(user: user,)));
