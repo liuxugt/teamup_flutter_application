@@ -3,11 +3,12 @@ import 'package:teamup_app/objects/user.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/models/user_model.dart';
 import 'package:teamup_app/objects/team.dart';
+import 'package:teamup_app/pages/profile_edit_page.dart';
 
 
 class ProfilePage extends StatelessWidget {
 
-  final User user;
+  User user;
   ProfilePage({this.user});
 
   Widget _makeBody() {
@@ -159,6 +160,14 @@ class ProfilePage extends StatelessWidget {
   }
 
   Widget _makeFAB(BuildContext context){
+    if(user.id == ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentUser.id){
+      return FloatingActionButton(
+        child: Icon(Icons.edit),
+        onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context) => ProfileEditPage(user: user)));
+        }
+      );
+    }
     if(user.inTeamForCourse(
         ScopedModel.of<UserModel>(context, rebuildOnChange: false)
             .currentCourse
@@ -198,6 +207,7 @@ class ProfilePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+      //user = ScopedModel.of<UserModel>(context, rebuildOnChange: true).currentUser;
       return Scaffold(
           appBar: AppBar(
             title: Text('${user.firstName} ${user.lastName}'),

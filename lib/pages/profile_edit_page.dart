@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:teamup_app/objects/user.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/models/user_model.dart';
-import 'package:teamup_app/objects/team.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 
 class ProfileEditPage extends StatefulWidget {
@@ -22,6 +23,7 @@ class ProfileEditPageState extends State<ProfileEditPage>{
   TextEditingController headlineController = new TextEditingController();
   TextEditingController skillsController = new TextEditingController();
   TextEditingController strengthsController = new TextEditingController();
+  File _image;
 
   final List<String> languages = [
     'English',
@@ -44,6 +46,15 @@ class ProfileEditPageState extends State<ProfileEditPage>{
     skillsController.text = skills;
     strengthsController.text = strengths;
 
+  }
+
+
+  Future getImage() async {
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _image = image;
+      ScopedModel.of<UserModel>(context, rebuildOnChange: false).updateUserPhoto(image);
+    });
   }
 
   Widget _makeBody() {
@@ -70,6 +81,15 @@ class ProfileEditPageState extends State<ProfileEditPage>{
           child: CircleAvatar(
             backgroundImage: NetworkImage(user.photoURL),
             radius: 40.0,
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: IconButton(
+            icon: Icon(Icons.camera),
+            onPressed: (){
+              getImage();
+            },
           ),
         ),
         Padding(

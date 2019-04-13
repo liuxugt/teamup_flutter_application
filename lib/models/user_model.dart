@@ -6,6 +6,7 @@ import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/objects/user.dart';
 import 'package:teamup_app/services/api.dart';
 import 'package:teamup_app/objects/message.dart';
+import 'dart:io';
 
 class UserModel extends Model {
   final API _api = API();
@@ -399,5 +400,11 @@ class UserModel extends Model {
       attributes['strengths'] = strengths.substring(strengths.indexOf(('.')) + 1);
 
     await _api.updateUserAttributes(_currentUser.id, attributes);
+  }
+
+  Future<void> updateUserPhoto(File photo) async {
+    String photoURL = await _api.uploadPicture(_currentUser.id, photo);
+    await _api.updateUserPhoto(_currentUser.id, photoURL);
+    _currentUser.setPhoto = photoURL;
   }
 }

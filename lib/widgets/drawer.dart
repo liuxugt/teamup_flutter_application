@@ -49,11 +49,11 @@ class CustomDrawer extends StatelessWidget {
         accountName: Text('${user.firstName} ${user.lastName}'),
         accountEmail: Text(user.email),
         currentAccountPicture: CircleAvatar(
-            backgroundImage: NetworkImage(user.photoURL)),
+            backgroundImage: NetworkImage(ScopedModel.of<UserModel>(context, rebuildOnChange: true).currentUser.photoURL)),
         decoration: BoxDecoration(color: Colors.blue),
         onDetailsPressed: (){
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ProfilePage(user: user,)));
+              builder: (context) => ProfilePage(user: ScopedModel.of<UserModel>(context, rebuildOnChange: true).currentUser,)));
         },
       )
     ];

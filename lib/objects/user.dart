@@ -105,6 +105,7 @@ class User {
   set setSkills(String skill) => _skills = skill;
   set setHeadline(String headline) => _headline = headline;
   set setStrengths(String strength) => _strengths = strength;
+  set setPhoto(String photoURL) => _photoURL = photoURL;
 
   //TODO: Make this check attributes
   String get subtitle => (_headline != null && _headline.isNotEmpty) ? _headline :_email;
