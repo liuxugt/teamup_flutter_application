@@ -41,6 +41,8 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
 
   DateTime _birthDate = DateTime.now();
 
+  final double _titleFontSize = 24.0;
+
   Future<Null> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
@@ -51,8 +53,7 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
       setState(() {
         _birthDate = picked;
         _birthDateUpdated = true;
-        ScopedModel.of<OnboardingModel>(context,
-            rebuildOnChange: false)
+        ScopedModel.of<OnboardingModel>(context, rebuildOnChange: false)
             .birthDate = _birthDate;
       });
   }
@@ -92,7 +93,7 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
               children: <Widget>[
                 Text(
                   "Gender",
-                  style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: _titleFontSize, fontWeight: FontWeight.bold),
                 ),
                 DropdownButton(
                   value: _genderValue,
@@ -102,7 +103,7 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
                       _genderValue = value;
                     });
                     ScopedModel.of<OnboardingModel>(context,
-                        rebuildOnChange: false)
+                            rebuildOnChange: false)
                         .gender = value;
                   },
 //                  onSaved: (value) => _gender = value,
@@ -113,15 +114,16 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
               children: <Widget>[
                 Text(
                   "Date of Birth",
-                  style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: _titleFontSize, fontWeight: FontWeight.bold),
                 ),
                 FlatButton(
-                onPressed: () => _selectDate(context),
-                child: Text('Select date')
-                ),
-                (_birthDateUpdated)
-                ? Text("${_birthDate.day}/${_birthDate.month}/${_birthDate.year}")
-                : Container(height: 0.0,)
+                    onPressed: () => _selectDate(context),
+                    child: Text(
+                      (_birthDateUpdated)
+                          ? "${_birthDate.day}/${_birthDate.month}/${_birthDate.year}"
+                          : 'Select Date',
+                      style: TextStyle(fontSize: 18.0, color: Colors.blue),
+                    )),
               ],
             )
           ],
@@ -131,7 +133,7 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
         ),
         Text(
           "Major area of study",
-          style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: _titleFontSize, fontWeight: FontWeight.bold),
         ),
         DropdownButton(
           isExpanded: true,
@@ -150,7 +152,7 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
         ),
         Text(
           "Year of study",
-          style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: _titleFontSize, fontWeight: FontWeight.bold),
         ),
         DropdownButton(
           isExpanded: true,

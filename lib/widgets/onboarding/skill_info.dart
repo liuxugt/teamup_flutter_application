@@ -33,7 +33,7 @@ class _SkillInfoTabState extends State<SkillInfoTab> {
           height: 32.0,
         ),
         TextField(
-          maxLines: 1,
+          maxLines: 5,
           decoration: InputDecoration(
               hintText: 'e.g. javascript or project management',
               border: OutlineInputBorder()

@@ -15,7 +15,11 @@ class _LanguageInfoTabState extends State<LanguageInfoTab> {
     'Mandarin',
     'Japanese',
     'French',
-    'German'
+    'German',
+    'Hindi',
+    'Arabic',
+    'Bengali',
+    'Indonesian'
   ];
 
   List<String> _languageItems;
@@ -59,8 +63,12 @@ class _LanguageInfoTabState extends State<LanguageInfoTab> {
           height: 32.0,
         ),
         Text(
-          "Waht lanauges are you fluent in?",
+          "What lanauges are you fluent in?",
           style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
+        ),
+
+        Container(
+          height: 64.0,
         ),
 
         Wrap(
