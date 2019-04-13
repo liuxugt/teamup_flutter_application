@@ -65,13 +65,23 @@ class ProfilePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
+
+                    IconTheme(
+                      data: new IconThemeData(
+                        color: null,
+                      ),
+                      child: new Image(image: new AssetImage("./assets/grade.png"), color: null, height: 16, width: 16),//Logo
+                    ),
                     Text(
-                      "headline",
+                      "Headline",
                       style: TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 16.0),
                     ),
-                    Text(user.subtitle,
-                        style: TextStyle(fontSize: 16.0, color: Colors.black54))
+                    Container(
+                      width: 200.0,
+                      child:Text(user.subtitle,
+                          style: TextStyle(fontSize: 16.0, color: Colors.black54), textAlign: TextAlign.end)
+                    )
                   ],
                 ),
                 (user.skills == null || user.skills.isEmpty) ? Container() :
@@ -82,6 +92,12 @@ class ProfilePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
+                    IconTheme(
+                      data: new IconThemeData(
+                        color: null,
+                      ),
+                      child: new Image(image: new AssetImage("./assets/skills.png"), color: null, height: 16, width: 16),//Logo
+                    ),
                     Text(
                       "Skills",
                       style: TextStyle(
@@ -102,13 +118,22 @@ class ProfilePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
+                    IconTheme(
+                      data: new IconThemeData(
+                        color: null,
+                      ),
+                      child: new Image(image: new AssetImage("./assets/good_at.png"), color: null, height: 16, width: 16),//Logo
+                    ),
                     Text(
                       "Strength",
                       style: TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 16.0),
                     ),
-                    Text(user.strengths,
-                        style: TextStyle(fontSize: 16.0, color: Colors.black54), textAlign: TextAlign.end)
+                    Container(
+                      width: 200.0,
+                      child: Text(user.strengths,
+                          style: TextStyle(fontSize: 16.0, color: Colors.black54), textAlign: TextAlign.end)
+                    )
                   ],
                 ),
                 (user.languages.isEmpty) ? Container() :
@@ -119,6 +144,12 @@ class ProfilePage extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
+                    IconTheme(
+                      data: new IconThemeData(
+                        color: null,
+                      ),
+                      child: new Image(image: new AssetImage("./assets/language.png"), color: null, height: 16, width: 16),//Logo
+                    ),
                     Text(
                       "Languages",
                       style: TextStyle(
@@ -131,28 +162,25 @@ class ProfilePage extends StatelessWidget {
                     )
                   ],
                 ),
-                /*
-                (user.languages.isEmpty) ? Container() :
                 Container(
                   height: 16.0,
                 ),
-                (user.languages.isEmpty) ? Container() :
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget> [
+                    IconTheme(
+                      data: new IconThemeData(
+                        color: null,
+                      ),
+                      child: new Image(image: new AssetImage("./assets/time_availability.png"), color: null, height: 16, width: 16),//Logo
+                    ),
                     Text(
-                      "Languages",
+                      "Unavailable at",
                       style: TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 16.0),
                     ),
-                    Container(
-                      width: 200.0,
-                      child: Text(user.languages.toString().replaceAll(new RegExp('[\\[\\]]'), ''),
-                        style: TextStyle(fontSize: 16.0, color: Colors.black54), textAlign: TextAlign.end,),
-                    )
-                  ],
-                ),
-                */
+                  ]
+                )
                 //TODO: Add all the attributes for a user here
               ],
             )

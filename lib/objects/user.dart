@@ -17,6 +17,7 @@ class User {
   String _headline;
   String _skills;
   String _strengths;
+  List<bool> _unavailable = [];
 
 
 //  _printVariables(){
@@ -101,6 +102,8 @@ class User {
   DateTime get birthdate => _birthdate;
   String get strengths => _strengths;
   List<String> get languages => _languages;
+
+  List<bool> get unavailable => _unavailable;
 
   set setSkills(String skill) => _skills = skill;
   set setHeadline(String headline) => _headline = headline;

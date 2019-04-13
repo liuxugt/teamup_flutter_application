@@ -58,6 +58,12 @@ flutter:
     - assets/thinking.png
     - assets/dc.jpg
     - assets/avengers.jpg
+    - assets/skills.png
+    - assets/language.png
+    - assets/skills.png
+    - assets/time_availability.png
+    - assets/good_at.png
+    - assets/grade.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.io/assets-and-images/#resolution-aware.
