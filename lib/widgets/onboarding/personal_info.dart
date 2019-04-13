@@ -41,6 +41,8 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
 
   DateTime _birthDate = DateTime.now();
 
+  final double _titleFontSize = 24.0;
+
   Future<Null> _selectDate(BuildContext context) async {
     final DateTime picked = await showDatePicker(
         context: context,
@@ -91,7 +93,7 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
               children: <Widget>[
                 Text(
                   "Gender",
-                  style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: _titleFontSize, fontWeight: FontWeight.bold),
                 ),
                 DropdownButton(
                   value: _genderValue,
@@ -112,7 +114,7 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
               children: <Widget>[
                 Text(
                   "Date of Birth",
-                  style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: _titleFontSize, fontWeight: FontWeight.bold),
                 ),
                 FlatButton(
                     onPressed: () => _selectDate(context),
@@ -131,7 +133,7 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
         ),
         Text(
           "Major area of study",
-          style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: _titleFontSize, fontWeight: FontWeight.bold),
         ),
         DropdownButton(
           isExpanded: true,
@@ -150,7 +152,7 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
         ),
         Text(
           "Year of study",
-          style: TextStyle(fontSize: 28.0, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: _titleFontSize, fontWeight: FontWeight.bold),
         ),
         DropdownButton(
           isExpanded: true,

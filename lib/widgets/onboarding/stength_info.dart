@@ -99,6 +99,10 @@ class _StrengthInfoTabState extends State<StrengthInfoTab> {
         ),
 
         Container(
+          height: 36.0,
+        ),
+
+        Container(
           height: 350.0,
           child: ListView(
             scrollDirection: Axis.horizontal,
