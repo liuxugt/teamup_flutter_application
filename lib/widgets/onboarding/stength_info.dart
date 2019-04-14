@@ -34,7 +34,7 @@ class _StrengthInfoTabState extends State<StrengthInfoTab> {
 
   @override
   void initState() {
-    _strength = StrengthType.influencing;
+    _strength = StrengthType.strategicThinking;
     super.initState();
   }
 
