@@ -5,17 +5,16 @@ import 'package:teamup_app/models/user_model.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 
-
 class ProfileEditPage extends StatefulWidget {
-
   final User user;
   ProfileEditPage({this.user});
 
   @override
-  State<StatefulWidget> createState() => new ProfileEditPageState(user: this.user);
+  State<StatefulWidget> createState() =>
+      new ProfileEditPageState(user: this.user);
 }
 
-class ProfileEditPageState extends State<ProfileEditPage>{
+class ProfileEditPageState extends State<ProfileEditPage> {
   final User user;
   String headline;
   String skills;
@@ -47,7 +46,7 @@ class ProfileEditPageState extends State<ProfileEditPage>{
 
   List<String> selectedLanguage;
   //List<LanguageOption> languageOptions;
-  ProfileEditPageState({this.user}){
+  ProfileEditPageState({this.user}) {
     headline = user.headline;
     skills = user.skills;
     strengths = user.strengths;
@@ -61,12 +60,12 @@ class ProfileEditPageState extends State<ProfileEditPage>{
     yearController.text = yearofStudy;
   }
 
-
   Future getImage() async {
     var image = await ImagePicker.pickImage(source: ImageSource.gallery);
     setState(() {
       _image = image;
-      ScopedModel.of<UserModel>(context, rebuildOnChange: false).updateUserPhoto(image);
+      ScopedModel.of<UserModel>(context, rebuildOnChange: false)
+          .updateUserPhoto(image);
     });
   }
 
@@ -76,7 +75,7 @@ class ProfileEditPageState extends State<ProfileEditPage>{
     return ListView(
       children: <Widget>[
         Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             Padding(
               padding: EdgeInsets.all(20.0),
@@ -87,7 +86,6 @@ class ProfileEditPageState extends State<ProfileEditPage>{
         )
       ],
     );
-
   }
 
   Widget _makeHeader() {
@@ -104,7 +102,7 @@ class ProfileEditPageState extends State<ProfileEditPage>{
           padding: const EdgeInsets.all(4.0),
           child: IconButton(
             icon: Icon(Icons.camera),
-            onPressed: (){
+            onPressed: () {
               getImage();
             },
           ),
@@ -118,16 +116,11 @@ class ProfileEditPageState extends State<ProfileEditPage>{
         ),
         Padding(
           padding: const EdgeInsets.all(4.0),
-          child: Text(user.email,
+          child: Text(
+            user.email,
             style: TextStyle(fontSize: 16.0, color: Colors.black54),
           ),
         ),
-// TODO: Add headline here
-//        Padding(
-//          padding: const EdgeInsets.all(4.0),
-//          child: Text(user.headline,
-//              style: TextStyle(fontSize: 18.0, color: Colors.black54)),
-//        ),
       ],
     );
   }
@@ -138,137 +131,142 @@ class ProfileEditPageState extends State<ProfileEditPage>{
         child: Column(
           children: <Widget>[
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(
-                  "major",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16.0),
-                ),
                 Container(
-                  width: 100.0,
+                  width: 100,
+                  child: Text(
+                    "Major",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                  ),
+                ),
+                Flexible(
                   child: TextField(
                     controller: majorController,
-                    onChanged: (value){major = value;},
+                    onChanged: (value) {
+                      major = value;
+                    },
                     textAlign: TextAlign.center,
                   ),
                 ),
               ],
             ),
-            Container(
-              height: 16.0,
-            ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(
-                  "Year of Study",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16.0),
-                ),
                 Container(
-                  width: 100.0,
+                  width: 100,
+                  child: Text(
+                    "Year",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                  ),
+                ),
+                Flexible(
                   child: TextField(
                     controller: yearController,
-                    onChanged: (value){yearofStudy = value;},
+                    onChanged: (value) {
+                      yearofStudy = value;
+                    },
                     textAlign: TextAlign.center,
                   ),
                 ),
               ],
             ),
-            Container(
-              height: 16.0,
-            ),
 
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(
-                  "headline",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16.0),
-                ),
                 Container(
-                  width: 100.0,
+                  width: 100,
+                  child: Text(
+                    "headline",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                  ),
+                ),
+                Flexible(
                   child: TextField(
                     controller: headlineController,
-                    onChanged: (value){headline = value;},
+                    onChanged: (value) {
+                      headline = value;
+                    },
                     textAlign: TextAlign.center,
                   ),
                 ),
               ],
             ),
-            Container(
-              height: 16.0,
-            ),
 
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(
-                  "Skills",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16.0),
-                ),
                 Container(
-                  width: 100.0,
+                  width: 100,
+                  child: Text(
+                    "Skills",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                  ),
+                ),
+                Flexible(
                   child: TextField(
                     controller: skillsController,
-                    onChanged: (value) =>{skills = value},
+                    onChanged: (value) => {skills = value},
                     textAlign: TextAlign.center,
-                    ),
-                )
-              ],
-            ),
-
-            Container(
-              height: 16.0,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Text(
-                  "Strength",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16.0),
-                ),
-                Container(
-                  width: 100.0,
-                  child: FlatButton(
-                    child: Text(user.strengths),
-                    onPressed: (){
-                      showDialog(context: context,
-                          builder:(BuildContext context) {
-                        return SimpleDialog(
-                          title: Text("choose a strengths"),
-                          children: _makestrengthsOptions(context),
-                        );
-                      });
-                    }
                   ),
                 )
               ],
             ),
 
-            Container(
-              height: 16.0,
+            Row(
+              children: <Widget>[
+                Container(
+                  width: 100,
+                  child: Text(
+                    "Strength",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                  ),
+                ),
+                Flexible(
+                  child: Center(
+                    child: FlatButton(
+                        textColor: Color.fromRGBO(90, 133, 236, 1.0),
+                        child: Text(user.strengths),
+                        onPressed: () {
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return SimpleDialog(
+                                  title: Text("choose a strengths"),
+                                  children: _makestrengthsOptions(context),
+                                );
+                              });
+                        }),
+                  ),
+                )
+              ],
             ),
 
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
-                Text(
-                  "Languages",
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold, fontSize: 16.0),
-                ),
                 Container(
-                  width: 200.0,
-                  child: FlatButton(
-                    child: Text(user.languages.toString().replaceAll(new RegExp('[\\[\\]]'), '')),
-                    onPressed: (){
-                      _makeLanguageDialog(context);
+                  width: 100.0,
+                  child: Text(
+                    "Languages",
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                  ),
+                ),
+                Flexible(
+                  child: Center(
+                    child: FlatButton(
+                      textColor: Color.fromRGBO(90, 133, 236, 1.0),
+                      child: Text(user.languages
+                          .toString()
+                          .replaceAll(new RegExp('[\\[\\]]'), '')),
+                      onPressed: () {
+                        _makeLanguageDialog(context);
                       },
+                    ),
                   ),
                 )
               ],
@@ -276,21 +274,26 @@ class ProfileEditPageState extends State<ProfileEditPage>{
 
             //TODO: Add all the attributes for a user here
           ],
-        )
-    );
+        ));
   }
 
-  Widget _makeFAB(BuildContext context){
-      return FloatingActionButton(
-        child: Icon(Icons.add),
+  Widget _makeFAB(BuildContext context) {
+    return FloatingActionButton(
+        child: Icon(Icons.done),
+        backgroundColor: Color.fromRGBO(90, 133, 236, 1.0),
         onPressed: () {
           //print(user.skills);
           ScopedModel.of<UserModel>(context, rebuildOnChange: false).updateUser(
-              headline, skills, strengths, selectedLanguage, major, yearofStudy);
+              headline,
+              skills,
+              strengths,
+              selectedLanguage,
+              major,
+              yearofStudy);
           Navigator.pop(context);
-        }
-      );
+        });
   }
+
   List<Widget> _makestrengthsOptions(BuildContext context) {
     List<Widget> options = [];
     for (int i = 0; i < strengthList.length; i++) {
@@ -312,44 +315,46 @@ class ProfileEditPageState extends State<ProfileEditPage>{
     ));
     return options;
   }
-  void _makeLanguageDialog(BuildContext context){
+
+  void _makeLanguageDialog(BuildContext context) {
     showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text("select languages"),
-          content: ListView(
-            children: languages.map((language) {return _makeLanguageOption(context, language);}).toList()
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text("Ok"),
-              onPressed: (){
-                Navigator.pop(context);
-              },
-            ),
-          ],
-        );
-      }
-    );
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("select languages"),
+            content: ListView(
+                children: languages.map((language) {
+              return _makeLanguageOption(context, language);
+            }).toList()),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Ok"),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        });
   }
 
-  bool _selectLanguage(String language, bool checkboxSelected){
-    if(!selectedLanguage.contains(language)){
-      setState((){
+  bool _selectLanguage(String language, bool checkboxSelected) {
+    if (!selectedLanguage.contains(language)) {
+      setState(() {
         selectedLanguage.add(language);
       });
-    }
-    else{
-      setState((){
+    } else {
+      setState(() {
         selectedLanguage.remove(language);
       });
     }
     print(selectedLanguage);
     return true;
   }
-  Widget _makeLanguageOption(BuildContext context, String language){
-    LanguageOption temp = new LanguageOption(language, selectedLanguage.contains(language), _selectLanguage);
+
+  Widget _makeLanguageOption(BuildContext context, String language) {
+    LanguageOption temp = new LanguageOption(
+        language, selectedLanguage.contains(language), _selectLanguage);
     return LanguageListUnit(language: temp);
   }
 
@@ -365,22 +370,23 @@ class ProfileEditPageState extends State<ProfileEditPage>{
   }
 }
 
-class LanguageOption{
+class LanguageOption {
   String language;
   bool isCheck;
   Function(String, bool) itemCallback;
   LanguageOption(this.language, this.isCheck, this.itemCallback);
 }
 
-class LanguageListUnit extends StatefulWidget{
+class LanguageListUnit extends StatefulWidget {
   final LanguageOption language;
 
   LanguageListUnit({this.language});
   @override
-  State<StatefulWidget> createState() => new LanguageListUnitState(language: language);
+  State<StatefulWidget> createState() =>
+      new LanguageListUnitState(language: language);
 }
 
-class LanguageListUnitState extends State<LanguageListUnit>{
+class LanguageListUnitState extends State<LanguageListUnit> {
   final LanguageOption language;
   LanguageListUnitState({this.language});
 
@@ -388,22 +394,23 @@ class LanguageListUnitState extends State<LanguageListUnit>{
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(language.language),
-      onTap: (){
-        if(language.itemCallback(language.language, language.isCheck)){
-          setState((){
+      onTap: () {
+        if (language.itemCallback(language.language, language.isCheck)) {
+          setState(() {
             language.isCheck = !language.isCheck;
           });
         }
       },
       trailing: Checkbox(
         value: language.isCheck,
-        onChanged: (value){
-          if(language.itemCallback(language.language, value)){
-            setState((){
+        onChanged: (value) {
+          if (language.itemCallback(language.language, value)) {
+            setState(() {
               language.isCheck = value;
             });
           }
-        },),
+        },
+      ),
     );
   }
 }
