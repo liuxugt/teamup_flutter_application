@@ -121,6 +121,9 @@ class User {
   set setHeadline(String headline) => _headline = headline;
   set setStrengths(String strength) => _strengths = strength;
   set setPhoto(String photoURL) => _photoURL = photoURL;
+  set setMajor(String major) => _major = major;
+  set setYearofStudy(String year) => _yearOfStudy = year;
+  set setLanguages(List<String> languages) => _languages = languages;
 
   String get subtitle => (_headline != null && _headline.isNotEmpty) ? _headline :_email;
 
@@ -130,10 +133,10 @@ class User {
       returnString += _headline;
     }
     if(_yearOfStudy != null && _yearOfStudy.isNotEmpty){
-      returnString += ', $_yearOfStudy';
+      returnString += ', $_yearOfStudy year ';
     }
     if(_major != null && _major.isNotEmpty){
-      returnString += ', ' + _major;
+      returnString += 'in ' + _major;
     }
     return returnString;
   }

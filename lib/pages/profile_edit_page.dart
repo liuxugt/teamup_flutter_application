@@ -20,9 +20,12 @@ class ProfileEditPageState extends State<ProfileEditPage>{
   String headline;
   String skills;
   String strengths;
+  String major;
+  String yearofStudy;
   TextEditingController headlineController = new TextEditingController();
   TextEditingController skillsController = new TextEditingController();
-  TextEditingController strengthsController = new TextEditingController();
+  TextEditingController majorController = new TextEditingController();
+  TextEditingController yearController = new TextEditingController();
   File _image;
 
   final List<String> languages = [
@@ -35,6 +38,13 @@ class ProfileEditPageState extends State<ProfileEditPage>{
     'German'
   ];
 
+  final List<String> strengthList = [
+    'strategicThinking',
+    'influencing',
+    'executing',
+    'relationshipBuilding',
+  ];
+
   List<String> selectedLanguage;
   //List<LanguageOption> languageOptions;
   ProfileEditPageState({this.user}){
@@ -42,10 +52,13 @@ class ProfileEditPageState extends State<ProfileEditPage>{
     skills = user.skills;
     strengths = user.strengths;
     selectedLanguage = user.languages;
+    major = user.major;
+    yearofStudy = user.yearOfStudy;
+
     headlineController.text = headline;
     skillsController.text = skills;
-    strengthsController.text = strengths;
-
+    majorController.text = major;
+    yearController.text = yearofStudy;
   }
 
 
@@ -60,14 +73,18 @@ class ProfileEditPageState extends State<ProfileEditPage>{
   Widget _makeBody() {
     //return Text("Body");
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
+    return ListView(
       children: <Widget>[
-        Padding(
-          padding: EdgeInsets.all(20.0),
-        ),
-        _makeHeader(),
-        _makeAttributeList(),
+        Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(20.0),
+            ),
+            _makeHeader(),
+            _makeAttributeList(),
+          ],
+        )
       ],
     );
 
@@ -124,6 +141,49 @@ class ProfileEditPageState extends State<ProfileEditPage>{
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 Text(
+                  "major",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16.0),
+                ),
+                Container(
+                  width: 100.0,
+                  child: TextField(
+                    controller: majorController,
+                    onChanged: (value){major = value;},
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              height: 16.0,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  "Year of Study",
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold, fontSize: 16.0),
+                ),
+                Container(
+                  width: 100.0,
+                  child: TextField(
+                    controller: yearController,
+                    onChanged: (value){yearofStudy = value;},
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
+            Container(
+              height: 16.0,
+            ),
+
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
                   "headline",
                   style: TextStyle(
                       fontWeight: FontWeight.bold, fontSize: 16.0),
@@ -174,10 +234,17 @@ class ProfileEditPageState extends State<ProfileEditPage>{
                 ),
                 Container(
                   width: 100.0,
-                  child: TextField(
-                    controller: strengthsController,
-                    onChanged: (value) =>{strengths = value},
-                    textAlign: TextAlign.center,
+                  child: FlatButton(
+                    child: Text(user.strengths),
+                    onPressed: (){
+                      showDialog(context: context,
+                          builder:(BuildContext context) {
+                        return SimpleDialog(
+                          title: Text("choose a strengths"),
+                          children: _makestrengthsOptions(context),
+                        );
+                      });
+                    }
                   ),
                 )
               ],
@@ -219,12 +286,32 @@ class ProfileEditPageState extends State<ProfileEditPage>{
         onPressed: () {
           //print(user.skills);
           ScopedModel.of<UserModel>(context, rebuildOnChange: false).updateUser(
-              headline, skills, strengths, selectedLanguage);
+              headline, skills, strengths, selectedLanguage, major, yearofStudy);
           Navigator.pop(context);
         }
       );
   }
-
+  List<Widget> _makestrengthsOptions(BuildContext context) {
+    List<Widget> options = [];
+    for (int i = 0; i < strengthList.length; i++) {
+      options.add(SimpleDialogOption(
+        onPressed: () {
+          setState(() {
+            strengths = strengthList[i];
+            user.setStrengths = strengthList[i];
+          });
+          Navigator.of(context).pop();
+        },
+        child: Text(strengthList[i]),
+      ));
+    }
+    options.add(FlatButton(
+      onPressed: () => Navigator.of(context).pop(),
+      child: Text("Cancel"),
+      textColor: Colors.blue,
+    ));
+    return options;
+  }
   void _makeLanguageDialog(BuildContext context){
     showDialog(
       context: context,

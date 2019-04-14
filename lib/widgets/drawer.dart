@@ -56,7 +56,7 @@ class CustomDrawer extends StatelessWidget {
         ),
         onDetailsPressed: (){
           Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ProfilePage(user: user,)));
+              builder: (context) => ProfilePage(user: ScopedModel.of<UserModel>(context, rebuildOnChange: true).currentUser,)));
         },
       )
     ];

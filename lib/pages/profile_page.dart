@@ -23,15 +23,17 @@ class ProfilePage extends StatelessWidget {
 
   Widget _makeBody() {
     print(strengthMap);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.all(20.0),
-        ),
-        _makeHeader(),
-        _makeAttributeList(),
-      ],
+    return SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.all(20.0),
+            ),
+            _makeHeader(),
+            _makeAttributeList(),
+          ],
+        )
     );
   }
 

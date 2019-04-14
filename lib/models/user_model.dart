@@ -378,10 +378,13 @@ class UserModel extends Model {
 //    temp.updateData({"status": "responded"});
   }
 
-  Future<void> updateUser(String headline, String skills, String strengths, List<String> languages) async{
+  Future<void> updateUser(String headline, String skills, String strengths, List<String> languages, String major, String yearofStudy) async{
     _currentUser.setHeadline = headline;
     _currentUser.setSkills = skills;
     _currentUser.setStrengths = strengths;
+    _currentUser.setMajor = major;
+    _currentUser.setYearofStudy = yearofStudy;
+    _currentUser.setLanguages = languages;
     Map<String, dynamic> attributes = {};
 
     if(headline != null)
@@ -398,6 +401,13 @@ class UserModel extends Model {
 
     if(strengths != null)
       attributes['strengths'] = strengths.substring(strengths.indexOf(('.')) + 1);
+
+    if(major != null)
+      attributes['major'] = major;
+
+    if(yearofStudy != null){
+      attributes['year_of_study'] = yearofStudy;
+    }
 
     await _api.updateUserAttributes(_currentUser.id, attributes);
   }
