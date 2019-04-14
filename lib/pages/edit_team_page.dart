@@ -272,7 +272,7 @@ class _EditTeamPageState extends State<EditTeamPage> {
             });
             if (successful) {
 
-              await ScopedModel.of<UserModel>(context,
+              ScopedModel.of<UserModel>(context,
                   rebuildOnChange: false).changeCourse();
 
               await showDialog(

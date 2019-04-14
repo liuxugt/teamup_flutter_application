@@ -7,6 +7,19 @@ import 'package:teamup_app/pages/propose_team_page.dart';
 import 'package:teamup_app/pages/team_page.dart';
 
 class TeamsList extends StatelessWidget {
+  final Map<String, Image> _teamMateIconMap = {
+    'anyone': Image.asset("assets/anyone.png", height: 24, width: 24),
+    'designer': Image.asset("assets/designer.png", height: 24, width: 24),
+    'researcher': Image.asset("assets/researcher.png", height: 24, width: 24),
+    'developer': Image.asset("assets/developer.png", height: 24, width: 24),
+  };
+  final List<String> _customRoleList = [
+    'anyone',
+    'designer',
+    'researcher',
+    'developer'
+  ];
+
   List<Widget> _makeTeamIcons(List<dynamic> teamRoles) {
     List<Widget> iconList = [
       Container(
@@ -33,19 +46,26 @@ class TeamsList extends StatelessWidget {
     });
 
     for (String role in finalRoles) {
+      //default icon
+      Widget icon = _teamMateIconMap[_customRoleList[0]];
+      
+      for (String s in _customRoleList) {
+        if (role.toLowerCase().contains(s)) {
+          icon = _teamMateIconMap[s];
+          break;
+        }
+      }
+
       iconList.add(Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Icon(
-            Icons.account_circle,
-            color: Colors.grey[400],
-          ),
+          icon,
           Container(
             child: Center(
                 child: Text(
-                  role.toString(),
-                  textAlign: TextAlign.center,
-                )),
+              role.toString(),
+              textAlign: TextAlign.center,
+            )),
             width: 70.0,
           )
         ],
@@ -108,45 +128,45 @@ class TeamsList extends StatelessWidget {
                 child: model.userInTeam
                     ? _makeTeamCard(model.currentTeam, context)
                     : Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    const Text(
-                      'Oops! You are not in a team yet!',
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold),
-                    ),
-                    Container(
-                      height: 16.0,
-                    ),
-                    FlatButton(
-                      child: const Text(
-                        'Propose a new Team',
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          const Text(
+                            'Oops! You are not in a team yet!',
+                            style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Container(
+                            height: 16.0,
+                          ),
+                          FlatButton(
+                            child: const Text(
+                              'Propose a new Team',
+                            ),
+                            color: Colors.blue,
+                            textColor: Colors.white,
+                            onPressed: () {
+                              int courseGroupSize = ScopedModel.of<UserModel>(
+                                      context,
+                                      rebuildOnChange: false)
+                                  .currentCourse
+                                  .groupSize;
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ProposeTeamPage(
+                                            maxGroupSize: courseGroupSize,
+                                          )));
+                            },
+                          )
+                        ],
                       ),
-                      color: Colors.blue,
-                      textColor: Colors.white,
-                      onPressed: () {
-                        int courseGroupSize = ScopedModel.of<UserModel>(
-                            context,
-                            rebuildOnChange: false)
-                            .currentCourse
-                            .groupSize;
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => ProposeTeamPage(
-                                  maxGroupSize: courseGroupSize,
-                                )));
-                      },
-                    )
-                  ],
-                ),
               ),
               const Padding(
                 padding: EdgeInsets.all(20.0),
                 child: Text("Available Teams",
                     style:
-                    TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 18.0)),
               )
             ];
 
@@ -162,14 +182,17 @@ class TeamsList extends StatelessWidget {
                 );
               default:
                 List<Widget> queryList =
-                snapshot.data.documents.map((document) {
-                  if (document?.data != null){
+                    snapshot.data.documents.map((document) {
+                  if (document?.data != null) {
                     Team team = Team.fromSnapshot(document);
-                    if(model.currentTeam == null || team.id != model.currentTeam.id){
+                    if (model.currentTeam == null ||
+                        team.id != model.currentTeam.id) {
                       return _makeTeamCard(team, context);
                     }
                   }
-                  return Container(height: 0.0,);
+                  return Container(
+                    height: 0.0,
+                  );
                 }).toList();
                 children.addAll(queryList);
                 return ListView(children: children);

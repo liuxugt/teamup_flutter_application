@@ -41,7 +41,7 @@ class _AvailabilityInfoTabState extends State<AvailabilityInfoTab> {
             ScopedModel.of<OnboardingModel>(context, rebuildOnChange: false).availabilities = _availabilities;
           });
           },
-          child: AnimatedContainer(duration: const Duration(milliseconds: 700),
+          child: AnimatedContainer(duration: const Duration(milliseconds: 300),
               height: 32.0,
               color: _availabilities[cur]
                   ? Colors.blue

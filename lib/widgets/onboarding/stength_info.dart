@@ -40,7 +40,7 @@ class _StrengthInfoTabState extends State<StrengthInfoTab> {
 
   final List<Strength> _strengthList = [
     Strength('Strategic Thinking','assets/thinking.png', 'I create new idea to solve problems, and look for the best way to move forward on it.', StrengthType.strategicThinking),
-    Strength('Influencing', 'assets/influencing.png', 'I sell big ideas. I’m good at taking charge, speak up and be heard.', StrengthType.influencing),
+    Strength('Influencing', 'assets/influencing.png', 'I sell big ideas. I’m good at taking charge, speaking up and be heard.', StrengthType.influencing),
     Strength('Executing','assets/executing.png', 'I put ideas into action. I get things done, with speed, precision, and accuracy.', StrengthType.executing),
     Strength('Relationship Building','assets/relationbuilding.png', 'I make relational connections that bind a group together around an idea or each other.', StrengthType.relationshipBuilding)
   ];

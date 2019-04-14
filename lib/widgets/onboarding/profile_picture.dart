@@ -15,7 +15,7 @@ class _ProfilePictureTabState extends State<ProfilePictureTab> {
 
   Future getImage() async {
     //TODO: add max height and width to compress
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery, maxHeight: 200, maxWidth: 200);
     setState(() {
       _image = image;
       ScopedModel.of<OnboardingModel>(context, rebuildOnChange: false).image = _image;
@@ -52,15 +52,13 @@ class _ProfilePictureTabState extends State<ProfilePictureTab> {
         Center(
           //TODO: check width and height constraints to show full image
           child:  Container(
-            width: 300.0,
+            padding: EdgeInsets.all(16.0),
             child: _image == null
             ? Text('No image selected.')
                 : Image.file(_image, fit: BoxFit.contain),
             ),
         ),
-        Container(
-          height: 32.0,
-        ),
+
         Container(
           child: FloatingActionButton(
           onPressed: getImage,

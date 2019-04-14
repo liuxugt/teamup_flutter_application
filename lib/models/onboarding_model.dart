@@ -8,8 +8,8 @@ class OnboardingModel extends Model{
 
   String headline = '';
   String gender = '';
-  String major;
-  String yearOfStudy;
+  String major = '';
+  String yearOfStudy = '';
   DateTime birthDate;
   List<String> languages = [];
   String skills = '';
@@ -27,6 +27,12 @@ class OnboardingModel extends Model{
 
     if(headline.isNotEmpty)
       attributes['headline'] = headline;
+
+    if(major.isNotEmpty)
+      attributes['major'] = major;
+
+    if(yearOfStudy.isNotEmpty)
+      attributes['year_of_study'] = yearOfStudy;
 
     if(gender.isNotEmpty)
       attributes['gender'] = gender;

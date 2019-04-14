@@ -18,6 +18,8 @@ class User {
   String _skills;
   String _strengths;
   List<bool> _unavailable = [];
+  String _major = '';
+  String _yearOfStudy = '';
 
 
 //  _printVariables(){
@@ -72,6 +74,13 @@ class User {
       if (data['attributes']['strengths'] is String)
         _strengths = data['attributes']['strengths'];
 
+      if (data['attributes']['year_of_study'] is String)
+        _yearOfStudy = data['attributes']['year_of_study'];
+
+      if (data['attributes']['major'] is String)
+        _major = data['attributes']['major'];
+
+
       if (data['attributes']['languages'] is List && data['attributes']['languages'].length > 0)
         for (int i = 0; i < data['attributes']['languages'].length; i++) {
           _languages.add(data['attributes']['languages'][i]);
@@ -96,6 +105,9 @@ class User {
   String get lastName => _lastName;
   String get photoURL => _photoURL;
 
+
+  String get major => _major;
+  String get yearOfStudy => _yearOfStudy;
   String get skills => _skills;
   String get gender => _gender;
   String get headline => _headline;
@@ -110,6 +122,20 @@ class User {
   set setStrengths(String strength) => _strengths = strength;
   set setPhoto(String photoURL) => _photoURL = photoURL;
 
-  //TODO: Make this check attributes
   String get subtitle => (_headline != null && _headline.isNotEmpty) ? _headline :_email;
+
+  String get profilePageSubtitle {
+    String returnString = '';
+    if(_headline != null && _headline.isNotEmpty){
+      returnString += _headline;
+    }
+    if(_yearOfStudy != null && _yearOfStudy.isNotEmpty){
+      returnString += ', $_yearOfStudy';
+    }
+    if(_major != null && _major.isNotEmpty){
+      returnString += ', ' + _major;
+    }
+    return returnString;
+  }
+
 }
