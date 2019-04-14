@@ -24,7 +24,7 @@ class TeamsList extends StatelessWidget {
     List<Widget> iconList = [
       Container(
         height: 48,
-        child: Center(child: Text("we want")),
+        child: Center(child: Text("we want", style: TextStyle(color: Color.fromRGBO(90, 133, 236, 1.0), fontWeight: FontWeight.w600),)),
       )
     ];
 
@@ -81,12 +81,21 @@ class TeamsList extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
-            decoration: BoxDecoration(color: Color.fromRGBO(245, 245, 245, 1)),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [Color.fromRGBO(90, 133, 236, 1), Color.fromRGBO(149, 138, 224, 1)]),
+//                color: Color.fromRGBO(245, 245, 245, 1)
+            ),
             child: ListTile(
                 isThreeLine: true,
                 title: Text(team.name,
-                    style: TextStyle(fontWeight: FontWeight.bold)),
-                subtitle: Text(team.description),
+                    style: TextStyle(color: Colors.white, fontSize: 14)),
+                subtitle: Padding(
+                  padding: const EdgeInsets.only(top: 14),
+                  child: Text(team.description, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),),
+                ),
                 onTap: () {
                   Navigator.push(
                       context,
