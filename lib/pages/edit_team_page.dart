@@ -86,8 +86,8 @@ class _EditTeamPageState extends State<EditTeamPage> {
           children: <Widget>[
             _makeTeamNameInput(),
             _makeTeamDescriptionInput(),
-            _makeTeamMateIconList(),
             _makeTips(),
+            _makeTeamMateIconList(),
             _makeError(),
             _makeFinishButton(),
           ],
@@ -214,7 +214,7 @@ class _EditTeamPageState extends State<EditTeamPage> {
     options.add(FlatButton(
       onPressed: () => Navigator.of(context).pop(),
       child: Text("Cancel"),
-      textColor: Colors.blue,
+      textColor: Color.fromRGBO(90, 133, 236, 1.0),
     ));
     return options;
   }
@@ -225,7 +225,7 @@ class _EditTeamPageState extends State<EditTeamPage> {
 
   Widget _makeTips() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 4.0),
       child: Center(
         child: Text(
           'Tip: Click on the icon to edit teammate roles',
@@ -305,7 +305,7 @@ class _EditTeamPageState extends State<EditTeamPage> {
           const EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
           child: Text('DONE'),
         ),
-        color: Colors.blue,
+        color: Color.fromRGBO(90, 133, 236, 1.0),
         textColor: Colors.white,
       ),
     );

@@ -77,7 +77,7 @@ class TeamPage extends StatelessWidget {
           children: <TextSpan>[
             (user.id == team.leader)
                 ? TextSpan(
-                    text: ' (Team Lead)', style: TextStyle(color: Colors.blue))
+                    text: ' (Team Lead)', style: TextStyle(color: Color.fromRGBO(90, 133, 236, 1.0)))
                 : TextSpan(text: ""),
           ],
         ),

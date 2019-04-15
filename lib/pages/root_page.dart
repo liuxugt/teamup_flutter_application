@@ -11,6 +11,8 @@ class RootPage extends StatelessWidget {
         .loadCurrentUser()
         .then((isSignedIn) {
       if (isSignedIn) {
+        if(!ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentUser.onboardComplete)
+          Navigator.of(context).pushReplacementNamed('/onboarding');
         Navigator.of(context).pushReplacementNamed('/home');
       } else {
         Navigator.of(context).pushReplacementNamed('/login');

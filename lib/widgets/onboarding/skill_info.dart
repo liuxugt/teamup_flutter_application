@@ -34,6 +34,7 @@ class _SkillInfoTabState extends State<SkillInfoTab> {
         ),
         TextField(
           maxLines: 5,
+          keyboardType: TextInputType.text,
           decoration: InputDecoration(
               hintText: 'e.g. javascript or project management',
               border: OutlineInputBorder()

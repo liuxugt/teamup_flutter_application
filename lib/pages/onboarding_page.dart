@@ -39,9 +39,6 @@ class _OnboardingPageState extends State<OnboardingPage>
     return ScopedModel<OnboardingModel>(
       model: onboardingModel,
       child: Scaffold(
-        appBar: AppBar(
-          title: Text("Onboarding"),
-        ),
         body: Padding(
           padding: EdgeInsets.all(24.0),
           child: Column(
@@ -77,12 +74,13 @@ class _OnboardingPageState extends State<OnboardingPage>
                           )),
                       TabPageSelector(
                         controller: _tabController,
+                        selectedColor: Color.fromRGBO(90, 133, 236, 1.0),
                       ),
                       Container(
                           child: (_tabController.index ==
                               _tabController.length - 1)
                               ? (_isFinishLoading)
-                              ? CircularProgressIndicator()
+                              ? Padding(padding: EdgeInsets.all(8.0),child: CircularProgressIndicator())
                               : FlatButton(
                             child: Text("FINISH"),
                             onPressed: () async {

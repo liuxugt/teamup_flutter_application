@@ -78,18 +78,21 @@ class _ListElementState extends State<ListElement> {
 
           String name;
           int index;
+          String photoURL;
           if(_conv.related[0] == ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentUser.id){
             name = _conv.fullName2;
             index = 1;
+            photoURL = _conv.user2.photoURL;
           }
           else{
             name = _conv.fullName1;
             index = 0;
+            photoURL = _conv.user2.photoURL;
           }
           return ListTile(
             contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
             leading: CircleAvatar(
-              backgroundImage: NetworkImage(_conv.user1.photoURL),
+              backgroundImage: NetworkImage(photoURL),
               radius: 24.0,
             ),
             title: Text(name,

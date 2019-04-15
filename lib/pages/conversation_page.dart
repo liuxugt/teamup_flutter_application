@@ -54,8 +54,8 @@ class ConversationPageState extends State<ConversationPage> {
 
   Widget buildInput() {
     return Container(
+        decoration: BoxDecoration(border: Border(top: BorderSide(color: Colors.grey))),
         padding: EdgeInsets.only(left: 20.0, bottom: 4.0),
-        color: Colors.white,
         child: Row(
           children: <Widget>[
             Flexible(
@@ -69,7 +69,7 @@ class ConversationPageState extends State<ConversationPage> {
                 margin: EdgeInsets.symmetric(horizontal: 8.0),
                 child: IconButton(
                     icon: Icon(Icons.send),
-                    color: Colors.blue,
+                    color: Color.fromRGBO(90, 133, 236, 1.0),
                     onPressed: () {
                       String toId = _conversation.related[_targetIndex];
                       ScopedModel.of<UserModel>(context, rebuildOnChange: false)
@@ -111,7 +111,7 @@ class Bubble extends StatelessWidget {
             .currentUser
             .id !=
         message.from);
-    final bg = received ? Colors.white : Colors.greenAccent.shade100;
+    final bg = received ? Colors.white : Colors.greenAccent;
     final align = received ? MainAxisAlignment.start : MainAxisAlignment.end;
     print(align);
     final String content = message.content;
@@ -183,7 +183,7 @@ class Bubble extends StatelessWidget {
                           ),
                           Padding(padding: EdgeInsets.only(right: 10.0)),
                           FlatButton(
-                            textColor: Colors.blue,
+                            textColor: Color.fromRGBO(90, 133, 236, 1.0),
                             child: Row(
                               children: <Widget>[
                                 Icon(Icons.done),

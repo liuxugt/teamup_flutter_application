@@ -35,8 +35,10 @@ class _LanguageInfoTabState extends State<LanguageInfoTab> {
       yield Padding(
         padding: const EdgeInsets.all(4.0),
         child: FilterChip(
-          avatar: CircleAvatar(),
-          label: Text(language),
+//          backgroundColor: Color.fromRGBO(90, 133, 236, 0.5),
+          selectedColor: Color.fromRGBO(90, 133, 236, 1.0),
+          avatar: CircleAvatar(backgroundColor: Color.fromRGBO(90, 133, 236, 1.0),),
+          label: Text(language, style: (_languageItems.contains(language)) ? TextStyle(color: Colors.white) : null),
           selected: _languageItems.contains(language),
           onSelected: (bool value) {
             setState(() {

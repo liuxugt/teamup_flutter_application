@@ -221,7 +221,7 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
     options.add(FlatButton(
       onPressed: () => Navigator.of(context).pop(),
       child: Text("Cancel"),
-      textColor: Colors.blue,
+      textColor: Color.fromRGBO(90, 133, 236, 1.0),
     ));
     return options;
   }
@@ -524,6 +524,7 @@ class UserItemState extends State<UserListItem> {
       ),
       trailing: (userItem.user.id != ScopedModel.of<UserModel>(context).currentUser.id) ? Checkbox(
           value: userItem.isCheck,
+          activeColor: Color.fromRGBO(90, 133, 236, 1.0),
           onChanged: (value) {
             if (userItem.itemCallback(value)) {
               setState(() {

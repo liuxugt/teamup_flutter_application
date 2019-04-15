@@ -52,10 +52,9 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomPadding: false,
-        appBar: AppBar(
-          title: Text(_formMode == FormMode.LOGIN ? 'Login' : 'Sign Up')
-        ),
+//        appBar: AppBar(
+//          title: Text(_formMode == FormMode.LOGIN ? 'Login' : 'Sign Up')
+//        ),
         body: _showBody()
     );
   }
@@ -76,6 +75,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 //            mainAxisAlignment: MainAxisAlignment.start,
 //            crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
+                _showLogo(),
                 _showNameInput(),
                 _showEmailInput(),
                 _showPasswordInput(),
@@ -89,7 +89,9 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   }
 
 
-
+  Widget _showLogo(){
+    return Center(child: Image.asset('assets/logo.png', height: 100, width: 100,));
+  }
 
   Widget _showErrorMessage() {
     if (_errorMessage.length > 0 && _errorMessage != null) {
@@ -217,7 +219,7 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
   Widget _showPrimaryButton() {
       return Center(
         child: RaisedButton(
-          color: Colors.blue,
+          color: Color.fromRGBO(90, 133, 236, 1.0),
           onPressed: _onPrimaryButtonPressed,
           child: _formMode == FormMode.LOGIN
               ? Text('Login',

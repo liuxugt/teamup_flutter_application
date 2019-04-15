@@ -122,7 +122,7 @@ class _PersonalInfoTabState extends State<PersonalInfoTab> {
                       (_birthDateUpdated)
                           ? "${_birthDate.day}/${_birthDate.month}/${_birthDate.year}"
                           : 'Select Date',
-                      style: TextStyle(fontSize: 18.0, color: Colors.blue),
+                      style: TextStyle(fontSize: 18.0, color: Color.fromRGBO(90, 133, 236, 1.0)),
                     )),
               ],
             )

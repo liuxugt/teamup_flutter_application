@@ -44,7 +44,7 @@ class _AvailabilityInfoTabState extends State<AvailabilityInfoTab> {
           child: AnimatedContainer(duration: const Duration(milliseconds: 300),
               height: 32.0,
               color: _availabilities[cur]
-                  ? Colors.blue
+                  ? Color.fromRGBO(90, 133, 236, 1.0)
                   : Colors.white,
               child: Center(
                 child: _availabilities[cur]
@@ -76,7 +76,7 @@ class _AvailabilityInfoTabState extends State<AvailabilityInfoTab> {
                 style: TextStyle(
                   fontStyle: FontStyle.italic,
                   fontWeight: FontWeight.w900,
-                  color: Colors.blue)),
+                  color: Color.fromRGBO(90, 133, 236, 1.0))),
               TextSpan(text: 'for team work?'),
             ],
           ),

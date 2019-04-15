@@ -15,7 +15,7 @@ class _ProfilePictureTabState extends State<ProfilePictureTab> {
 
   Future getImage() async {
     //TODO: add max height and width to compress
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery, maxHeight: 200, maxWidth: 200);
+    var image = await ImagePicker.pickImage(source: ImageSource.gallery, maxHeight: 400, maxWidth: 400);
     setState(() {
       _image = image;
       ScopedModel.of<OnboardingModel>(context, rebuildOnChange: false).image = _image;
@@ -52,15 +52,22 @@ class _ProfilePictureTabState extends State<ProfilePictureTab> {
         Center(
           //TODO: check width and height constraints to show full image
           child:  Container(
-            padding: EdgeInsets.all(16.0),
-            child: _image == null
-            ? Text('No image selected.')
-                : Image.file(_image, fit: BoxFit.contain),
+            height: 250,
+            width: 250,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              image: (_image == null) ? DecorationImage(image: NetworkImage('http://rkhealth.com/wp-content/uploads/5.jpg'), fit: BoxFit.cover) : DecorationImage(image: FileImage(_image), fit: BoxFit.cover)
+            ),
+margin: EdgeInsets.all(24),
+//            child: _image == null
+//            ? Text('No image selected.')
+//                : Image.file(_image, fit: BoxFit.fitWidth,),
             ),
         ),
 
         Container(
           child: FloatingActionButton(
+            backgroundColor: Color.fromRGBO(90, 133, 236, 1.0),
           onPressed: getImage,
           tooltip: 'Pick Image',
           child: Icon(Icons.add_a_photo),
