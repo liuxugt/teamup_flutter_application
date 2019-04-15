@@ -23,7 +23,7 @@ class ClassmatesList extends StatelessWidget {
             style: TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text(user.subtitle),
         trailing: Container(
-            width: 64.0,
+            width: 96.0,
             child: Center(child: user.inTeamForCourse(
                 ScopedModel.of<UserModel>(context, rebuildOnChange: false)
                     .currentCourse
