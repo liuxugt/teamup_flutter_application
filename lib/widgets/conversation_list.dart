@@ -87,7 +87,7 @@ class _ListElementState extends State<ListElement> {
           else{
             name = _conv.fullName1;
             index = 0;
-            photoURL = _conv.user2.photoURL;
+            photoURL = _conv.user1.photoURL;
           }
           return ListTile(
             contentPadding: EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
