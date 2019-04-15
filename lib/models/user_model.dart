@@ -87,7 +87,7 @@ class UserModel extends Model {
   Future<bool> registerUser(
       String email, String password, String firstName, String lastName) async {
     try {
-      _api.registerUser(email, password, firstName, lastName);
+      await _api.registerUser(email, password, firstName, lastName);
       _error = "";
       return true;
     } catch (error) {

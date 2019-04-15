@@ -33,7 +33,7 @@ class ProfilePage extends StatelessWidget {
             ),
             _makeHeader(),
             _makeAttributeList(),
-            _makeSchedule(),
+//            _makeSchedule(),
           ],
         )
     );
@@ -186,14 +186,15 @@ class ProfilePage extends StatelessWidget {
                                 fontWeight: FontWeight.bold, fontSize: 16.0),
                           ),
                         ]),
-                  )
+                  ),
+            (user.unavailable == null || user.unavailable.isEmpty) ? Container() : _makeSchedule()
           ],
         ));
   }
 
   Widget _makeSchedule() {
     return Container(
-        height: 600,
+        height: 500,
         child: ListView(
           scrollDirection: Axis.horizontal,
           children: <Widget>[
