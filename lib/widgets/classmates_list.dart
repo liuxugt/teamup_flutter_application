@@ -29,7 +29,10 @@ class ClassmatesList extends StatelessWidget {
                     .currentCourse
                     .id)
                 ? Text("TEAMED", style: TextStyle(color: Color.fromRGBO(161, 166, 187, 1.0)),)
-                : Icon(Icons.brightness_1, color: Color.fromRGBO(90, 133, 236, 1.0), size: 22.0,),)),
+                : Text("AVAILABLE", style: TextStyle(color: Color.fromRGBO(90, 133, 236, 1.0)),)
+              //Icon(Icons.brightness_1, color: Color.fromRGBO(90, 133, 236, 1.0), size: 22.0,)
+     ,)
+       ),
         onTap: () {
           Navigator.push(
               context,

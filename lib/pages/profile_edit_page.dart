@@ -49,9 +49,10 @@ class ProfileEditPageState extends State<ProfileEditPage> {
     major = user.major;
     yearofStudy = user.yearOfStudy;
 
-    _unavailable = ((user.unavailable == null || user.unavailable.length == 0) ?
-    new List<bool>.filled(ProfileDataType.days * ProfileDataType.hours, false) :
-    user.unavailable);
+    _unavailable = ((user.unavailable == null || user.unavailable.length == 0)
+        ? new List<bool>.filled(
+            ProfileDataType.days * ProfileDataType.hours, false)
+        : user.unavailable);
 
     headlineController.text = headline;
     skillsController.text = skills;
@@ -280,7 +281,7 @@ class ProfileEditPageState extends State<ProfileEditPage> {
                   child: Text(
                     "Unavailable at",
                     style:
-                    TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                   ),
                 ),
               ],
@@ -314,17 +315,20 @@ class ProfileEditPageState extends State<ProfileEditPage> {
           children: <Widget>[
             Container(
               width: 32,
-              child: Column(children: ProfileDataType.hourList.map((int hour) =>
-                  Container(height: 32,
-                      child:  Text("${hour}"),
-                      alignment: Alignment(0.0, 3.0))).toList(),
+              child: Column(
+                children: ProfileDataType.hourList
+                    .map((int hour) => Container(
+                        height: 32,
+                        child: Text("${hour}"),
+                        alignment: Alignment(0.0, 3.0)))
+                    .toList(),
               ),
             ),
             Container(
               child: Column(
                 children: <Widget>[
                   Container(
-                    child:Row(
+                    child: Row(
                       children: <Widget>[
                         Container(
                             width: 48,
@@ -348,33 +352,47 @@ class ProfileEditPageState extends State<ProfileEditPage> {
                             width: 48,
                             child: Text("S", textAlign: TextAlign.center)),
                       ],
-                    ),),
+                    ),
+                  ),
                   Container(
                     child: Row(
                       children: <Widget>[
                         Table(
                           defaultColumnWidth: FixedColumnWidth(48.0),
                           border: TableBorder.all(color: Colors.grey),
-                          children: ProfileDataType.calendarIndex.map((List<int> hour) => TableRow(
-                            children: hour.map((int cur) => GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  _unavailable[cur] = !_unavailable[cur];
-                              });
-                              },
-                              child: AnimatedContainer(duration: const Duration(milliseconds: 300),
-                                  height: 32.0,
-                                  color: _unavailable[cur]
-                                      ? Color.fromRGBO(90, 133, 236, 1.0)
-                                      : Colors.white,
-                                  child: Center(
-                                    child: _unavailable[cur]
-                                        ? Text("X", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))
-                                        : Text(""),
-                                  )
-                              ),
-                            )).toList(),
-                          )).toList(),
+                          children: ProfileDataType.calendarIndex
+                              .map((List<int> hour) => TableRow(
+                                    children: hour
+                                        .map((int cur) => GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  _unavailable[cur] =
+                                                      !_unavailable[cur];
+                                                });
+                                              },
+                                              child: AnimatedContainer(
+                                                  duration: const Duration(
+                                                      milliseconds: 300),
+                                                  height: 32.0,
+                                                  color: _unavailable[cur]
+                                                      ? Color.fromRGBO(
+                                                          90, 133, 236, 1.0)
+                                                      : Colors.white,
+                                                  child: Center(
+                                                    child: _unavailable[cur]
+                                                        ? Text("X",
+                                                            style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                color: Colors
+                                                                    .white))
+                                                        : Text(""),
+                                                  )),
+                                            ))
+                                        .toList(),
+                                  ))
+                              .toList(),
                         )
                       ],
                     ),
@@ -383,8 +401,7 @@ class ProfileEditPageState extends State<ProfileEditPage> {
               ),
             )
           ],
-        )
-    );
+        ));
   }
 
   Widget _makeFAB(BuildContext context) {
@@ -394,17 +411,16 @@ class ProfileEditPageState extends State<ProfileEditPage> {
         onPressed: () {
           //print(user.skills);
           ScopedModel.of<UserModel>(context, rebuildOnChange: false).updateUser(
-              headline,
-              skills,
-              strengths,
-              selectedLanguage,
-              major,
-              yearofStudy,
-              _unavailable,
+            headline,
+            skills,
+            strengths,
+            selectedLanguage,
+            major,
+            yearofStudy,
+            _unavailable,
           );
           Navigator.of(context).popUntil(ModalRoute.withName('/home'));
-        }
-        );
+        });
   }
 
   List<Widget> _makestrengthsOptions(BuildContext context) {
