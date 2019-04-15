@@ -275,11 +275,21 @@ class ProfilePage extends StatelessWidget {
   }
 
   Widget _makeFAB(BuildContext context) {
-    //if this is your profile page
-    if (user.id ==
+
+    User currentUser = ScopedModel.of<UserModel>(context, rebuildOnChange: false)
+        .currentUser;
+    Team currentTeam = ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentTeam;
+
+    bool viewingUserInTeam = user.inTeamForCourse(
         ScopedModel.of<UserModel>(context, rebuildOnChange: false)
-            .currentUser
-            .id) {
+            .currentCourse
+            .id);
+
+    bool currentUserIsTeamLeadAndTeamNotFull = currentTeam != null && !currentTeam.isFull && currentTeam.leader == currentUser.id;
+
+
+    //if this is your profile page
+    if (user.id == currentUser.id) {
       return FloatingActionButton(
           child: Icon(Icons.edit),
           onPressed: () {
@@ -290,71 +300,76 @@ class ProfilePage extends StatelessWidget {
           });
     }
 
-    //if the user is already in a team
-    if (user.inTeamForCourse(
-        ScopedModel.of<UserModel>(context, rebuildOnChange: false)
-            .currentCourse
-            .id)) {
-      return Container(height: 0.0);
+
+    if(currentTeam == null && !viewingUserInTeam){
+      return FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () async {
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text("You are not in a team!"),
+                    content: Text(
+                        "It looks like you're not in a team, would you like to create one?"),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text("Cancel"),
+                        onPressed: () => Navigator.of(context).pop(),
+                      ),
+                      FlatButton(
+                        child: Text("Propose Team"),
+                        onPressed: () => Navigator.of(context).push(
+                            MaterialPageRoute(
+                                builder: (context) => ProposeTeamPage(
+                                    maxGroupSize: ScopedModel.of<UserModel>(
+                                        context,
+                                        rebuildOnChange: false)
+                                        .currentCourse
+                                        .groupSize))),
+                      )
+                    ],
+                  );
+                });
+        },
+      );
     }
 
-    //if the user is not in a team
-    return FloatingActionButton(
-      child: Icon(Icons.add),
-      onPressed: () async {
-        Team current =
-            ScopedModel.of<UserModel>(context, rebuildOnChange: false)
-                .currentTeam;
 
-        //if you are not on a team, suggest to make one
-        if (current == null) {
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text("You are not in a team!"),
-                  content: Text(
-                      "It looks like you're not in a team, would you like to create one?"),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text("Cancel"),
-                      onPressed: () => Navigator.of(context).pop(),
-                    ),
-                    FlatButton(
-                      child: Text("Propose Team"),
-                      onPressed: () => Navigator.of(context).push(
-                          MaterialPageRoute(
-                              builder: (context) => ProposeTeamPage(
-                                  maxGroupSize: ScopedModel.of<UserModel>(
-                                          context,
-                                          rebuildOnChange: false)
-                                      .currentCourse
-                                      .groupSize))),
-                    )
-                  ],
-                );
-              });
-        } else {
-          await ScopedModel.of<UserModel>(context, rebuildOnChange: false)
-              .createInvitation(current, user.id);
-          showDialog(
-              context: context,
-              builder: (context) {
-                return AlertDialog(
-                  title: Text("Invitation Confirmation"),
-                  content: Text(
-                      "Your Invitation has been successfully sent, check your inbox for updates!"),
-                  actions: <Widget>[
-                    FlatButton(
-                      child: Text("Okay!"),
-                      onPressed: () => Navigator.of(context).pop(),
-                    )
-                  ],
-                );
-              });
-        }
-      },
-    );
+    if(currentUserIsTeamLeadAndTeamNotFull && !viewingUserInTeam){
+      return FloatingActionButton(
+        child: Icon(Icons.add),
+        onPressed: () async {
+            await ScopedModel.of<UserModel>(context, rebuildOnChange: false)
+                .createInvitation(currentTeam, user.id);
+            showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    title: Text("Invitation Confirmation"),
+                    content: Text(
+                        "Your Invitation has been successfully sent, check your inbox for updates!"),
+                    actions: <Widget>[
+                      FlatButton(
+                        child: Text("Okay!"),
+                        onPressed: () => Navigator.of(context).pop(),
+                      )
+                    ],
+                  );
+                });
+          }
+      );
+
+    }
+
+
+
+
+
+      return Container(height: 0.0);
+
+
+    //if the user is not in a team
   }
 
   @override
