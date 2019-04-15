@@ -332,7 +332,7 @@ class UserModel extends Model {
           "invitation", "pending", _currentTeam.id);
       String conversationId = await _api.createConversation(
           _currentCourse.id, _currentUser.id, userId);
-      print("the team is" + temp.team);
+//      print("the team is" + temp.team);
       await _api.createMessage(_currentCourse.id, conversationId, temp);
       _error = "";
       return true;
