@@ -31,7 +31,7 @@ class TeamPage extends StatelessWidget {
               role.toString(),
               textAlign: TextAlign.center,
             )),
-            width: 70.0,
+            width: 96.0,
           )
         ],
       ));
@@ -252,7 +252,7 @@ class TeamPage extends StatelessWidget {
                       color: Color.fromRGBO(161, 166, 187, 1.0)),
                 )),
             Container(
-              height: 96.0,
+              height: 108.0,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 physics: ClampingScrollPhysics(),
