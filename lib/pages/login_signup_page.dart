@@ -90,7 +90,10 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
 
   Widget _showLogo(){
-    return Center(child: Image.asset('assets/logo.png', height: 100, width: 100,));
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 48),
+      child: Center(child: Image.asset('assets/logo.png', height: 80, width: 80,)),
+    );
   }
 
   Widget _showErrorMessage() {
@@ -218,14 +221,17 @@ class _LoginSignUpPageState extends State<LoginSignUpPage> {
 
   Widget _showPrimaryButton() {
       return Center(
-        child: RaisedButton(
-          color: Color.fromRGBO(90, 133, 236, 1.0),
-          onPressed: _onPrimaryButtonPressed,
-          child: _formMode == FormMode.LOGIN
-              ? Text('Login',
-                  style: TextStyle(fontSize: 20.0, color: Colors.white))
-              : Text('Create account',
-                  style: TextStyle(fontSize: 20.0, color: Colors.white)),
+        child: Padding(
+          padding: const EdgeInsets.only(top: 24.0),
+          child: RaisedButton(
+            color: Color.fromRGBO(90, 133, 236, 1.0),
+            onPressed: _onPrimaryButtonPressed,
+            child: _formMode == FormMode.LOGIN
+                ? Text('Login',
+                    style: TextStyle(fontSize: 20.0, color: Colors.white))
+                : Text('Create account',
+                    style: TextStyle(fontSize: 20.0, color: Colors.white)),
+          ),
         ),
       );
   }
