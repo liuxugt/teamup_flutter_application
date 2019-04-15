@@ -11,6 +11,7 @@ class HomePage extends StatelessWidget {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 3,
+      initialIndex: 1,
       child: Scaffold(
         appBar: AppBar(
           title: Text(ScopedModel.of<UserModel>(context, rebuildOnChange: true)
@@ -20,12 +21,14 @@ class HomePage extends StatelessWidget {
           ],
         ),
         bottomNavigationBar: TabBar(
+
           tabs: <Widget>[
             Tab(icon: Icon(Icons.person), child: Text("Classmates"),),
             Tab(icon: Icon(Icons.group), child: Text("Teams"),),
             Tab(icon: Icon(Icons.mail), child: Text("Inbox"),),
           ],
-          labelColor: Colors.blue,
+          labelColor: Color.fromRGBO(90, 133, 236, 1.0),
+          indicatorColor: Color.fromRGBO(90, 133, 236, 1.0),
           unselectedLabelColor: Colors.grey,
         ),
         body: TabBarView(

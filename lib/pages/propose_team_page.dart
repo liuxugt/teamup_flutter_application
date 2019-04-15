@@ -88,9 +88,9 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
             _makeTeamMateCounter(),
             _makeTeamMateIconList(),
 //            _makeTeamPreferenceInput(),
+            _makeTips(),
             _makeInviteClassmatesButton(),
             _makeInvitedUsersList(),
-            _makeTips(),
             _makeError(),
             _makeFinishButton(),
           ],
@@ -270,7 +270,7 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
           onPressed: () => _openInviteTeamMates(context),
           child: Text(
             'invite classmates',
-            style: TextStyle(color: Colors.blue, fontSize: 16.0),
+            style: TextStyle(color: Color.fromRGBO(90, 133, 236, 1.0), fontSize: 16.0),
           )),
     );
   }
@@ -307,7 +307,7 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
 
   Widget _makeTips() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Center(
         child: Text(
           'Tip: Click on the icon to edit teammate roles',
@@ -392,7 +392,7 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
                     const EdgeInsets.symmetric(horizontal: 48.0, vertical: 8.0),
                 child: Text('DONE'),
               ),
-              color: Colors.blue,
+              color: Color.fromRGBO(90, 133, 236, 1.0),
               textColor: Colors.white,
             ),
     );

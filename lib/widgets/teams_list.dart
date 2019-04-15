@@ -89,11 +89,12 @@ class TeamsList extends StatelessWidget {
 //                color: Color.fromRGBO(245, 245, 245, 1)
             ),
             child: ListTile(
+              contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
                 isThreeLine: true,
                 title: Text(team.name,
                     style: TextStyle(color: Colors.white, fontSize: 14)),
                 subtitle: Padding(
-                  padding: const EdgeInsets.only(top: 14),
+                  padding: const EdgeInsets.only(top: 18),
                   child: Text(team.description, style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 16),),
                 ),
                 onTap: () {
@@ -152,7 +153,7 @@ class TeamsList extends StatelessWidget {
                             child: const Text(
                               'Propose a new Team',
                             ),
-                            color: Colors.blue,
+                            color: Color.fromRGBO(90, 133, 236, 1.0),
                             textColor: Colors.white,
                             onPressed: () {
                               int courseGroupSize = ScopedModel.of<UserModel>(
