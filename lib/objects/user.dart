@@ -122,6 +122,7 @@ class User {
   set setMajor(String major) => _major = major;
   set setYearofStudy(String year) => _yearOfStudy = year;
   set setLanguages(List<String> languages) => _languages = languages;
+  set setUnavailable(List<bool> unavailable) => _unavailable = unavailable;
 
   String get subtitle => (_headline != null && _headline.isNotEmpty) ? _headline :_email;
 

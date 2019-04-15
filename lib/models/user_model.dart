@@ -378,7 +378,7 @@ class UserModel extends Model {
 //    temp.updateData({"status": "responded"});
   }
 
-  Future<void> updateUser(String headline, String skills, String strengths, List<String> languages, String major, String yearofStudy) async{
+  Future<void> updateUser(String headline, String skills, String strengths, List<String> languages, String major, String yearofStudy, List<bool> unavailable) async{
     _currentUser.setHeadline = headline;
     _currentUser.setSkills = skills;
     _currentUser.setStrengths = strengths;
@@ -407,6 +407,10 @@ class UserModel extends Model {
 
     if(yearofStudy != null){
       attributes['year_of_study'] = yearofStudy;
+    }
+
+    if (unavailable != null && unavailable.length != 0) {
+      attributes['availabilities'] = unavailable;
     }
 
     await _api.updateUserAttributes(_currentUser.id, attributes);

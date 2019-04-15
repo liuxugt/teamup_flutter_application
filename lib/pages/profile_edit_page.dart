@@ -28,6 +28,8 @@ class ProfileEditPageState extends State<ProfileEditPage> {
   TextEditingController yearController = new TextEditingController();
   File _image;
 
+  List<bool> _unavailable;
+
   final List<String> languages = ProfileDataType.languages;
 
   final List<String> strengthList = [
@@ -46,6 +48,10 @@ class ProfileEditPageState extends State<ProfileEditPage> {
     selectedLanguage = user.languages;
     major = user.major;
     yearofStudy = user.yearOfStudy;
+
+    _unavailable = ((user.unavailable == null || user.unavailable.length == 0) ?
+    new List<bool>.filled(ProfileDataType.days * ProfileDataType.hours, false) :
+    user.unavailable);
 
     headlineController.text = headline;
     skillsController.text = skills;
@@ -265,9 +271,120 @@ class ProfileEditPageState extends State<ProfileEditPage> {
               ],
             ),
 
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Container(
+                  width: 150.0,
+                  height: 48,
+                  child: Text(
+                    "Unavailable at",
+                    style:
+                    TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                  ),
+                ),
+              ],
+            ),
+            _makeSchedule(),
+//            Row(
+//              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//              children: <Widget>[
+//                Container(
+//                  width: 100.0,
+//                  child: Text(
+//                    "NOT availalbe at",
+//                    style:
+//                    TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+//                  ),
+//                ),
+//                _makeSchedule(),
+//              ],
+//            ),
+
             //TODO: Add all the attributes for a user here
           ],
         ));
+  }
+
+  Widget _makeSchedule() {
+    return Container(
+        height: 500,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          children: <Widget>[
+            Container(
+              width: 32,
+              child: Column(children: ProfileDataType.hourList.map((int hour) =>
+                  Container(height: 32,
+                      child:  Text("${hour}"),
+                      alignment: Alignment(0.0, 3.0))).toList(),
+              ),
+            ),
+            Container(
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    child:Row(
+                      children: <Widget>[
+                        Container(
+                            width: 48,
+                            child: Text("S", textAlign: TextAlign.center)),
+                        Container(
+                            width: 48,
+                            child: Text("M", textAlign: TextAlign.center)),
+                        Container(
+                            width: 48,
+                            child: Text("T", textAlign: TextAlign.center)),
+                        Container(
+                            width: 48,
+                            child: Text("W", textAlign: TextAlign.center)),
+                        Container(
+                            width: 48,
+                            child: Text("T", textAlign: TextAlign.center)),
+                        Container(
+                            width: 48,
+                            child: Text("F", textAlign: TextAlign.center)),
+                        Container(
+                            width: 48,
+                            child: Text("S", textAlign: TextAlign.center)),
+                      ],
+                    ),),
+                  Container(
+                    child: Row(
+                      children: <Widget>[
+                        Table(
+                          defaultColumnWidth: FixedColumnWidth(48.0),
+                          border: TableBorder.all(color: Colors.grey),
+                          children: ProfileDataType.calendarIndex.map((List<int> hour) => TableRow(
+                            children: hour.map((int cur) => GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  _unavailable[cur] = !_unavailable[cur];
+                              });
+                              },
+                              child: AnimatedContainer(duration: const Duration(milliseconds: 300),
+                                  height: 32.0,
+                                  color: _unavailable[cur]
+                                      ? Color.fromRGBO(90, 133, 236, 1.0)
+                                      : Colors.white,
+                                  child: Center(
+                                    child: _unavailable[cur]
+                                        ? Text("X", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))
+                                        : Text(""),
+                                  )
+                              ),
+                            )).toList(),
+                          )).toList(),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        )
+    );
   }
 
   Widget _makeFAB(BuildContext context) {
@@ -282,9 +399,12 @@ class ProfileEditPageState extends State<ProfileEditPage> {
               strengths,
               selectedLanguage,
               major,
-              yearofStudy);
+              yearofStudy,
+              _unavailable,
+          );
           Navigator.of(context).popUntil(ModalRoute.withName('/home'));
-        });
+        }
+        );
   }
 
   List<Widget> _makestrengthsOptions(BuildContext context) {
