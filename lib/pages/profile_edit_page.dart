@@ -283,7 +283,7 @@ class ProfileEditPageState extends State<ProfileEditPage> {
               selectedLanguage,
               major,
               yearofStudy);
-          Navigator.of(context).popUntil(ModalRoute.withName('/home');
+          Navigator.of(context).popUntil(ModalRoute.withName('/home'));
         });
   }
 
