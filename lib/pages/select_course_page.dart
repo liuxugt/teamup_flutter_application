@@ -21,9 +21,9 @@ class SelectCoursePage extends StatelessWidget {
                 child: Text('Cancel'),
               ),
               FlatButton(
-                onPressed: () {
-                  ScopedModel.of<UserModel>(context, rebuildOnChange: true).joinCourse(course);
-                  Navigator.of(context).pop();
+                onPressed: () async {
+                  await ScopedModel.of<UserModel>(context, rebuildOnChange: true).joinCourse(course);
+                  Navigator.of(context).popUntil(ModalRoute.withName('/home'));
                 },
                 child: Text('Yes'),
               ),
@@ -32,34 +32,26 @@ class SelectCoursePage extends StatelessWidget {
         });
   }
 
-  Widget _makeCourseCard(Course course, BuildContext context) {
+  Widget _makeCourseCard(Course course, BuildContext context, {bool joined = false}) {
     return Card(
-      elevation: 0.0,
+      elevation: 2.0,
       margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
       child: Container(
-        decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
+        decoration: BoxDecoration(gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color.fromRGBO(90, 133, 236, 1), Color.fromRGBO(149, 138, 224, 1)])),
         child: ListTile(
+            leading: Icon(Icons.bookmark_border,color: Colors.white,),
             title:
-                Text(course.id, style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(course.name),
+                Text(course.id, style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white)),
+            subtitle: Text(course.name, style: TextStyle(color: Colors.white),),
+            trailing: (joined) ? Icon(Icons.done, color: Colors.white,): null,
             onTap: () => _showConfirmDialog(course, context)),
       ),
     );
   }
 
-  Widget _makeJoinsedCourseCard(Course course, BuildContext context) {
-    return Card(
-      elevation: 0.0,
-      margin: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-      child: Container(
-        decoration: BoxDecoration(color: Color.fromRGBO(220, 220, 220, .5)),
-        child: ListTile(
-            title:
-            Text("${course.id} (Joined)", style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text(course.name),
-      ),
-    ));
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -78,10 +70,7 @@ class SelectCoursePage extends StatelessWidget {
                       children: snapshot.data.documents.map((document) {
                         if(document?.data != null){
                           Course course = Course.fromSnapshot(document);
-
-                          return (model.currentUser.courseIds.contains(course.id)) ?
-                              _makeJoinsedCourseCard(course, context)
-                              : _makeCourseCard(course, context);
+                          return _makeCourseCard(course, context, joined: model.currentUser.courseIds.contains(course.id));
                         }
                         return Container();
 

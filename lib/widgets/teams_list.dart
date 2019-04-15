@@ -8,10 +8,10 @@ import 'package:teamup_app/pages/team_page.dart';
 
 class TeamsList extends StatelessWidget {
   final Map<String, Image> _teamMateIconMap = {
-    'anyone': Image.asset("assets/anyone.png", height: 24, width: 24),
-    'designer': Image.asset("assets/designer.png", height: 24, width: 24),
-    'researcher': Image.asset("assets/researcher.png", height: 24, width: 24),
-    'developer': Image.asset("assets/developer.png", height: 24, width: 24),
+    'anyone': Image.asset("assets/anyone.png", height: 32, width: 32),
+    'designer': Image.asset("assets/designer.png", height: 32, width: 32),
+    'researcher': Image.asset("assets/researcher.png", height: 32, width: 32),
+    'developer': Image.asset("assets/developer.png", height: 32, width: 32),
   };
   final List<String> _customRoleList = [
     'anyone',
@@ -45,10 +45,10 @@ class TeamsList extends StatelessWidget {
       }
     });
 
+    Widget icon = _teamMateIconMap[_customRoleList[0]];
+
     for (String role in finalRoles) {
       //default icon
-      Widget icon = _teamMateIconMap[_customRoleList[0]];
-      
       for (String s in _customRoleList) {
         if (role.toLowerCase().contains(s)) {
           icon = _teamMateIconMap[s];
@@ -61,10 +61,12 @@ class TeamsList extends StatelessWidget {
         children: <Widget>[
           icon,
           Container(
+            padding: EdgeInsets.only(top: 8),
             child: Center(
                 child: Text(
               role.toString(),
               textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 11),
             )),
             width: 70.0,
           )

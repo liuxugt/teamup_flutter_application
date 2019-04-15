@@ -13,18 +13,43 @@ class TeamPage extends StatelessWidget {
   final Team team;
   TeamPage({this.team});
 
+  final Map<String, Image> _teamMateIconMap = {
+    'anyone': Image.asset("assets/anyone.png", height: 48, width: 48),
+    'designer': Image.asset("assets/designer.png", height: 48, width: 48),
+    'researcher': Image.asset("assets/researcher.png", height: 48, width: 48),
+    'developer': Image.asset("assets/developer.png", height: 48, width: 48),
+  };
+  final List<String> _customRoleList = [
+    'anyone',
+    'designer',
+    'researcher',
+    'developer'
+  ];
+
+
+
   List<Widget> _makeTeamIcons(List<dynamic> teamRoles) {
     List<Widget> iconList = [];
 
+
+
+
     for (String role in teamRoles) {
+
+      Widget icon = _teamMateIconMap[_customRoleList[0]];
+
+        //default icon
+      for (String s in _customRoleList) {
+        if (role.toLowerCase().contains(s)) {
+          icon = _teamMateIconMap[s];
+          break;
+        }
+      }
+
       iconList.add(Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: <Widget>[
-          Icon(
-            Icons.account_circle,
-            color: Colors.grey[400],
-            size: 48.0,
-          ),
+          icon,
           Container(
             child: Center(
                 child: Text(

@@ -90,7 +90,6 @@ class ConversationPageState extends State<ConversationPage> {
           (_targetIndex == 0)
               ? _conversation.fullName1
               : _conversation.fullName2,
-          style: TextStyle(color: Colors.white),
         ),
         actions: <Widget>[],
       ),
