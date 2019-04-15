@@ -10,7 +10,7 @@ class HeadlineTab extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Container(
-            height: 32.0,
+            height: 76.0,
           ),
           Text(
             "Hi ${ScopedModel.of<UserModel>(context, rebuildOnChange: false).currentUser.firstName}!\nGive yourself a title to tell people what you do.",
