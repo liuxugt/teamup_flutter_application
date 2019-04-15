@@ -5,6 +5,7 @@ import 'package:teamup_app/models/user_model.dart';
 import 'package:teamup_app/objects/team.dart';
 import 'package:teamup_app/pages/profile_edit_page.dart';
 import 'package:teamup_app/pages/propose_team_page.dart';
+import 'package:teamup_app/widgets/profile_data_type.dart';
 
 class ProfilePage extends StatelessWidget {
   final Map<String, String> strengthMap = {
@@ -32,6 +33,7 @@ class ProfilePage extends StatelessWidget {
             ),
             _makeHeader(),
             _makeAttributeList(),
+            _makeSchedule(),
           ],
         )
     );
@@ -187,6 +189,88 @@ class ProfilePage extends StatelessWidget {
                   )
           ],
         ));
+  }
+
+  Widget _makeSchedule() {
+    return Container(
+        height: 600,
+        child: ListView(
+          scrollDirection: Axis.horizontal,
+          children: <Widget>[
+            Container(
+              width: 32,
+              child: Column(children: ProfileDataType.hourList.map((int hour) =>
+                  Container(height: 32,
+                  child:  Text("${hour}"),
+                  alignment: Alignment(0.0, 3.0))).toList(),
+              ),
+            ),
+            Container(
+              child: Column(
+                children: <Widget>[
+                  Container(
+                    child:Row(
+                      children: <Widget>[
+                        Container(
+                            width: 48,
+                            child: Text("S", textAlign: TextAlign.center)),
+                        Container(
+                            width: 48,
+                            child: Text("M", textAlign: TextAlign.center)),
+                        Container(
+                            width: 48,
+                            child: Text("T", textAlign: TextAlign.center)),
+                        Container(
+                            width: 48,
+                            child: Text("W", textAlign: TextAlign.center)),
+                        Container(
+                            width: 48,
+                            child: Text("T", textAlign: TextAlign.center)),
+                        Container(
+                            width: 48,
+                            child: Text("F", textAlign: TextAlign.center)),
+                        Container(
+                            width: 48,
+                            child: Text("S", textAlign: TextAlign.center)),
+                      ],
+                    ),),
+                  Container(
+                    child: Row(
+                      children: <Widget>[
+                        Table(
+                          defaultColumnWidth: FixedColumnWidth(48.0),
+                          border: TableBorder.all(color: Colors.grey),
+                          children: ProfileDataType.calendarIndex.map((List<int> hour) => TableRow(
+                            children: hour.map((int cur) => GestureDetector(
+                              onTap: () {
+//                                setState(() {
+//                                _availabilities[cur] = !_availabilities[cur];
+//                                ScopedModel.of<OnboardingModel>(context, rebuildOnChange: false).availabilities = _availabilities;
+//                              });
+                              },
+                              child: AnimatedContainer(duration: const Duration(milliseconds: 300),
+                                  height: 32.0,
+                                  color: user.unavailable[cur]
+                                      ? Color.fromRGBO(90, 133, 236, 1.0)
+                                      : Colors.white,
+                                  child: Center(
+                                    child: user.unavailable[cur]
+                                        ? Text("X", style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white))
+                                        : Text(""),
+                                  )
+                              ),
+                            )).toList(),
+                          )).toList(),
+                        )
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            )
+          ],
+        )
+    );
   }
 
   Widget _makeFAB(BuildContext context) {

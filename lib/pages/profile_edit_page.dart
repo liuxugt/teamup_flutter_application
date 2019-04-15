@@ -3,6 +3,7 @@ import 'package:teamup_app/objects/user.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/models/user_model.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:teamup_app/widgets/profile_data_type.dart';
 import 'dart:io';
 
 class ProfileEditPage extends StatefulWidget {
@@ -27,15 +28,7 @@ class ProfileEditPageState extends State<ProfileEditPage> {
   TextEditingController yearController = new TextEditingController();
   File _image;
 
-  final List<String> languages = [
-    'English',
-    'Spanish',
-    'Korean',
-    'Mandarin',
-    'Japanese',
-    'French',
-    'German'
-  ];
+  final List<String> languages = ProfileDataType.languages;
 
   final List<String> strengthList = [
     'strategicThinking',

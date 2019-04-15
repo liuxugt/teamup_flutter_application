@@ -29,12 +29,9 @@ class _AvailabilityInfoTabState extends State<AvailabilityInfoTab> {
     }
   }
 
-  List<TableRow> test() {
+  List<TableRow> _makeSchedule() {
     List<TableRow> res;
     res = index.map((List<int> hour) => TableRow(
-        decoration: new BoxDecoration(
-//          border: Border.all(color: Colors.red),
-        ),
         children: hour.map((int cur) => GestureDetector(
           onTap: () {setState(() {
             _availabilities[cur] = !_availabilities[cur];
@@ -121,28 +118,6 @@ class _AvailabilityInfoTabState extends State<AvailabilityInfoTab> {
                 child: Column(children: hourList,
                 ),
               ),
-//              Container(
-////                width: 300,
-//                child: Table(
-//                  defaultColumnWidth: FixedColumnWidth(48.0),
-//                  border: TableBorder.all(color: Colors.grey),
-//                  children: test(),
-////                  children: new List.from(test())..insert(0, TableRow(
-////                    decoration: new BoxDecoration(
-////                      border: Border.all(color: Colors.red),
-////                    ),
-////
-////                    children: [
-////                      Text("S"),
-////                      Text("M"),
-////                      Text("T"),
-////                      Text("W"),
-////                      Text("T"),
-////                      Text("F"),
-////                      Text("S"),
-////                    ]
-//                ),
-//              ),
               Container(
                 child: Column(
                   children: <Widget>[
@@ -178,20 +153,13 @@ class _AvailabilityInfoTabState extends State<AvailabilityInfoTab> {
                           Table(
                             defaultColumnWidth: FixedColumnWidth(48.0),
                             border: TableBorder.all(color: Colors.grey),
-                            children: test(),
+                            children: _makeSchedule(),
                           )
                         ],
                       ),
                     ),
                   ],
                 ),
-
-
-//                child: Table(
-//                defaultColumnWidth: FixedColumnWidth(48.0),
-//                border: TableBorder.all(color: Colors.grey),
-//                children: test(),
-//                )
               )
             ],
           )

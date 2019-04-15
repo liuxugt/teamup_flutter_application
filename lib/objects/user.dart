@@ -80,19 +80,18 @@ class User {
       if (data['attributes']['major'] is String)
         _major = data['attributes']['major'];
 
-
-      if (data['attributes']['languages'] is List && data['attributes']['languages'].length > 0)
+      if (data['attributes']['languages'] is List && data['attributes']['languages'].length > 0) {
         for (int i = 0; i < data['attributes']['languages'].length; i++) {
           _languages.add(data['attributes']['languages'][i]);
         }
+      }
+
+      if (data['attributes']['availabilities'] is List && data['attributes']['availabilities'].length > 0) {
+        _unavailable = List<bool>.from(data['attributes']['availabilities']);
+      }
     }
 
-
-
-
-
     onboardComplete = data['onboard_complete'];
-//    _birthdate = data['attributes']['birthdate'];
   }
 
 
@@ -114,7 +113,6 @@ class User {
   DateTime get birthdate => _birthdate;
   String get strengths => _strengths;
   List<String> get languages => _languages;
-
   List<bool> get unavailable => _unavailable;
 
   set setSkills(String skill) => _skills = skill;

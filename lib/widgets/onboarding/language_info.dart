@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:teamup_app/models/onboarding_model.dart';
+import 'package:teamup_app/widgets/profile_data_type.dart';
 
 class LanguageInfoTab extends StatefulWidget {
   @override
@@ -8,19 +9,8 @@ class LanguageInfoTab extends StatefulWidget {
 }
 
 class _LanguageInfoTabState extends State<LanguageInfoTab> {
-  final List<String> languages = [
-    'English',
-    'Spanish',
-    'Korean',
-    'Mandarin',
-    'Japanese',
-    'French',
-    'German',
-    'Hindi',
-    'Arabic',
-    'Bengali',
-    'Indonesian'
-  ];
+
+  static final List<String> languages = ProfileDataType.languages;
 
   List<String> _languageItems;
 
@@ -35,7 +25,6 @@ class _LanguageInfoTabState extends State<LanguageInfoTab> {
       yield Padding(
         padding: const EdgeInsets.all(4.0),
         child: FilterChip(
-//          backgroundColor: Color.fromRGBO(90, 133, 236, 0.5),
           selectedColor: Color.fromRGBO(90, 133, 236, 1.0),
           avatar: CircleAvatar(backgroundColor: Color.fromRGBO(90, 133, 236, 1.0),),
           label: Text(language, style: (_languageItems.contains(language)) ? TextStyle(color: Colors.white) : null),
