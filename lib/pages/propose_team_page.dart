@@ -86,9 +86,9 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
             _makeTeamNameInput(),
             _makeTeamDescriptionInput(),
             _makeTeamMateCounter(),
+            _makeTips(),
             _makeTeamMateIconList(),
 //            _makeTeamPreferenceInput(),
-            _makeTips(),
             _makeInviteClassmatesButton(),
             _makeInvitedUsersList(),
             _makeError(),
@@ -307,13 +307,12 @@ class _ProposeTeamPageState extends State<ProposeTeamPage> {
 
   Widget _makeTips() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
-      child: Center(
-        child: Text(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child:
+        Text(
           'Tip: Click on the icon to edit teammate roles',
           style: TextStyle(color: Colors.black26),
         ),
-      ),
     );
   }
 
